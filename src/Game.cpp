@@ -12,6 +12,12 @@ Game::Game(int vecWidth, int vecHeight, int rendererScalex, int rendererScaley)
       isRunning(true), vec(vecHeight, std::vector<Pixel *>(vecWidth)) {}
 
 Game::~Game() {
+    for(int i = vecHeight-1; i >= 0; i--){
+        for(int k = vecWidth-1; k >= 0; k--){
+            if(vec[i][k] == nullptr) continue;
+            delete vec[i][k];
+        }
+    }
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
