@@ -1,5 +1,8 @@
 #include "SolidDynamic.hpp"
 
+SolidDynamic::SolidDynamic(){}
+SolidDynamic::~SolidDynamic(){}
+
 void SolidDynamic::updateVelocity() {
     velocity += g/3;
 }
@@ -22,7 +25,7 @@ double SolidDynamic::randomNumber(){
 
 }
 
-void SolidDynamic::swapElements(std::vector<std::vector<Pixel *>> vec, 
+void SolidDynamic::swapElements(std::vector<std::vector<Pixel *>> &vec, 
                                 int x1, int y1, 
                                 int x2, int y2){
     Pixel *temp = vec[x1][y1];

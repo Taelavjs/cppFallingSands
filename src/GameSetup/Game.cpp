@@ -36,9 +36,8 @@ void Game::init(const std::string* title) {
     for (int row = 0; row < vecHeight; ++row) {
         for (int col = 0; col < vecWidth; ++col) {
             if (randomnumber() > 0.35) {
-                vec[row][col] = new Sand();
-                //vec[row][col].setType(PixelType::Sand);
-            }
+                vec[row][col] = new Sand(); // Create a Sand object and store its pointer
+            } 
         }
     }
 }
@@ -69,7 +68,6 @@ void Game::update() {
             Sand* sand = static_cast<Sand*>(vec[row][col]);
 
             sand -> update(vec, row, col, vecWidth, vecHeight);
-
         }
     }
 }

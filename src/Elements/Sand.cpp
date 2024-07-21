@@ -1,9 +1,11 @@
 #include "Sand.hpp"
 
-void Sand::update(std::vector<std::vector<Pixel *>> &vec, int row, int col, int vecWidth, int vecHeight) 
-{
-    Pixel *orgPoint = vec[row][col];
+Sand::Sand(){
+}
+Sand::~Sand(){}
 
+void Sand::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) 
+{
     if (vec[row + 1][col] != nullptr)
     {
         double rngValue = randomNumber();

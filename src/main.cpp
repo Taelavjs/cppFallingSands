@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     Game game(vecWidth, vecHeight, rendererScalex, rendererScaley);
     game.init(&title);
 
-    const int fps = 10;
+    const int fps = 30;
     const int timeBetweenFrames = 1000/fps;
     Uint32 frameStart{};
     int frameTime{};
@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
         game.update();
         // Render
         game.render();
-
         frameTime = SDL_GetTicks() - frameStart;
         if(frameTime < timeBetweenFrames){
             SDL_Delay(timeBetweenFrames - frameTime);

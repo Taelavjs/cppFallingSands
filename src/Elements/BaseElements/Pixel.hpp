@@ -5,19 +5,11 @@
 #include <string>
 #include <SDL2/SDL.h> // Include SDL2 header for SDL_Color
 
-enum class PixelType {
-    Sand,
-    Water,
-    Air
-};
-
-std::string pixelTypeToString(PixelType type);
-
 // Default Base Class Of Every Pixel
 class Pixel {
 public:
     Pixel();
-    ~Pixel();
+    virtual ~Pixel();
 
     // void updateVelocity();
     // void resetVelocity();

@@ -9,9 +9,9 @@
 
 class Sand : public SolidDynamic {
 public:
-    Sand() : SolidDynamic(){};
+    Sand();
     ~Sand();
-    void update(std::vector<std::vector<Pixel *>> &vec, int row, int col, int vecWidth, int vecHeight) override;
+    void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) override;
 };
 
 
