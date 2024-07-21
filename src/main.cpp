@@ -4,8 +4,8 @@
 #include <vector>
 #include <random>
 #include "SDL2/SDL.h"
-#include "Game.hpp"
-#include "Pixel.hpp"
+#include "./GameSetup/Game.hpp"
+#include "./Elements/BaseElements/Pixel.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     Game game(vecWidth, vecHeight, rendererScalex, rendererScaley);
     game.init(&title);
 
-    const int fps = 25;
+    const int fps = 10;
     const int timeBetweenFrames = 1000/fps;
     Uint32 frameStart{};
     int frameTime{};

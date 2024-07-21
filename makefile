@@ -12,7 +12,7 @@ LIBRARY_PATHS = -L$(LIB_DIR)
 LIBS = -lSDL2
 
 # Source and object files
-SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
+SRC_FILES = $(shell find $(SRC_DIR) -name '*.cpp')
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRC_FILES))
 
 # Output binary
@@ -28,7 +28,7 @@ $(OBJ_NAME): $(OBJ_FILES)
 
 # Compile source files to object files
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(dir $@)
 	$(CC) $(CXXFLAGS) $(INCLUDE_PATHS) -c $< -o $@
 
 # Clean build files

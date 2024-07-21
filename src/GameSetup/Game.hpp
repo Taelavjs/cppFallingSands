@@ -6,7 +6,7 @@
 #include <string>
 #include <iostream>
 #include <SDL2/SDL.h>
-#include "Pixel.hpp"
+#include "../Elements/BaseElements/Pixel.hpp"
 
 class Game {
 public:

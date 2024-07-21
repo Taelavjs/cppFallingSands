@@ -40,7 +40,7 @@ void Game::init(const std::string* title) {
 
     for (int row = 0; row < vecHeight; ++row) {
         for (int col = 0; col < vecWidth; ++col) {
-            if (randomnumber() > 0.85f) {
+            if (randomnumber() > 0.35) {
                 vec[row][col] = new Pixel(PixelType::Sand);
                 //vec[row][col].setType(PixelType::Sand);
             }
