@@ -7,6 +7,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include "../Elements/BaseElements/Pixel.hpp"
+#include "../Elements/Sand.hpp"
 
 class Game {
 public:
@@ -21,9 +22,8 @@ public:
     void setRunning(bool running) { isRunning = running; }
     bool getRunning() const { return isRunning; }
     void swapElements(int x, int y, int x2, int y2);
-
+    double randomnumber();
 private:
-    static double randomnumber();
     int vecWidth;
     int vecHeight;
     int rendererScalex;

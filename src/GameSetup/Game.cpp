@@ -1,10 +1,5 @@
 #include "Game.hpp"
 
-double Game::randomnumber() {
-    static std::default_random_engine rng;
-    std::uniform_real_distribution<double> dist(0.0, 1.0);
-    return dist(rng);
-}
 
 Game::Game(int vecWidth, int vecHeight, int rendererScalex, int rendererScaley)
     : vecWidth(vecWidth), vecHeight(vecHeight),
@@ -41,7 +36,7 @@ void Game::init(const std::string* title) {
     for (int row = 0; row < vecHeight; ++row) {
         for (int col = 0; col < vecWidth; ++col) {
             if (randomnumber() > 0.35) {
-                vec[row][col] = new Pixel(PixelType::Sand);
+                vec[row][col] = new Sand();
                 //vec[row][col].setType(PixelType::Sand);
             }
         }
@@ -60,7 +55,7 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale) {
         }
         if (e.type == SDL_MOUSEBUTTONDOWN) {
             SDL_GetMouseState(&x, &y);
-            vec[y / xScale][x / yScale] = new Pixel(PixelType::Sand);
+            vec[y / xScale][x / yScale] = new Sand();
         }
     }
 }
@@ -71,32 +66,10 @@ void Game::update() {
             if (vec[row][col] == nullptr) continue;
 
             if (row + 1 >= vecHeight) continue;
+            Sand* sand = static_cast<Sand*>(vec[row][col]);
 
-            Pixel *orgPoint = vec[row][col];
+            sand -> update(vec, row, col, vecWidth, vecHeight);
 
-            if (vec[row + 1][col] != nullptr) {
-                double rngValue = randomnumber();
-                if (col - 1 >= 0 && vec[row + 1][col - 1] == nullptr && rngValue > 0.5f) {
-                    orgPoint -> resetVelocity();
-                    swapElements(row, col, row + 1, col - 1);
-                } else if (col + 1 < vecWidth && vec[row + 1][col + 1] == nullptr) {
-                    orgPoint -> resetVelocity();
-                    swapElements(row, col, row + 1, col + 1);
-                }
-            } else if (vec[row + 1][col] == nullptr) {
-                int blocksToFall = vec[row][col]->getBlocksToFall();
-                int fallToRow = row + blocksToFall;
-                if (fallToRow >= vecHeight) {
-                    fallToRow = vecHeight - 1;
-                }
-                while (fallToRow > row && vec[fallToRow][col] != nullptr) {
-                    fallToRow--;
-                }
-                if (fallToRow > row) {
-                    orgPoint->updateVelocity();
-                    swapElements(row, col, fallToRow, col);
-                }
-            }
         }
     }
 }
@@ -121,11 +94,9 @@ void Game::clean() {
     SDL_Quit();
 };
 
-void Game::swapElements(int x, int y, int x2, int y2 ){
-    Pixel *temp = vec[x][y];
+double Game::randomnumber(){
+    static std::default_random_engine rng;
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
+    return dist(rng);
 
-    vec[x][y] = vec[x2][y2];
-    vec[x2][y2] = temp;
-
-
-};
+}
