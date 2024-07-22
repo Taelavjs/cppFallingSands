@@ -19,8 +19,12 @@ int SolidDynamic::getBlocksToFall() {
 }
 
 double SolidDynamic::randomNumber(){
-    static std::default_random_engine rng;
-    std::uniform_real_distribution<double> dist(0.0, 1.0);
+    static std::default_random_engine rng(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count()));
+    
+    // Create a uniform distribution between 0.0 and 1.0
+    static std::uniform_real_distribution<double> dist(0.0, 1.0);
+    
+    // Return a random double value in the range [0.0, 1.0)
     return dist(rng);
 
 }
@@ -32,4 +36,12 @@ void SolidDynamic::swapElements(std::vector<std::vector<Pixel *>> &vec,
 
     vec[x1][y1] = vec[x2][y2];
     vec[x2][y2] = temp;
+}
+
+void SolidDynamic::setProcessed(bool tf){
+    isProcessed = tf;
+}
+
+bool SolidDynamic::getProcessed(){
+    return isProcessed;
 }

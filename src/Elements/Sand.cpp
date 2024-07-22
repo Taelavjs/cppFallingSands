@@ -6,6 +6,8 @@ Sand::~Sand(){}
 
 void Sand::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) 
 {
+    vec[row][col] -> setProcessed(true);
+
     if (vec[row + 1][col] != nullptr)
     {
         double rngValue = randomNumber();

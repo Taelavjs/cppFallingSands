@@ -10,13 +10,16 @@ class Pixel {
 public:
     Pixel();
     virtual ~Pixel();
-
+    SDL_Color getColor(){ return color;};
+    virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) {};
+    virtual void setProcessed(bool tf) { isProcessed = tf; }
+    virtual bool getProcessed() { return isProcessed; }
     // void updateVelocity();
     // void resetVelocity();
     // int getBlocksToFall();
-    
-
 protected:
+    bool isProcessed{false};
+
 //     static std::unordered_map<PixelType, int> createPixelTypeMap();
 //     static const std::unordered_map<PixelType, int> pixelTypes;
 // int velocity{0};

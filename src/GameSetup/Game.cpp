@@ -35,7 +35,7 @@ void Game::init(const std::string* title) {
 
     for (int row = 0; row < vecHeight; ++row) {
         for (int col = 0; col < vecWidth; ++col) {
-            if (randomnumber() > 0.35) {
+            if (randomnumber() < 0.0) {
                 vec[row][col] = new Sand(); // Create a Sand object and store its pointer
             } 
         }
@@ -54,37 +54,87 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale) {
         }
         if (e.type == SDL_MOUSEBUTTONDOWN) {
             SDL_GetMouseState(&x, &y);
-            vec[y / xScale][x / yScale] = new Sand();
+
+            // Convert mouse position to grid position
+            int gridX = x / xScale;
+            int gridY = y / yScale;
+
+            // Place Water in a circle around the clicked position
+            for (int angle = 0; angle < 360; ++angle) {
+                // Convert angle to radians
+                double radians = angle * (M_PI / 180.0);
+                
+                // Calculate offset from the center based on the angle and radius
+                int offsetX = static_cast<int>(20 * cos(radians));
+                int offsetY = static_cast<int>(20 * sin(radians));
+                
+                // Calculate grid cell position
+                int newX = gridX + offsetX;
+                int newY = gridY + offsetY;
+
+                // Ensure we are within grid bounds
+                if (newX >= 0 && newY >= 0 && newX < vecWidth && newY < vecHeight) {
+                    vec[newY][newX] = new Water();
+                }
+            }
         }
     }
 }
 
 void Game::update() {
-    for (int row = vecHeight - 1; row >= 0; --row) {
+for (int row = vecHeight - 1; row >= 0; --row) {
+    if (row % 2 == 0) {
+        // Even rows: left to right
         for (int col = 0; col < vecWidth; ++col) {
             if (vec[row][col] == nullptr) continue;
+            if (vec[row][col]->getProcessed()) continue;
+            vec[row][col]->setProcessed(true);
 
-            if (row + 1 >= vecHeight) continue;
-            Sand* sand = static_cast<Sand*>(vec[row][col]);
+            SolidDynamic* particle = static_cast<SolidDynamic*>(vec[row][col]);
+            particle->update(vec, row, col, vecWidth, vecHeight);
+        }
+    } else {
+        // Odd rows: right to left
+        for (int col = vecWidth - 1; col >= 0; --col) {
+            if (vec[row][col] == nullptr) continue;
+            if (vec[row][col]->getProcessed()) continue;
+            vec[row][col]->setProcessed(true);
 
-            sand -> update(vec, row, col, vecWidth, vecHeight);
+            SolidDynamic* particle = static_cast<SolidDynamic*>(vec[row][col]);
+            particle->update(vec, row, col, vecWidth, vecHeight);
         }
     }
+}
 }
 
 
 void Game::render() {
+    SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, vecWidth, vecHeight);
+    if (texture == nullptr) {
+        std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
+        return;
+    }
+    uint32_t* pixels = new uint32_t[vecWidth * vecHeight];
+
     for (int row = 0; row < vecHeight; ++row) {
         for (int col = 0; col < vecWidth; ++col) {
-            int color = (vec[row][col] != nullptr) ? 1 : 0;
+            uint32_t color = (vec[row][col] != nullptr) ? SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 130, 255, 255) : SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 93, 0, 93, 255);
+            pixels[row * vecWidth + col] = color;
 
-            SDL_SetRenderDrawColor(renderer, 255 * color, 255 * color, 255 * color, 255);
-            SDL_RenderDrawPoint(renderer, col, row);
+            if(vec[row][col] == nullptr) continue;
+            vec[row][col] -> setProcessed(false);
         }
     }
+    SDL_UpdateTexture(texture, NULL, pixels, vecWidth * sizeof(uint32_t));
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
-    SDL_PumpEvents();
-};
+
+    // Clean up
+    delete[] pixels;
+    SDL_DestroyTexture(texture);
+}
+
 
 void Game::clean() {
     SDL_DestroyRenderer(renderer);

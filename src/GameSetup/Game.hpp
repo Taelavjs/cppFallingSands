@@ -8,6 +8,8 @@
 #include <SDL2/SDL.h>
 #include "../Elements/BaseElements/Pixel.hpp"
 #include "../Elements/Sand.hpp"
+#include "../Elements/Water.hpp"
+
 
 class Game {
 public:
