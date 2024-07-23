@@ -10,7 +10,7 @@ class Pixel {
 public:
     Pixel();
     virtual ~Pixel();
-    SDL_Color getColor(){ return color;};
+    virtual SDL_Color getColor(){ return color;};
     virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) {};
     virtual void setProcessed(bool tf) { isProcessed = tf; }
     virtual bool getProcessed() { return isProcessed; }

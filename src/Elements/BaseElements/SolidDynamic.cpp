@@ -14,7 +14,7 @@ void SolidDynamic::resetVelocity() {
 int SolidDynamic::getBlocksToFall() {
     int acceleration = g / mass;
     velocity += acceleration;
-    int blocksToFall = std::max(1, std::min(14, velocity / 4)); // Divide by a higher value to reduce the falling speed
+    int blocksToFall = std::max(1, std::min(25, velocity / 2)); // Divide by a higher value to reduce the falling speed
     return blocksToFall;
 }
 

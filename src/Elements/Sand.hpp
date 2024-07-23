@@ -10,8 +10,8 @@
 class Sand : public SolidDynamic {
 public:
     Sand();
-    ~Sand();
-    void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) override;
+    virtual ~Sand();
+    void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
 };
 
 

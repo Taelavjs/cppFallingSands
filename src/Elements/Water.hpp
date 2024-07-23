@@ -5,8 +5,8 @@
 class Water : public SolidDynamic {
 public:
     Water();
-    ~Water();
-    void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) override;  
+    virtual ~Water();
+    void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);  
 
 private:
     bool movingRight{false};

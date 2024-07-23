@@ -7,20 +7,21 @@
 #include <vector>
 #include <random>
 class SolidDynamic : public Pixel {
-public:    
+protected:    
     SolidDynamic();
     virtual ~SolidDynamic();
-    virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) override {};
+    virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) {};
     void updateVelocity();
     void resetVelocity();
     int getBlocksToFall();
     double randomNumber();
     void swapElements(std::vector<std::vector<Pixel *>> &vec, int x1, int y1, int x2, int y2);
-    void setProcessed(bool tf) override;
-    bool getProcessed() override;
+    void setProcessed(bool tf) ;
+    bool getProcessed() ;
 
 private:
     int velocity{0};
+    int maxBlocksToFall{25};
 };
 
 

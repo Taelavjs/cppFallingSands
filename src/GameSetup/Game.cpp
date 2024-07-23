@@ -89,9 +89,7 @@ for (int row = vecHeight - 1; row >= 0; --row) {
             if (vec[row][col] == nullptr) continue;
             if (vec[row][col]->getProcessed()) continue;
             vec[row][col]->setProcessed(true);
-
-            SolidDynamic* particle = static_cast<SolidDynamic*>(vec[row][col]);
-            particle->update(vec, row, col, vecWidth, vecHeight);
+            vec[row][col]->update(vec, row, col, vecWidth, vecHeight);
         }
     } else {
         // Odd rows: right to left
@@ -99,9 +97,7 @@ for (int row = vecHeight - 1; row >= 0; --row) {
             if (vec[row][col] == nullptr) continue;
             if (vec[row][col]->getProcessed()) continue;
             vec[row][col]->setProcessed(true);
-
-            SolidDynamic* particle = static_cast<SolidDynamic*>(vec[row][col]);
-            particle->update(vec, row, col, vecWidth, vecHeight);
+            vec[row][col]->update(vec, row, col, vecWidth, vecHeight);
         }
     }
 }
