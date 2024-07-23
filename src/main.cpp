@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     Game game(vecWidth, vecHeight, rendererScalex, rendererScaley);
     game.init(&title);
 
-    const int fps = 60;
+    const int fps = 32;
     const int timeBetweenFrames = 1000/fps;
     Uint32 frameStart{};
     int frameTime{};
