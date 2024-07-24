@@ -54,11 +54,7 @@ int Liquid::getBlocksToFall()
 double Liquid::randomNumber()
 {
     static std::default_random_engine rng(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count()));
-
-    // Create a uniform distribution between 0.0 and 1.0
     static std::uniform_real_distribution<double> dist(0.0, 1.0);
-
-    // Return a random double value in the range [0.0, 1.0)
     return dist(rng);
 }
 
@@ -95,4 +91,88 @@ void Liquid::setProcessed(bool tf)
 bool Liquid::getProcessed()
 {
     return isProcessed;
+}
+
+void Liquid::moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor)
+{
+    int newCol = col + incrementor;
+    transferVelocityX();
+    resetVelocity();
+    while (newCol >= 0 && newCol < vecWidth && vec[row][newCol] == nullptr && abs(newCol - col) < getDispersionRate())
+    {
+        newCol += incrementor;
+    }
+    newCol -= incrementor; // Step back to the last valid position
+    swapElements(vec, row, col, row, newCol);
+}
+
+void Liquid::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
+{
+    int x_direction = rand() % 2 == 0 ? -1 : 1; // Randomize direction
+
+    if (row + 1 < vecHeight && vec[row + 1][col] == nullptr)
+    {
+        int blocksToFall = getBlocksToFall();
+        int fallToRow = row + blocksToFall;
+        if (fallToRow >= vecHeight)
+        {
+            fallToRow = vecHeight - 1;
+        }
+        while (fallToRow > row && vec[fallToRow][col] != nullptr)
+        {
+            fallToRow--;
+        }
+        if (fallToRow > row)
+        {
+            updateVelocity();
+            swapElements(vec, row, col, fallToRow, col);
+        }
+
+        resetX();
+    }
+    else
+    {
+        bool colLeftInBounds = col - 1 >= 0;
+        bool colRightInBounds = col + 1 < vecWidth;
+        bool dropInBounds = row + 1 < vecHeight;
+
+        if (dropInBounds && col + 1 < vecWidth && vec[row + 1][col + 1] == nullptr && col - 1 >= 0 && vec[row + 1][col - 1] == nullptr)
+        {
+            // Could fall either left diagonally or right diagonally
+            updateVelocity();
+            swapElements(vec, row, col, row, col + x_direction);
+            resetX();
+
+        }
+        else if (dropInBounds && col + 1 < vecWidth && vec[row + 1][col + 1] == nullptr)
+        {
+            // Could fall right diagonally
+            updateVelocity();
+            swapElements(vec, row, col, row + 1, col + 1);
+        resetX();
+
+        }
+        else if (dropInBounds && col - 1 >= 0 && vec[row + 1][col - 1] == nullptr)
+        {
+            // Could fall left diagonally
+            updateVelocity();
+            swapElements(vec, row, col, row + 1, col - 1);
+        resetX();
+
+        }
+        else if (colLeftInBounds && vec[row][col - 1] == nullptr && colRightInBounds && vec[row][col + 1] == nullptr)
+        {
+            // Has to move to the left or right
+            moveHorizontally(vecWidth, vec, col, row, x_direction);
+        }
+        else if (colRightInBounds && vec[row][col + 1] == nullptr)
+        {
+            moveHorizontally(vecWidth, vec, col, row, 1);
+        }
+        else if (colLeftInBounds && vec[row][col - 1] == nullptr)
+        {
+            moveHorizontally(vecWidth, vec, col, row, -1);
+            // If neither direction is possible, do nothing (water stays in place)
+        }
+    }
 }

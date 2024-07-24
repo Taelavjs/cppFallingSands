@@ -6,6 +6,7 @@ Game::Game(int vecWidth, int vecHeight)
         sand = new Sand();
         water = new Water();
         rock = new Rock();
+        smoke = new Smoke();
       }
 
 Game::~Game()
@@ -91,6 +92,8 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
                 SquarePlace(vec, x/xScale, y/yScale, rock);
             } else if(e.key.keysym.sym == SDLK_s){
                 SquarePlace(vec, x/xScale, y/yScale, sand);
+            } else if(e.key.keysym.sym == SDLK_w){
+                SquarePlace(vec, x/xScale, y/yScale, smoke);
             }
         }
 

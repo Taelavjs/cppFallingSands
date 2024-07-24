@@ -10,6 +10,7 @@
 #include "../Elements/Sand.hpp"
 #include "../Elements/Water.hpp"
 #include "../Elements/Rock.hpp"
+#include "../Elements/Smoke.hpp"
 #include "Rendering.hpp"
 
 
@@ -38,6 +39,7 @@ private:
     Sand *sand;
     Water *water;
     Rock *rock;
+    Smoke *smoke;
 };
 
 #endif // GAME_HPP

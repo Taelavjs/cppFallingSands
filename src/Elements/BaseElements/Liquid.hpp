@@ -7,7 +7,6 @@ class Liquid:public Pixel {
 public:
     Liquid();
     ~Liquid();
-    virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) {};
     void updateVelocity();
     void resetVelocity();
     void resetX();
@@ -23,6 +22,9 @@ public:
     void transferVelocityX();
     virtual bool isLiquid();
     int getSumVelocity(){return (3*xVelocity)+yVelocity;};
+    virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
+    void moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor);
+
 private:
     int maxDispersionRate{9};
     int minDispersionRate{3};

@@ -8,10 +8,9 @@ class Water : public Liquid {
 public:
     Water();
     virtual ~Water();
-    virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) override;  
     virtual Pixel *clone() const { return new Water(); }
+public:
     virtual uint32_t getColour();
-    void moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor);
 private:
     bool movingRight{false};
 };
