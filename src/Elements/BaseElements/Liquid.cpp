@@ -26,7 +26,11 @@ void Liquid::updateVelocity()
 }
 
 void Liquid::transferVelocityX(){
-    xVelocity += std::min(static_cast<int>(0.6 * yVelocity), maxDispersionRate);
+    xVelocity += std::max(minDispersionRate, std::min(static_cast<int>(verticalToHorizontalRation * yVelocity), maxDispersionRate));
+    
+}
+bool Liquid::isLiquid(){
+    return true;
 }
 
 void Liquid::resetVelocity()

@@ -17,7 +17,9 @@ public:
     virtual Pixel *clone() const = 0;
     virtual uint32_t getColour() { return SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 255, 255, 255); }
     virtual bool isMoveable(){return false;}
-    
+    virtual bool isLiquid();
+    virtual bool isSolid(){return false;};
+    virtual bool isGas(){return false;};
 protected:
     bool isProcessed{false};
     int mass{1};

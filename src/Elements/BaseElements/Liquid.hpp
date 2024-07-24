@@ -20,8 +20,12 @@ public:
     int getDensity(){return density;}
     int getDispersionRate(){return xVelocity;};
     void transferVelocityX();
+    virtual bool isLiquid();
+
 private:
-    int maxDispersionRate{5};
+    int maxDispersionRate{3};
+    int minDispersionRate{1};
+    float verticalToHorizontalRation{0.7f};
     int yVelocity{0};
     int maxBlocksToFall{25};
     int xVelocity{0};
