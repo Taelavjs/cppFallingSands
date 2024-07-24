@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
     const int vecHeight{600};
     const std::string title {"awesomepawsome"};
 
-    Game game(vecWidth, vecHeight, rendererScalex, rendererScaley);
-    game.init(&title);
+    Game game(vecWidth, vecHeight);
+    game.init(&title, rendererScalex, rendererScaley);
 
     const int fps = 32;
     const int timeBetweenFrames = 1000/fps;

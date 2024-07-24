@@ -1,19 +1,21 @@
+#include "Liquid.hpp"
+
 #include "SolidDynamic.hpp"
 
-SolidDynamic::SolidDynamic() {}
-SolidDynamic::~SolidDynamic() {}
+Liquid::Liquid() {}
+Liquid::~Liquid() {}
 
-void SolidDynamic::updateVelocity()
+void Liquid::updateVelocity()
 {
     velocity += g / 3;
 }
 
-void SolidDynamic::resetVelocity()
+void Liquid::resetVelocity()
 {
     velocity = 0;
 }
 
-int SolidDynamic::getBlocksToFall()
+int Liquid::getBlocksToFall()
 {
     int acceleration = g / mass;
     velocity += acceleration;
@@ -21,7 +23,7 @@ int SolidDynamic::getBlocksToFall()
     return blocksToFall;
 }
 
-double SolidDynamic::randomNumber()
+double Liquid::randomNumber()
 {
     static std::default_random_engine rng(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count()));
 
@@ -32,7 +34,7 @@ double SolidDynamic::randomNumber()
     return dist(rng);
 }
 
-void SolidDynamic::swapElements(std::vector<std::vector<Pixel *>> &vec,
+void Liquid::swapElements(std::vector<std::vector<Pixel *>> &vec,
                                 int x1, int y1,
                                 int x2, int y2)
 {
@@ -42,12 +44,27 @@ void SolidDynamic::swapElements(std::vector<std::vector<Pixel *>> &vec,
     vec[x2][y2] = temp;
 }
 
-void SolidDynamic::setProcessed(bool tf)
+bool Liquid::swapOnDensity(std::vector<std::vector<Pixel *>> &vec,
+                                 int x1, int y1,
+                                 int x2, int y2, int density1, int density2)
+{
+    if(density1 < density2){
+        Pixel *temp = vec[x1][y1];
+        vec[x1][y1] = vec[x2][y2];
+        vec[x2][y2] = temp;
+        return true;
+    }
+    return false;
+
+
+}
+
+void Liquid::setProcessed(bool tf)
 {
     isProcessed = tf;
 }
 
-bool SolidDynamic::getProcessed()
+bool Liquid::getProcessed()
 {
     return isProcessed;
 }

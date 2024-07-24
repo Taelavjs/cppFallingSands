@@ -9,14 +9,16 @@
 #include "../Elements/BaseElements/Pixel.hpp"
 #include "../Elements/Sand.hpp"
 #include "../Elements/Water.hpp"
+#include "../Elements/Rock.hpp"
+#include "Rendering.hpp"
 
 
 class Game {
 public:
-    Game(int vecWidth, int vecHeight, int rendererScalex, int rendererScaley);
+    Game(int vecWidth, int vecHeight);
     ~Game();
 
-    void init(const std::string* title);
+    void init(const std::string* title, int scaleX, int scaleY);
     void handleEvents(const uint8_t &xScale, const uint8_t &yScale);
     void update();
     void render();
@@ -28,12 +30,14 @@ public:
 private:
     int vecWidth;
     int vecHeight;
-    int rendererScalex;
-    int rendererScaley;
+    // int rendererScalex;
+    // int rendererScaley;
     bool isRunning;
-    SDL_Window* window;
-    SDL_Renderer* renderer;
+    Rendering *rendering{nullptr};
     std::vector<std::vector<Pixel *>> vec;
+    Sand *sand;
+    Water *water;
+    Rock *rock;
 };
 
 #endif // GAME_HPP

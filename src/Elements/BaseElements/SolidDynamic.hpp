@@ -10,7 +10,7 @@ class SolidDynamic : public Pixel {
 protected:    
     SolidDynamic();
     virtual ~SolidDynamic();
-    virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) {};
+    virtual void update() const = 0;
     void updateVelocity();
     void resetVelocity();
     int getBlocksToFall();
@@ -18,6 +18,7 @@ protected:
     void swapElements(std::vector<std::vector<Pixel *>> &vec, int x1, int y1, int x2, int y2);
     void setProcessed(bool tf) ;
     bool getProcessed() ;
+    virtual bool isMoveable(){return true;}
 
 private:
     int velocity{0};

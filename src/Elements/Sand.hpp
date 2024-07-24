@@ -6,12 +6,16 @@
 #include <vector>
 #include <random>
 #include "BaseElements/SolidDynamic.hpp"
+#include "BaseElements/Pixel.hpp"
 
 class Sand : public SolidDynamic {
 public:
     Sand();
     virtual ~Sand();
-    void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
+    virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
+    virtual Pixel *clone() const { return new Sand(); }
+    virtual uint32_t getColour() { return SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 200, 200, 0, 255); }
+    void xDisperse(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res);
 };
 
 

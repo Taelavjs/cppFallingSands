@@ -1,43 +1,97 @@
 #include "Sand.hpp"
 
 Sand::Sand(){
+    density = 5;
 }
 Sand::~Sand(){}
 
-void Sand::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) 
+void Sand::xDisperse(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res)
 {
-    vec[row][col] -> setProcessed(true);
+    // Initialize result with the current position
+    res = col;
 
-    if (vec[row + 1][col] != nullptr)
+    for (int i = 1; i <= xDispersion; i++)
     {
-        double rngValue = randomNumber();
-        if (col - 1 >= 0 && vec[row + 1][col - 1] == nullptr && rngValue > 0.5f)
+        int newCol = col + (xDirection * i);
+        if (newCol < 0 || newCol >= vec[0].size())
         {
-            resetVelocity();
-            swapElements(vec, row, col, row + 1, col - 1);
+            break; // Out of bounds
         }
-        else if (col + 1 < vecWidth && vec[row + 1][col + 1] == nullptr)
+        if (vec[row + 1][newCol] == nullptr)
         {
-            resetVelocity();
-            swapElements(vec, row, col, row + 1, col + 1);
+            res = newCol; // Update result to the new free position
+        }
+        else
+        {
+            break; // Stop if we hit a non-empty space
         }
     }
-    else if (vec[row + 1][col] == nullptr)
+}
+
+
+void Sand::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) 
+{
+    vec[row][col]->setProcessed(true);
+
+    int xDispersion{5}; // Distance to check for dispersion
+    int res{col}; // Default to current column
+
+    // Check space below
+    if (row + 1 < vecHeight && vec[row + 1][col] == nullptr) 
     {
+        // Space directly below is free
         int blocksToFall = getBlocksToFall();
         int fallToRow = row + blocksToFall;
-        if (fallToRow >= vecHeight)
+        if (fallToRow >= vecHeight) 
         {
             fallToRow = vecHeight - 1;
         }
-        while (fallToRow > row && vec[fallToRow][col] != nullptr)
+        while (fallToRow > row && vec[fallToRow][col] != nullptr) 
         {
             fallToRow--;
         }
-        if (fallToRow > row)
+        if (fallToRow > row) 
         {
             updateVelocity();
             swapElements(vec, row, col, fallToRow, col);
         }
+    } 
+    else 
+    {
+        // Space directly below is not free, check spaces to the sides
+        bool canFallLeft = (col - 1 >= 0 && row + 1 < vecHeight && vec[row + 1][col - 1] == nullptr);
+        bool canFallRight = (col + 1 < vecWidth && row + 1 < vecHeight && vec[row + 1][col + 1] == nullptr);
+
+        if (canFallLeft && canFallRight) 
+        {
+            // Randomly choose between falling left or right if both are free
+            double rngValue = randomNumber();
+            if (rngValue > 0.5f) 
+            {
+                xDisperse(vec, row, col, xDispersion, -1, res);
+            } 
+            else 
+            {
+                xDisperse(vec, row, col, xDispersion, 1, res);
+            }
+        } 
+        else if (canFallLeft) 
+        {
+            xDisperse(vec, row, col, xDispersion, -1, res);
+        } 
+        else if (canFallRight) 
+        {
+            xDisperse(vec, row, col, xDispersion, 1, res);
+        }
+        
+        // Move sand to the calculated position
+        if (res != col)
+        {
+            resetVelocity();
+            swapElements(vec, row, col, row + 1, res);
+        }
     }
 }
+
+
+
