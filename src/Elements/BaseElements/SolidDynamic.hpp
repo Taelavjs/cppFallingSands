@@ -10,7 +10,6 @@ class SolidDynamic : public Pixel {
 protected:    
     SolidDynamic();
     virtual ~SolidDynamic();
-    virtual void update() const = 0;
     void updateVelocity();
     void resetVelocity();
     int getBlocksToFall();

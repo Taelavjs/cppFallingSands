@@ -61,7 +61,6 @@ void SquarePlace(std::vector<std::vector<Pixel *>> &vec, int x, int y, Pixel *el
         for (int k = y - 10; k < y + 10; k++) {
             if (j < 0 || k < 0 || k >= vec.size() || j >= vec[k].size()) continue;
 
-            std::cout << "placed at " << x << " " << y << '\n';
 
             delete vec[k][j];  // Delete existing object to avoid memory leak
             vec[k][j] = elm->clone();  // Assign new clone
@@ -88,10 +87,8 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
         {
             SDL_GetMouseState(&x, &y);
             if(e.button.button == SDL_BUTTON_LEFT){
-                std::cout << "Left" << '\n';
                 SquarePlace(vec, x/xScale, y/yScale, water);
             } else {
-                std::cout << "Right" << '\n';
                 SquarePlace(vec, x/xScale, y/yScale, rock);
             }
         }

@@ -8,6 +8,18 @@ Water::Water()
 
 Water::~Water() {}
 
+void Water::moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor)
+{
+    int newCol = col + incrementor;
+    resetVelocity();
+    while (newCol >= 0 && newCol < vecWidth && vec[row][newCol] == nullptr && abs(newCol - col) < getDispersionRate())
+    {
+        newCol += incrementor;
+    }
+    newCol -= incrementor; // Step back to the last valid position
+    swapElements(vec, row, col, row, newCol);
+}
+
 void Water::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
 {
     int x_direction = rand() % 2 == 0 ? -1 : 1; // Randomize direction
@@ -32,61 +44,41 @@ void Water::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, i
     }
     else
     {
-        if (row + 1 < vecHeight && col + 1 < vecWidth && vec[row + 1][col + 1] == nullptr && col - 1 >= 0 && vec[row + 1][col - 1] == nullptr)
+        bool colLeftInBounds = col - 1 >= 0;
+        bool colRightInBounds = col + 1 < vecWidth;
+        bool dropInBounds = row + 1 < vecHeight;
+
+        if (dropInBounds && col + 1 < vecWidth && vec[row + 1][col + 1] == nullptr && col - 1 >= 0 && vec[row + 1][col - 1] == nullptr)
         {
             // Could fall either left diagonally or right diagonally
             updateVelocity();
             swapElements(vec, row, col, row, col + x_direction);
         }
-        else if (row + 1 < vecHeight && col + 1 < vecWidth && vec[row + 1][col + 1] == nullptr)
+        else if (dropInBounds && col + 1 < vecWidth && vec[row + 1][col + 1] == nullptr)
         {
             // Could fall right diagonally
             updateVelocity();
             swapElements(vec, row, col, row + 1, col + 1);
         }
-        else if (row + 1 < vecHeight && col - 1 >= 0 && vec[row + 1][col - 1] == nullptr)
+        else if (dropInBounds && col - 1 >= 0 && vec[row + 1][col - 1] == nullptr)
         {
             // Could fall left diagonally
             updateVelocity();
             swapElements(vec, row, col, row + 1, col - 1);
         }
-        else if (col - 1 >= 0 && vec[row][col - 1] == nullptr && col + 1 < vecWidth && vec[row][col + 1] == nullptr)
+        else if (colLeftInBounds && vec[row][col - 1] == nullptr && colRightInBounds && vec[row][col + 1] == nullptr)
         {
             // Has to move to the left or right
-            int newCol = col + x_direction;
-            while (newCol >= 0 && newCol < vecWidth && vec[row][newCol] == nullptr && abs(newCol - col) < getDispersionRate())
-            {
-                newCol += x_direction;
-            }
-            newCol -= x_direction;
-            updateVelocity();
-            swapElements(vec, row, col, row, newCol);
+            moveHorizontally(vecWidth, vec, col, row, x_direction);
         }
-        else if (col + 1 < vecWidth && vec[row][col + 1] == nullptr)
+        else if (colRightInBounds && vec[row][col + 1] == nullptr)
         {
-            // Has to move to the right
-            int newCol = col + 1;
-            while (newCol < vecWidth && vec[row][newCol] == nullptr && newCol < col + getDispersionRate())
-            {
-                newCol++;
-            }
-            newCol--; // Step back to the last valid position
-            updateVelocity();
-            swapElements(vec, row, col, row, newCol);
+            moveHorizontally(vecWidth, vec, col, row, 1);
         }
-        else if (col - 1 >= 0 && vec[row][col - 1] == nullptr)
+        else if (colLeftInBounds && vec[row][col - 1] == nullptr)
         {
-            // Has to move to the left
-            int newCol = col - 1;
-            while (newCol >= 0 && vec[row][newCol] == nullptr && newCol > col - getDispersionRate())
-            {
-                newCol--;
-            }
-            newCol++; // Step back to the last valid position
-            updateVelocity();
-            swapElements(vec, row, col, row, newCol);
+            moveHorizontally(vecWidth, vec, col, row, -1);
+            // If neither direction is possible, do nothing (water stays in place)
         }
-        // If neither direction is possible, do nothing (water stays in place)
     }
 }
-
