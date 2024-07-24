@@ -1,11 +1,13 @@
 #include "Sand.hpp"
 
-Sand::Sand(){
+Sand::Sand()
+{
     density = 5;
 }
-Sand::~Sand(){}
+Sand::~Sand() {}
 
-bool checkMoveableMat(Pixel* space){
+bool checkMoveableMat(Pixel *space)
+{
     return (space->isLiquid() || space->isGas());
 }
 
@@ -21,7 +23,7 @@ void Sand::xDisperse(std::vector<std::vector<Pixel *>> &vec, int row, int col, i
         {
             break; // Out of bounds
         }
-        if (vec[row + 1][newCol] == nullptr || checkMoveableMat(vec[row+1][newCol]))
+        if (vec[row + 1][newCol] == nullptr || checkMoveableMat(vec[row + 1][newCol]))
         {
             res = newCol; // Update result to the new free position
         }
@@ -32,72 +34,75 @@ void Sand::xDisperse(std::vector<std::vector<Pixel *>> &vec, int row, int col, i
     }
 }
 
-
-void Sand::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) 
+void Sand::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
 {
     vec[row][col]->setProcessed(true);
 
     int xDispersion{5}; // Distance to check for dispersion
-    int res{col}; // Default to current column
+    int res{col};       // Default to current column
 
     // Check space below
-    if (row + 1 < vecHeight && vec[row + 1][col] == nullptr) 
+    if (row + 1 < vecHeight && vec[row + 1][col] == nullptr)
+    {
+        int newRow = row + 1;
+        while (newRow < vecHeight && vec[newRow][col] == nullptr && (newRow - row) < getBlocksToFall())
+        {
+            newRow++;
+        }
+        newRow--; // Step back to the last valid position
+        if (newRow != row) // Only swap if new position is different
+        {
+            swapElements(vec, row, col, newRow, col);
+        }
+    }
+    else if (row + 1 < vecHeight && vec[row + 1][col] != nullptr && checkMoveableMat(vec[row + 1][col]))
     {
         // Space directly below is free
-        int blocksToFall = getBlocksToFall();
-        int fallToRow = row + blocksToFall;
-        if (fallToRow >= vecHeight) 
+        int newRow = row + 1;
+        while (newRow < vecHeight && vec[newRow][col] != nullptr && vec[newRow][col]->isLiquid() && (newRow - row) < getBlocksToFall())
         {
-            fallToRow = vecHeight - 1;
+            newRow++;
         }
-        while (fallToRow > row && vec[fallToRow][col] != nullptr) 
+        newRow--; // Step back to the last valid position
+        if (newRow != row) // Only swap if new position is different
         {
-            fallToRow--;
+            swapElements(vec, row, col, newRow, col);
         }
-        if (fallToRow > row) 
-        {
-            updateVelocity();
-            swapElements(vec, row, col, fallToRow, col);
-        }
-    } 
-    else if (row+1 < vecHeight && vec[row+1][col] != nullptr && checkMoveableMat(vec[row+1][col])){
-        swapElements(vec, row, col, row+1, col);
-        resetVelocity();
-    } else {
+    }
+    else
+    {
         // Space directly below is not free, check spaces to the sides
-        bool canFallLeft = (col - 1 >= 0 && row + 1 < vecHeight && (vec[row + 1][col - 1] == nullptr || vec[row+1][col-1]->isLiquid()));
-        bool canFallRight = (col + 1 < vecWidth && row + 1 < vecHeight && (vec[row + 1][col + 1] == nullptr || vec[row+1][col+1]->isLiquid()));
+        bool canFallLeft = (col - 1 >= 0 && row + 1 < vecHeight && (vec[row + 1][col - 1] == nullptr || vec[row + 1][col - 1]->isLiquid()));
+        bool canFallRight = (col + 1 < vecWidth && row + 1 < vecHeight && (vec[row + 1][col + 1] == nullptr || vec[row + 1][col + 1]->isLiquid()));
 
-        if (canFallLeft && canFallRight) 
+        if (canFallLeft && canFallRight)
         {
             // Randomly choose between falling left or right if both are free
             double rngValue = randomNumber();
-            if (rngValue > 0.5f) 
+            if (rngValue > 0.5f)
             {
                 xDisperse(vec, row, col, xDispersion, -1, res);
-            } 
-            else 
+            }
+            else
             {
                 xDisperse(vec, row, col, xDispersion, 1, res);
             }
-        } 
-        else if (canFallLeft) 
+        }
+        else if (canFallLeft)
         {
             xDisperse(vec, row, col, xDispersion, -1, res);
-        } 
-        else if (canFallRight) 
+        }
+        else if (canFallRight)
         {
             xDisperse(vec, row, col, xDispersion, 1, res);
         }
-        
+
         // Move sand to the calculated position
         if (res != col)
         {
-            resetVelocity();
             swapElements(vec, row, col, row + 1, res);
         }
+        resetVelocity();
+
     }
 }
-
-
-

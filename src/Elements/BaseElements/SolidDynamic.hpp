@@ -18,10 +18,15 @@ protected:
     void setProcessed(bool tf) ;
     bool getProcessed() ;
     virtual bool isMoveable(){return true;}
+    void transferVelocityX();
 
 private:
-    int velocity{0};
+    int yVelocity{0};
+    int xVelocity{0};
     int maxBlocksToFall{25};
+    int minDispersionRate{1};
+    int maxDispersionRate{6};
+    float verticalToHorizontalRation{0.4};
 };
 
 

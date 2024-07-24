@@ -57,10 +57,10 @@ void Game::init(const std::string *title, int scaleX, int scaleY)
 }
 
 void SquarePlace(std::vector<std::vector<Pixel *>> &vec, int x, int y, Pixel *elm){
-    for (int j = x - 10; j < x + 10; j++) {
-        for (int k = y - 10; k < y + 10; k++) {
+    for (int j = x - 30; j < x + 30; j++) {
+        for (int k = y - 30; k < y + 30; k++) {
             if (j < 0 || k < 0 || k >= vec.size() || j >= vec[k].size()) continue;
-
+            if(rand() % 2 == 0) continue;
 
             delete vec[k][j];  // Delete existing object to avoid memory leak
             vec[k][j] = elm->clone();  // Assign new clone
@@ -72,26 +72,28 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
 {
     SDL_Event e;
     int x{}, y{};
-    bool mouseDown{false};
     while (SDL_PollEvent(&e))
     {
         if (e.type == SDL_QUIT)
         {
             setRunning(false);
         }
-        if (e.type == SDL_KEYDOWN)
+        if (e.type == SDL_MOUSEBUTTONDOWN)
         {
             setRunning(false);
         }
-        if (e.type == SDL_MOUSEBUTTONDOWN)
+        if (e.type == SDL_KEYDOWN)
         {
             SDL_GetMouseState(&x, &y);
-            if(e.button.button == SDL_BUTTON_LEFT){
+            if(e.key.keysym.sym == SDLK_a){
                 SquarePlace(vec, x/xScale, y/yScale, water);
-            } else {
+            } else if(e.key.keysym.sym == SDLK_d){
                 SquarePlace(vec, x/xScale, y/yScale, rock);
+            } else if(e.key.keysym.sym == SDLK_s){
+                SquarePlace(vec, x/xScale, y/yScale, sand);
             }
         }
+
         
     }
 }

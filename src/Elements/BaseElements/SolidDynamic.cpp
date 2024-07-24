@@ -3,21 +3,42 @@
 SolidDynamic::SolidDynamic() {}
 SolidDynamic::~SolidDynamic() {}
 
-void SolidDynamic::updateVelocity()
-{
-    velocity += g / 3;
-}
-
 void SolidDynamic::resetVelocity()
 {
-    velocity = 0;
+    transferVelocityX();
+    yVelocity = 0;
+}
+
+void SolidDynamic::updateVelocity()
+{
+    // Constants for simulation
+    const float drag = 0.98f;         // Drag factor (0 < drag < 1)
+    const float maxVelocity = 8000.0f;  // Terminal yVelocity
+
+    // Update the yVelocity with gravity
+    yVelocity += g / 3;
+
+    // Apply drag to the yVelocity
+    yVelocity *= drag;
+    xVelocity *= drag;
+
+    // Ensure yVelocity does not exceed terminal yVelocity
+    if (yVelocity > maxVelocity)
+    {
+        yVelocity = maxVelocity;
+    }
+}
+
+void SolidDynamic::transferVelocityX(){
+    xVelocity += std::max(minDispersionRate, std::min(static_cast<int>(verticalToHorizontalRation * yVelocity), maxDispersionRate));
+    
 }
 
 int SolidDynamic::getBlocksToFall()
 {
     int acceleration = g / mass;
-    velocity += acceleration;
-    int blocksToFall = std::max(1, std::min(25, velocity / 2)); // Divide by a higher value to reduce the falling speed
+    yVelocity += acceleration;
+    int blocksToFall = std::max(1, std::min(25, yVelocity / 2)); // Divide by a higher value to reduce the falling speed
     return blocksToFall;
 }
 

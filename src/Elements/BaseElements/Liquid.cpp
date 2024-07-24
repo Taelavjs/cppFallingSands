@@ -9,14 +9,15 @@ void Liquid::updateVelocity()
 {
     // Constants for simulation
     const float drag = 0.98f;         // Drag factor (0 < drag < 1)
-    const float maxVelocity = 30.0f;  // Terminal yVelocity
+    const float xdrag = 0.98f;         // Drag factor (0 < drag < 1)
+    const float maxVelocity = 1000.0f;  // Terminal yVelocity
 
     // Update the yVelocity with gravity
     yVelocity += g / 3;
 
     // Apply drag to the yVelocity
     yVelocity *= drag;
-    xVelocity *= drag;
+    xVelocity *= xdrag;
 
     // Ensure yVelocity does not exceed terminal yVelocity
     if (yVelocity > maxVelocity)
@@ -35,9 +36,11 @@ bool Liquid::isLiquid(){
 
 void Liquid::resetVelocity()
 {
-    transferVelocityX();
-
     yVelocity = 0;
+}
+
+void Liquid::resetX(){
+    xVelocity = 0;
 }
 
 int Liquid::getBlocksToFall()

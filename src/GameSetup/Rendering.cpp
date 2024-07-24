@@ -41,10 +41,13 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec){
         for (int col = 0; col < screenWidth; ++col)
         {
             uint32_t color = (vec[row][col] != nullptr) ? vec[row][col] -> getColour() : SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 25, 0, 255);
+
             pixels[row * screenWidth + col] = color;
 
             if (vec[row][col] == nullptr)
                 continue;
+
+            
             vec[row][col]->setProcessed(false);
         }
     }

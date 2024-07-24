@@ -10,6 +10,7 @@ public:
     virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) {};
     void updateVelocity();
     void resetVelocity();
+    void resetX();
     int getBlocksToFall();
     double randomNumber();
     void swapElements(std::vector<std::vector<Pixel *>> &vec, int x1, int y1, int x2, int y2);
@@ -21,14 +22,14 @@ public:
     int getDispersionRate(){return xVelocity;};
     void transferVelocityX();
     virtual bool isLiquid();
-
+    int getSumVelocity(){return (3*xVelocity)+yVelocity;};
 private:
-    int maxDispersionRate{3};
-    int minDispersionRate{1};
+    int maxDispersionRate{9};
+    int minDispersionRate{3};
     float verticalToHorizontalRation{0.7f};
-    int yVelocity{0};
+    int yVelocity{1};
     int maxBlocksToFall{25};
-    int xVelocity{0};
+    int xVelocity{1};
 
 };
 
