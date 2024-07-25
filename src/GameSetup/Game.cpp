@@ -49,7 +49,7 @@ void Game::init(const std::string *title, int scaleX, int scaleY)
     {
         for (int col = 0; col < vecWidth; ++col)
         {
-            if (randomnumber() < 0.3)
+            if (randomnumber() < 0.0)
             {
                 vec[row][col] = sand -> clone(); // Create a Sand object and store its pointer
             }
@@ -104,7 +104,7 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
 
 void Game::update()
 {
-    for (int row = 0; row < vecHeight; ++row)
+    for (int row = vecHeight-1; row >= 0; --row)
     {
         if (row % 2 == 0)
         {

@@ -14,6 +14,7 @@ public:
     virtual ~Sand();
     virtual Pixel *clone() const { return new Sand(); }
     virtual uint32_t getColour() { return SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 200, 200, 0, 255); }
+
 };
 
 

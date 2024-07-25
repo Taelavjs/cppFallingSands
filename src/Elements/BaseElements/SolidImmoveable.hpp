@@ -6,8 +6,7 @@ class SolidImmoveable : public Pixel {
 public:
     SolidImmoveable(){};
     ~SolidImmoveable(){};
-protected:
-    virtual bool isMoveable(){return false;}
+    bool isMoveable(){return false;}
 };
 
 #endif /* SOLIDIMMOVEABLE_HPP */

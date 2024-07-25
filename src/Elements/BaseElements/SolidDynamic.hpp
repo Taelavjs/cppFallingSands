@@ -9,6 +9,9 @@
 class SolidDynamic : public Pixel {
 public:
     bool isSolid(){return true;};
+    bool isMoveable() {
+        return true; // Or whatever logic you want for SolidDynamic
+    }  
 protected:    
     SolidDynamic();
     virtual ~SolidDynamic();
@@ -19,7 +22,7 @@ protected:
     void swapElements(std::vector<std::vector<Pixel *>> &vec, int x1, int y1, int x2, int y2);
     void setProcessed(bool tf) ;
     bool getProcessed() ;
-    virtual bool isMoveable(){return true;}
+  
     virtual void transferVelocityX();
     virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
     virtual void xDisperse(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res);

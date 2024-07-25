@@ -2,17 +2,20 @@
 
 #include "Gas.hpp"
 
-Gas::Gas() {
+Gas::Gas()
+{
     // Constructor implementation
 }
 
-Gas::~Gas() {
+Gas::~Gas()
+{
     // Destructor implementation
 }
 
-bool Gas::isGas(){
+bool Gas::isGas()
+{
     return true;
-    };
+};
 
 void Gas::xDisp(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res)
 {
@@ -26,7 +29,7 @@ void Gas::xDisp(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xD
         {
             break; // Out of bounds
         }
-        if (vec[row-1][newCol] == nullptr)
+        if (vec[row - 1][newCol] == nullptr)
         {
             res = newCol; // Update result to the new free position
         }
@@ -36,76 +39,91 @@ void Gas::xDisp(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xD
         }
     }
 }
-
+// Function to check if a position is valid for gas movement
+bool Gas::isValidPosition(const std::vector<std::vector<Pixel*>>& vec, int row, int col)
+{
+    return (row >= 0 && row < vec.size() && col >= 0 && col < vec[0].size() &&
+            (vec[row][col] == nullptr || (!vec[row][col]->isGas() && vec[row][col]->isMoveable())));
+}
 void Gas::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
 {
     vec[row][col]->setProcessed(true);
 
-    int xDispersion{5}; // Distance to check for dispersion
+    int xDispersion{20}; // Distance to check for dispersion
     int res{col};       // Default to current column
-
-    // Check space below
-    if (row - 1 >= 0 && vec[row - 1][col] == nullptr)
+    
+    if (isValidPosition(vec, row - 1, col))
     {
+        // Air space above gas particle
         int newRow = row - 1;
-        while (newRow >= 0 && vec[newRow][col] == nullptr && (newRow + row) > getBlocksToFall())
+        while (row - newRow < xDispersion && newRow >= 0 && (vec[newRow][col] == nullptr || (!vec[newRow][col]->isGas() && vec[newRow][col]->isMoveable())))
         {
             newRow--;
         }
-        newRow++; // Step back to the last valid position
-        if (newRow != row) // Only swap if new position is different
+        newRow++;
+        swapElements(vec, row, col, newRow, col);
+    }
+    else if (isValidPosition(vec, row - 1, col) && vec[row - 1][col]->isMoveable())
+    {
+        if (isValidPosition(vec, row - 1, col - 1))
         {
-            swapElements(vec, row, col, newRow, col);
+            int newCol = col - 1;
+            while (col - newCol < xDispersion && newCol >= 0 && (vec[row-1][newCol] == nullptr || (!vec[row-1][newCol]->isGas() && vec[row-1][newCol]->isMoveable())))
+            {
+                newCol--;
+            }
+            newCol++;
+            swapElements(vec, row, col, row - 1, newCol);
+        }
+        else if (isValidPosition(vec, row - 1, col + 1))
+        {
+            int newCol = col + 1;
+            while (newCol - col < xDispersion && newCol < vecWidth &&(vec[row-1][newCol] == nullptr || (!vec[row-1][newCol]->isGas() && vec[row-1][newCol]->isMoveable())))
+            {
+                newCol++;
+            }
+            newCol--;
+            swapElements(vec, row, col, row - 1, newCol);
         }
     }
-    else if (row - 1 >= 0 && vec[row - 1][col] != nullptr && (vec[row-1][col]->isSolid() || vec[row-1][col]->isLiquid()))
+    bool canMoveLeft = (col - 1 >= 0 && (vec[row][col - 1] == nullptr || !vec[row][col-1]->isGas()));
+    bool canMoveRight = (col + 1 < vecWidth && (vec[row][col + 1] == nullptr || !vec[row][col+1]->isGas()));
+
+    if (canMoveLeft && canMoveRight){
+        const int randomBit = rand() % 2;
+        int incr;
+        if(randomBit == 0){
+            incr = 1;
+        } else {
+            incr = -1;
+        }
+    
+        int newCol = col + incr;
+        while (std::abs(col - newCol) < 20 && newCol >= 0 && newCol < vecWidth && isValidPosition(vec, row, newCol))
+        {
+            newCol += incr;
+        }
+        newCol -= incr;
+        swapElements(vec, row, col, row, newCol);
+    } else if(canMoveLeft)
     {
-        // Space directly below is free
-        int newRow = row - 1;
-        while (newRow >= 0 && (vec[row-1][col]->isSolid() || vec[row-1][col]->isLiquid()))
+        int newCol = col - 1;
+        while (col - newCol < 20 && newCol >= 0 && isValidPosition(vec, row, newCol))
         {
-            newRow--;
+            newCol--;
         }
-        newRow++; // Step back to the last valid position
-        if (newRow != row) // Only swap if new position is different
-        {
-            swapElements(vec, row, col, newRow, col);
-        }
+        newCol++;
+        swapElements(vec, row, col, row, newCol);
     }
-    else
+    else if (canMoveRight)
     {
-    bool canFallLeft = (col - 1 >= 0 && row-1 >= 0 && vec[row-1][col - 1] == nullptr);
-    bool canFallRight = (col + 1 < vecWidth && row-1 >= 0 && vec[row-1][col + 1] == nullptr);
-
-        if (canFallLeft && canFallRight)
+        int newCol = col + 1;
+        while (newCol - col < 20 && newCol < vecWidth && isValidPosition(vec, row, newCol))
         {
-            // Randomly choose between falling left or right if both are free
-            double rngValue = randomNumber();
-            if (rngValue > 0.5f)
-            {
-                xDisp(vec, row, col, 20, -1, res);
-            }
-            else
-            {
-                xDisp(vec, row, col, 20, 1, res);
-            }
+            newCol++;
         }
-        else if (canFallLeft)
-        {
-            xDisp(vec, row, col, 20, -1, res);
-        }
-        else if (canFallRight)
-        {
-            xDisp(vec, row, col, 20, 1, res);
-        }
-
-        // Move sand to the calculated position
-        if (res != col)
-        {
-            swapElements(vec, row, col, row, res);
-        }
-        resetVelocity();
-
+        newCol--;
+        swapElements(vec, row, col, row, newCol);
     }
 }
 
