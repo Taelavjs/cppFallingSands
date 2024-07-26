@@ -25,7 +25,7 @@ public:
     virtual bool isGas(){return false;};
     virtual bool isFlammable(){return false;};
     void swapElements(std::vector<std::vector<Pixel*>>& vec, int x1, int y1,int x2, int y2);
-
+    virtual int getDensity(){return 0;};
 protected:
     bool isProcessed{false};
     int mass{1};

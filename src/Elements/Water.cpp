@@ -3,7 +3,6 @@
 Water::Water()
 {
     movingRight = (randomNumber() > 0.5f);
-    density = 2;
 }
 
 Water::~Water() {}

@@ -5,9 +5,6 @@
 Liquid::Liquid() {}
 Liquid::~Liquid() {}
 
-bool Liquid::isLiquid(){
-    return true;
-}
 
 double Liquid::randomNumber()
 {
@@ -29,7 +26,7 @@ bool Liquid::getProcessed()
 void Liquid::moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor)
 {
     int newCol = col + incrementor;
-    while (newCol >= 0 && newCol < vecWidth && vec[row][newCol] == nullptr && abs(newCol - col) < xMaxDistance)
+    while (newCol >= 0 && newCol < vecWidth && abs(newCol - col) < xMaxDistance  && (vec[row][newCol] == nullptr|| vec[row][newCol] -> isLiquid() ))
     {
         newCol += incrementor;
     }
@@ -49,9 +46,13 @@ void Liquid::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, 
         x_direction = rand() % 2 == 0 ? -1 : 1; // Randomize direction
     }
     
+    bool isLiq{false};
+    if(dropInBounds){
+        isLiq = true;
+    }
 
 
-    if (row + 1 < vecHeight && (vec[row + 1][col] == nullptr))
+    if (dropInBounds && (vec[row + 1][col] == nullptr || (isLiq && vec[row][col]->getDensity() > vec[row+1][col]->getDensity())))
     {
         int blocksToFall = 3;
         int fallCounter{1};
@@ -72,18 +73,22 @@ void Liquid::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, 
     dropInBounds = pRow + 1 < vecHeight;
     x_direction = rand() % 2 == 0 ? -1 : 1;
 
-    if((colLeftInBounds && vec[pRow][pCol-1] == nullptr) && (colRightInBounds && vec[pRow][pCol+1] == nullptr)){
+    if((colLeftInBounds && (vec[pRow][pCol-1] == nullptr|| vec[pRow][pCol-1]->isLiquid())) && (colRightInBounds && (vec[pRow][pCol+1] == nullptr|| vec[pRow][pCol+1]->isLiquid()))){
         moveHorizontally(vecWidth, vec, pCol, pRow, x_direction);
+        pCol += x_direction;
 
-    } else if(colLeftInBounds && vec[pRow][pCol+1] == nullptr){
+    } else if(colLeftInBounds && (vec[pRow][pCol+1] == nullptr || vec[pRow][pCol+1]->isLiquid())){
         moveHorizontally(vecWidth, vec, pCol, pRow, 1);
         x_direction = 1;
+        pCol += 1;
 
-    } else if(colRightInBounds && vec[pRow][pCol-1] == nullptr){
+    } else if(colRightInBounds && (vec[pRow][pCol-1] == nullptr || vec[pRow][pCol-1]->isLiquid())){
         moveHorizontally(vecWidth, vec, pCol, pRow, -1);
         x_direction = -1;
-    } else{
+        pCol -= 1;
     }
 
-
+    if(pRow-1 >= 0 && (vec[pRow - 1][pCol] != nullptr && (vec[pRow][pCol]->getDensity() > vec[pRow-1][pCol]->getDensity()))){
+        swapElements(vec, pRow, pCol, pRow-1, pCol);
+    }
 }

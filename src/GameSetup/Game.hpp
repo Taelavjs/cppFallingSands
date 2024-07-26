@@ -11,6 +11,7 @@
 #include "../Elements/Water.hpp"
 #include "../Elements/Rock.hpp"
 #include "../Elements/Smoke.hpp"
+#include "../Elements/Oil.hpp"
 #include "Rendering.hpp"
 
 
@@ -40,6 +41,7 @@ private:
     Water *water;
     Rock *rock;
     Smoke *smoke;
+    Oil *oil;
 };
 
 #endif // GAME_HPP
