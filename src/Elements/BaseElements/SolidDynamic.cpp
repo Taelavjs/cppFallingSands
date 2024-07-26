@@ -1,42 +1,22 @@
 #include "SolidDynamic.hpp"
 
-SolidDynamic::SolidDynamic() {}
+SolidDynamic::SolidDynamic() {
+    moveable = true;
+
+}
 SolidDynamic::~SolidDynamic() {}
 
 void SolidDynamic::resetVelocity()
 {
-    transferVelocityX();
     yVelocity = 0;
 }
 
-void SolidDynamic::updateVelocity()
+void SolidDynamic::updateVelocity(int &newCol)
 {
-    // Constants for simulation
-    const float drag = 0.98f;         // Drag factor (0 < drag < 1)
-    const float maxVelocity = 8000.0f;  // Terminal yVelocity
+    newCol += (int)2.0f/getMass() + yVelocity;
+    yVelocity += (int)2.0f;
+    if(yVelocity > terminalY) yVelocity = terminalY;
 
-    // Update the yVelocity with gravity
-    yVelocity += g / 3;
-
-    // Apply drag to the yVelocity
-    yVelocity *= drag;
-    xVelocity *= drag;
-
-    // Ensure yVelocity does not exceed terminal yVelocity
-    if (yVelocity > maxVelocity)
-    {
-        yVelocity = maxVelocity;
-    }
-}
-
-void SolidDynamic::transferVelocityX(){
-    xVelocity += std::max(minDispersionRate, std::min(static_cast<int>(verticalToHorizontalRation * yVelocity), maxDispersionRate));
-    
-}
-
-int SolidDynamic::getBlocksToFall()
-{
-    return 3;
 }
 
 double SolidDynamic::randomNumber()
@@ -103,7 +83,9 @@ void SolidDynamic::update(std::vector<std::vector<Pixel *>> &vec, int &row, int 
     if (row + 1 < vecHeight && vec[row + 1][col] == nullptr)
     {
         int newRow = row + 1;
-        while (newRow < vecHeight && vec[newRow][col] == nullptr && (newRow - row) < getBlocksToFall())
+        int blocksToFall{};
+        updateVelocity(blocksToFall);
+        while (newRow < vecHeight && vec[newRow][col] == nullptr && (newRow - row) < blocksToFall)
         {
             newRow++;
         }
@@ -117,7 +99,9 @@ void SolidDynamic::update(std::vector<std::vector<Pixel *>> &vec, int &row, int 
     {
         // Space directly below is free
         int newRow = row + 1;
-        while (newRow < vecHeight && vec[newRow][col] != nullptr && vec[newRow][col]->isLiquid() && (newRow - row) < getBlocksToFall())
+        int blocksToFall{};
+        updateVelocity(blocksToFall);
+        while (newRow < vecHeight && vec[newRow][col] != nullptr && vec[newRow][col]->isLiquid() && (newRow - row) < blocksToFall)
         {
             newRow++;
         }

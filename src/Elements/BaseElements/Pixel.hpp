@@ -19,19 +19,25 @@ public:
     virtual bool getProcessed() { return isProcessed; }
     virtual uint32_t getColour() { return SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 255, 255, 255); }
     virtual bool isMoveable(){
-        return false;}
+        return moveable;}
     virtual bool isLiquid();
     virtual bool isSolid(){return false;};
     virtual bool isGas(){return false;};
     virtual bool isFlammable(){return false;};
     void swapElements(std::vector<std::vector<Pixel*>>& vec, int x1, int y1,int x2, int y2);
     virtual int getDensity(){return 0;};
+    virtual int getMass(){return mass;};
+
 protected:
     bool isProcessed{false};
     int mass{1};
     int g{3};
     SDL_Color elmColor = {.r = 255, .g = 255, .b = 255};
     int density{0};
+    int terminalX{3};
+    int terminalY{3};
+    bool moveable{false};
+
 };
 
 #endif // PIXEL_HPP

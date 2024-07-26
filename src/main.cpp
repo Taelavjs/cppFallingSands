@@ -6,13 +6,14 @@
 #include "SDL2/SDL.h"
 #include "./GameSetup/Game.hpp"
 #include "./Elements/BaseElements/Pixel.hpp"
+constexpr double GLOBAL_CONST_VAR{ 3.5f };
 
 int main(int argc, char *argv[])
 {
-    const uint8_t rendererScalex{1};
-    const uint8_t rendererScaley{1};
-    const int vecWidth{600};
-    const int vecHeight{600};
+    const uint8_t rendererScalex{10};
+    const uint8_t rendererScaley{10};
+    const int vecWidth{60};
+    const int vecHeight{60};
     const std::string title {"awesomepawsome"};
 
     Game game(vecWidth, vecHeight);

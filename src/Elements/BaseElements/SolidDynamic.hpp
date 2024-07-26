@@ -15,14 +15,12 @@ public:
 protected:    
     SolidDynamic();
     virtual ~SolidDynamic();
-    virtual void updateVelocity();
+    virtual void updateVelocity(int &newCol);
     void resetVelocity();
-    virtual int getBlocksToFall();
     double randomNumber();
     void setProcessed(bool tf) ;
     bool getProcessed() ;
   
-    virtual void transferVelocityX();
     virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
     virtual void xDisperse(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res);
     bool checkMoveableMat(Pixel *space);

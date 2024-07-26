@@ -2,6 +2,7 @@
 
 Oil::Oil()
 {
+    mass = 14;
 }
 
 Oil::~Oil() {}

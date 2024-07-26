@@ -17,7 +17,7 @@ public:
     virtual bool isLiquid(){return true;};
     virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
     void moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor);
-
+    void updateYPosition(int &newCol);
 private:
     int maxDispersionRate{9};
     int minDispersionRate{3};

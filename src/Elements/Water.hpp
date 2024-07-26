@@ -10,6 +10,7 @@ public:
     virtual ~Water();
     virtual Pixel *clone() const { return new Water(); }
     int getDensity(){return 5;};
+
 public:
     virtual uint32_t getColour();
 private:

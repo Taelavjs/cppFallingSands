@@ -59,10 +59,11 @@ void Game::init(const std::string *title, int scaleX, int scaleY)
 }
 
 void SquarePlace(std::vector<std::vector<Pixel *>> &vec, int x, int y, Pixel *elm){
-    for (int j = x - 30; j < x + 30; j++) {
-        for (int k = y - 30; k < y + 30; k++) {
+    int numToPlace{1};
+    for (int j = x - numToPlace; j < x + numToPlace; j++) {
+        for (int k = y - numToPlace; k < y + numToPlace; k++) {
             if (j < 0 || k < 0 || k >= vec.size() || j >= vec[k].size()) continue;
-            if(rand() % 2 == 0) continue;
+            //if(rand() % 2 == 0) continue;
 
             delete vec[k][j];  // Delete existing object to avoid memory leak
             vec[k][j] = elm->clone();  // Assign new clone

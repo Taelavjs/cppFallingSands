@@ -16,10 +16,12 @@ public:
     bool isSolid(){return false;};
     int calculateNewColumn(const std::vector<std::vector<Pixel*>>& vec, int row, int col, int xDispersion, int xDirection);
     bool isValidPosition(const std::vector<std::vector<Pixel*>>& vec, int row, int col);
-
+    void updateYPosition(int &newCol);
+    bool isMoveable(){return true;};
 private:
     int randomDir{0};
     int yDispersion{7}; // Distance to check for dispersion
     int xDispersion{15}; // Distance to check for dispersion
+    int yVelocity{0};
 };
 #endif /* GAS_HPP */

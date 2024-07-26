@@ -3,6 +3,7 @@
 Sand::Sand()
 {
     density = 5;
+    mass = 2;
 }
 Sand::~Sand() {}
 
