@@ -5,50 +5,8 @@
 Liquid::Liquid() {}
 Liquid::~Liquid() {}
 
-void Liquid::updateVelocity()
-{
-    // Constants for simulation
-    const float drag = 0.98f;         // Drag factor (0 < drag < 1)
-    const float xdrag = 0.98f;         // Drag factor (0 < drag < 1)
-    const float maxVelocity = 1000.0f;  // Terminal yVelocity
-
-    // Update the yVelocity with gravity
-    yVelocity += g / 3;
-
-    // Apply drag to the yVelocity
-    yVelocity *= drag;
-    xVelocity *= xdrag;
-
-    // Ensure yVelocity does not exceed terminal yVelocity
-    if (yVelocity > maxVelocity)
-    {
-        yVelocity = maxVelocity;
-    }
-}
-
-void Liquid::transferVelocityX(){
-    xVelocity += std::max(minDispersionRate, std::min(static_cast<int>(verticalToHorizontalRation * yVelocity), maxDispersionRate));
-    
-}
 bool Liquid::isLiquid(){
     return true;
-}
-
-void Liquid::resetVelocity()
-{
-    yVelocity = 0;
-}
-
-void Liquid::resetX(){
-    xVelocity = 0;
-}
-
-int Liquid::getBlocksToFall()
-{
-    int acceleration = g / mass;
-    yVelocity += acceleration;
-    int blocksToFall = std::max(1, std::min(25, yVelocity / 2)); // Divide by a higher value to reduce the falling speed
-    return blocksToFall;
 }
 
 double Liquid::randomNumber()
@@ -56,31 +14,6 @@ double Liquid::randomNumber()
     static std::default_random_engine rng(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count()));
     static std::uniform_real_distribution<double> dist(0.0, 1.0);
     return dist(rng);
-}
-
-void Liquid::swapElements(std::vector<std::vector<Pixel *>> &vec,
-                                int x1, int y1,
-                                int x2, int y2)
-{
-    Pixel *temp = vec[x1][y1];
-
-    vec[x1][y1] = vec[x2][y2];
-    vec[x2][y2] = temp;
-}
-
-bool Liquid::swapOnDensity(std::vector<std::vector<Pixel *>> &vec,
-                                 int x1, int y1,
-                                 int x2, int y2, int density1, int density2)
-{
-    if(density1 < density2){
-        Pixel *temp = vec[x1][y1];
-        vec[x1][y1] = vec[x2][y2];
-        vec[x2][y2] = temp;
-        return true;
-    }
-    return false;
-
-
 }
 
 void Liquid::setProcessed(bool tf)
@@ -96,9 +29,7 @@ bool Liquid::getProcessed()
 void Liquid::moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor)
 {
     int newCol = col + incrementor;
-    transferVelocityX();
-    resetVelocity();
-    while (newCol >= 0 && newCol < vecWidth && vec[row][newCol] == nullptr && abs(newCol - col) < getDispersionRate())
+    while (newCol >= 0 && newCol < vecWidth && vec[row][newCol] == nullptr && abs(newCol - col) < xMaxDistance)
     {
         newCol += incrementor;
     }
@@ -108,71 +39,51 @@ void Liquid::moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &
 
 void Liquid::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
 {
-    int x_direction = rand() % 2 == 0 ? -1 : 1; // Randomize direction
-
-    if (row + 1 < vecHeight && vec[row + 1][col] == nullptr)
-    {
-        int blocksToFall = getBlocksToFall();
-        int fallToRow = row + blocksToFall;
-        if (fallToRow >= vecHeight)
-        {
-            fallToRow = vecHeight - 1;
-        }
-        while (fallToRow > row && vec[fallToRow][col] != nullptr)
-        {
-            fallToRow--;
-        }
-        if (fallToRow > row)
-        {
-            updateVelocity();
-            swapElements(vec, row, col, fallToRow, col);
-        }
-
-        resetX();
+    bool colLeftInBounds = col - 1 >= 0;
+    bool colRightInBounds = col + 1 < vecWidth;
+    bool dropInBounds = row + 1 < vecHeight;
+    int pRow = row;
+    int pCol = col;
+        
+    if(x_direction == 0){
+        x_direction = rand() % 2 == 0 ? -1 : 1; // Randomize direction
     }
-    else
+    
+
+
+    if (row + 1 < vecHeight && (vec[row + 1][col] == nullptr))
     {
-        bool colLeftInBounds = col - 1 >= 0;
-        bool colRightInBounds = col + 1 < vecWidth;
-        bool dropInBounds = row + 1 < vecHeight;
+        int blocksToFall = 3;
+        int fallCounter{1};
 
-        if (dropInBounds && col + 1 < vecWidth && vec[row + 1][col + 1] == nullptr && col - 1 >= 0 && vec[row + 1][col - 1] == nullptr)
-        {
-            // Could fall either left diagonally or right diagonally
-            updateVelocity();
-            swapElements(vec, row, col, row, col + x_direction);
-            resetX();
+        while(fallCounter < blocksToFall && row+fallCounter < vecHeight && vec[row+fallCounter][col] == nullptr){
+            fallCounter++;
+        }
+        fallCounter--;
+        int fallToRow = row + fallCounter;
 
-        }
-        else if (dropInBounds && col + 1 < vecWidth && vec[row + 1][col + 1] == nullptr)
-        {
-            // Could fall right diagonally
-            updateVelocity();
-            swapElements(vec, row, col, row + 1, col + 1);
-        resetX();
-
-        }
-        else if (dropInBounds && col - 1 >= 0 && vec[row + 1][col - 1] == nullptr)
-        {
-            // Could fall left diagonally
-            updateVelocity();
-            swapElements(vec, row, col, row + 1, col - 1);
-        resetX();
-
-        }
-        else if (colLeftInBounds && vec[row][col - 1] == nullptr && colRightInBounds && vec[row][col + 1] == nullptr)
-        {
-            // Has to move to the left or right
-            moveHorizontally(vecWidth, vec, col, row, x_direction);
-        }
-        else if (colRightInBounds && vec[row][col + 1] == nullptr)
-        {
-            moveHorizontally(vecWidth, vec, col, row, 1);
-        }
-        else if (colLeftInBounds && vec[row][col - 1] == nullptr)
-        {
-            moveHorizontally(vecWidth, vec, col, row, -1);
-            // If neither direction is possible, do nothing (water stays in place)
-        }
+        swapElements(vec, row, col, fallToRow, col);
+        pRow = fallToRow;
+        pCol = col;
     }
+
+    colLeftInBounds = pCol - 1 >= 0;
+    colRightInBounds = pCol + 1 < vecWidth;
+    dropInBounds = pRow + 1 < vecHeight;
+    x_direction = rand() % 2 == 0 ? -1 : 1;
+
+    if((colLeftInBounds && vec[pRow][pCol-1] == nullptr) && (colRightInBounds && vec[pRow][pCol+1] == nullptr)){
+        moveHorizontally(vecWidth, vec, pCol, pRow, x_direction);
+
+    } else if(colLeftInBounds && vec[pRow][pCol+1] == nullptr){
+        moveHorizontally(vecWidth, vec, pCol, pRow, 1);
+        x_direction = 1;
+
+    } else if(colRightInBounds && vec[pRow][pCol-1] == nullptr){
+        moveHorizontally(vecWidth, vec, pCol, pRow, -1);
+        x_direction = -1;
+    } else{
+    }
+
+
 }

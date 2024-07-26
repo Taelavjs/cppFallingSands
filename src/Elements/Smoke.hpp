@@ -7,6 +7,6 @@ public:
     Smoke();
     virtual ~Smoke();
     virtual Pixel *clone() const { return new Smoke(); }
-    virtual uint32_t getColour() { return SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 50, 0, 0, 255); }
+    virtual uint32_t getColour() { return SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 150, 0, 0, 255); }
 };
 #endif /* SMOKE_HPP*/

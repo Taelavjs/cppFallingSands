@@ -104,7 +104,7 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
 
 void Game::update()
 {
-    for (int row = vecHeight-1; row >= 0; --row)
+    for (int row = 0; row < vecHeight; ++row)
     {
         if (row % 2 == 0)
         {

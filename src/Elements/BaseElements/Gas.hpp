@@ -1,10 +1,11 @@
 #ifndef GAS_HPP
 #define GAS_HPP
 #include "SolidDynamic.hpp"
+#include "Pixel.hpp"
 #include <cmath>
 
 
-class Gas : public SolidDynamic {
+class Gas : public Pixel {
 public:    
     Gas();
     virtual ~Gas();
@@ -17,13 +18,8 @@ public:
     bool isValidPosition(const std::vector<std::vector<Pixel*>>& vec, int row, int col);
 
 private:
-    int yVelocity{0};
-    int xVelocity{0};
-    int maxBlocksToFall{25};
-    int minDispersionRate{1};
-    int maxDispersionRate{6};
-    float verticalToHorizontalRation{0.4};
-    bool movingRight{false};
-    bool movingLeft{false};
+    int randomDir{0};
+    int yDispersion{7}; // Distance to check for dispersion
+    int xDispersion{15}; // Distance to check for dispersion
 };
 #endif /* GAS_HPP */

@@ -7,21 +7,14 @@ class Liquid:public Pixel {
 public:
     Liquid();
     ~Liquid();
-    void updateVelocity();
-    void resetVelocity();
-    void resetX();
-    int getBlocksToFall();
     double randomNumber();
-    void swapElements(std::vector<std::vector<Pixel *>> &vec, int x1, int y1, int x2, int y2);
     void setProcessed(bool tf) ;
     bool getProcessed() ;
     virtual bool isMoveable(){return true;}
     bool swapOnDensity(std::vector<std::vector<Pixel *>> &vec, int x1, int y1, int x2, int y2, int density1, int density2);
     int getDensity(){return density;}
-    int getDispersionRate(){return xVelocity;};
-    void transferVelocityX();
+    int getDispersionRate(){return 5;};
     virtual bool isLiquid();
-    int getSumVelocity(){return (3*xVelocity)+yVelocity;};
     virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
     void moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor);
 
@@ -32,6 +25,8 @@ private:
     int yVelocity{1};
     int maxBlocksToFall{25};
     int xVelocity{1};
+    int x_direction{0};
+    int xMaxDistance{5};
 
 };
 

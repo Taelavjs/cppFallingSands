@@ -19,7 +19,6 @@ protected:
     void resetVelocity();
     virtual int getBlocksToFall();
     double randomNumber();
-    void swapElements(std::vector<std::vector<Pixel *>> &vec, int x1, int y1, int x2, int y2);
     void setProcessed(bool tf) ;
     bool getProcessed() ;
   

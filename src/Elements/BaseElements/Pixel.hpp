@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <vector>
 #include <SDL2/SDL.h> // Include SDL2 header for SDL_Color
 #include <iostream> // Include SDL2 header for SDL_Color
 
@@ -23,6 +24,7 @@ public:
     virtual bool isSolid(){return false;};
     virtual bool isGas(){return false;};
     virtual bool isFlammable(){return false;};
+    void swapElements(std::vector<std::vector<Pixel*>>& vec, int x1, int y1,int x2, int y2);
 
 protected:
     bool isProcessed{false};
