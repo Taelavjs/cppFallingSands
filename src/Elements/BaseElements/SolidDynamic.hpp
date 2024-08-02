@@ -6,31 +6,18 @@
 #include <thread>
 #include <vector>
 #include <random>
-class SolidDynamic : public Pixel {
+#include "Moveable.hpp"
+class SolidDynamic : public Moveable {
 public:
     bool isSolid(){return true;};
-    bool isMoveable() {
-        return true; // Or whatever logic you want for SolidDynamic
-    }  
+
 protected:    
     SolidDynamic();
     virtual ~SolidDynamic();
-    virtual void updateVelocity(int &newCol);
-    void resetVelocity();
-    double randomNumber();
-    void setProcessed(bool tf) ;
-    bool getProcessed() ;
-  
+protected:
     virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
     virtual void xDisperse(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res);
     bool checkMoveableMat(Pixel *space);
-private:
-    int yVelocity{0};
-    int xVelocity{0};
-    int maxBlocksToFall{25};
-    int minDispersionRate{1};
-    int maxDispersionRate{6};
-    float verticalToHorizontalRation{0.4};
 };
 
 

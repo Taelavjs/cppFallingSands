@@ -10,10 +10,10 @@ constexpr double GLOBAL_CONST_VAR{ 3.5f };
 
 int main(int argc, char *argv[])
 {
-    const uint8_t rendererScalex{10};
-    const uint8_t rendererScaley{10};
-    const int vecWidth{60};
-    const int vecHeight{60};
+    const uint8_t rendererScalex{5};
+    const uint8_t rendererScaley{5};
+    const int vecWidth{100};
+    const int vecHeight{100};
     const std::string title {"awesomepawsome"};
 
     Game game(vecWidth, vecHeight);

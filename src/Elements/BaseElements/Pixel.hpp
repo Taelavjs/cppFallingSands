@@ -18,8 +18,7 @@ public:
     virtual void setProcessed(bool tf) { isProcessed = tf; }
     virtual bool getProcessed() { return isProcessed; }
     virtual uint32_t getColour() { return SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 255, 255, 255); }
-    virtual bool isMoveable(){
-        return moveable;}
+    virtual bool isMoveable();
     virtual bool isLiquid();
     virtual bool isSolid(){return false;};
     virtual bool isGas(){return false;};

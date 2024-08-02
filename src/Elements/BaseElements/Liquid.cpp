@@ -7,28 +7,6 @@ Liquid::Liquid() {
 
 }
 Liquid::~Liquid() {}
-void Liquid::updateYPosition(int &newCol){
-    newCol += (int)2.0f/getMass() + yVelocity;
-    yVelocity += (int)2.0f;
-    if(yVelocity > terminalY) yVelocity = terminalY;
-}
-
-double Liquid::randomNumber()
-{
-    static std::default_random_engine rng(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count()));
-    static std::uniform_real_distribution<double> dist(0.0, 1.0);
-    return dist(rng);
-}
-
-void Liquid::setProcessed(bool tf)
-{
-    isProcessed = tf;
-}
-
-bool Liquid::getProcessed()
-{
-    return isProcessed;
-}
 
 void Liquid::moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor)
 {
@@ -59,7 +37,7 @@ void Liquid::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, 
         int blocksToFall{0};
         int fallCounter{1};
 
-        updateYPosition(blocksToFall);
+        updateVelocity(blocksToFall, 1);
 
         while(fallCounter < blocksToFall && row+fallCounter < vecHeight && vec[row+fallCounter][col] == nullptr){
             fallCounter++;
@@ -92,7 +70,7 @@ void Liquid::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, 
         pCol -= 1;
     }
 
-    if(pRow-1 >= 0 && (vec[pRow - 1][pCol] != nullptr && (vec[pRow][pCol]->getDensity() > vec[pRow-1][pCol]->getDensity()))){
+    if(pRow-1 >= 0 && (vec[pRow - 1][pCol] != nullptr && vec[pRow-1][pCol]->isMoveable() && (vec[pRow][pCol]->getDensity() > vec[pRow-1][pCol]->getDensity()))){
         swapElements(vec, pRow, pCol, pRow-1, pCol);
     }
 }

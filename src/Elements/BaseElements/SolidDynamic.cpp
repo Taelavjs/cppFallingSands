@@ -6,43 +6,6 @@ SolidDynamic::SolidDynamic() {
 }
 SolidDynamic::~SolidDynamic() {}
 
-void SolidDynamic::resetVelocity()
-{
-    yVelocity = 0;
-}
-
-void SolidDynamic::updateVelocity(int &newCol)
-{
-    newCol += (int)2.0f/getMass() + yVelocity;
-    yVelocity += (int)2.0f;
-    if(yVelocity > terminalY) yVelocity = terminalY;
-
-}
-
-double SolidDynamic::randomNumber()
-{
-    static std::default_random_engine rng(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count()));
-
-    // Create a uniform distribution between 0.0 and 1.0
-    static std::uniform_real_distribution<double> dist(0.0, 1.0);
-
-    // Return a random double value in the range [0.0, 1.0)
-    return dist(rng);
-}
-
-
-void SolidDynamic::setProcessed(bool tf)
-{
-    isProcessed = tf;
-}
-
-bool SolidDynamic::getProcessed()
-{
-    return isProcessed;
-}
-
-
-
 void SolidDynamic::xDisperse(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res)
 {
     // Initialize result with the current position
@@ -71,7 +34,6 @@ bool SolidDynamic::checkMoveableMat(Pixel *space)
     return (space->isLiquid() || space->isGas());
 }
 
-
 void SolidDynamic::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
 {
     vec[row][col]->setProcessed(true);
@@ -80,12 +42,12 @@ void SolidDynamic::update(std::vector<std::vector<Pixel *>> &vec, int &row, int 
     int res{col};       // Default to current column
 
     // Check space below
-    if (row + 1 < vecHeight && vec[row + 1][col] == nullptr)
+    if (row + 1 < vecHeight && isSpaceFree(vec, row+1, col))
     {
         int newRow = row + 1;
         int blocksToFall{};
-        updateVelocity(blocksToFall);
-        while (newRow < vecHeight && vec[newRow][col] == nullptr && (newRow - row) < blocksToFall)
+        updateVelocity(blocksToFall, 1);
+        while (newRow < vecHeight && isSpaceFree(vec, newRow, col) && (newRow - row) < blocksToFall)
         {
             newRow++;
         }
@@ -100,8 +62,8 @@ void SolidDynamic::update(std::vector<std::vector<Pixel *>> &vec, int &row, int 
         // Space directly below is free
         int newRow = row + 1;
         int blocksToFall{};
-        updateVelocity(blocksToFall);
-        while (newRow < vecHeight && vec[newRow][col] != nullptr && vec[newRow][col]->isLiquid() && (newRow - row) < blocksToFall)
+        updateVelocity(blocksToFall, -1);
+        while (newRow < vecHeight && vec[newRow][col] != nullptr && (isSpaceFree(vec, newRow, col)) && (newRow - row) < blocksToFall)
         {
             newRow++;
         }
@@ -114,8 +76,8 @@ void SolidDynamic::update(std::vector<std::vector<Pixel *>> &vec, int &row, int 
     else
     {
         // Space directly below is not free, check spaces to the sides
-        bool canFallLeft = (col - 1 >= 0 && row + 1 < vecHeight && (vec[row + 1][col - 1] == nullptr || vec[row + 1][col - 1]->isLiquid()));
-        bool canFallRight = (col + 1 < vecWidth && row + 1 < vecHeight && (vec[row + 1][col + 1] == nullptr || vec[row + 1][col + 1]->isLiquid()));
+        bool canFallLeft = (col - 1 >= 0 && row + 1 < vecHeight && (isSpaceFree(vec, row+1, col-1)));
+        bool canFallRight = (col + 1 < vecWidth && row + 1 < vecHeight && (isSpaceFree(vec, row+1, col+1)));
 
         if (canFallLeft && canFallRight)
         {

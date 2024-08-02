@@ -9,6 +9,10 @@ bool Pixel::isLiquid(){
     return false;
 }
 
+bool Pixel::isMoveable(){
+    return moveable;
+}
+
 void Pixel::swapElements(std::vector<std::vector<Pixel*>>& vec,
                                 int x1, int y1,
                                 int x2, int y2)

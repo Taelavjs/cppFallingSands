@@ -2,10 +2,11 @@
 #define GAS_HPP
 #include "SolidDynamic.hpp"
 #include "Pixel.hpp"
+#include "Moveable.hpp"
 #include <cmath>
 
 
-class Gas : public Pixel {
+class Gas : public Moveable {
 public:    
     Gas();
     virtual ~Gas();
@@ -15,7 +16,7 @@ public:
     void xDisp(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res);
     bool isSolid(){return false;};
     int calculateNewColumn(const std::vector<std::vector<Pixel*>>& vec, int row, int col, int xDispersion, int xDirection);
-    bool isValidPosition(const std::vector<std::vector<Pixel*>>& vec, int row, int col);
+    bool isValidPosition(std::vector<std::vector<Pixel*>>& vec, int row, int col);
     void updateYPosition(int &newCol);
     bool isMoveable(){return true;};
 private:

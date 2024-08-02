@@ -37,7 +37,7 @@ void Gas::xDisp(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xD
         {
             break; // Out of bounds
         }
-        if (vec[row - 1][newCol] == nullptr)
+        if (isSpaceFree(vec, row-1, newCol))
         {
             res = newCol; // Update result to the new free position
         }
@@ -48,10 +48,9 @@ void Gas::xDisp(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xD
     }
 }
 // Function to check if a position is valid for gas movement
-bool Gas::isValidPosition(const std::vector<std::vector<Pixel *>> &vec, int row, int col)
+bool Gas::isValidPosition(std::vector<std::vector<Pixel *>> &vec, int row, int col)
 {
-    return (row >= 0 && row < vec.size() && col >= 0 && col < vec[0].size() &&
-            (vec[row][col] == nullptr || (vec[row][col]->isGas() || vec[row][col]->isMoveable())));
+    return (row >= 0 && row < vec.size() && col >= 0 && col < vec[0].size() && isSpaceFree(vec, row, col));
 }
 void Gas::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
 {
@@ -68,7 +67,7 @@ void Gas::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int
         int newRow = pRow - 1;
         int spaceToRise{};
         updateYPosition(spaceToRise);
-        while (std::abs(pRow - newRow) < spaceToRise && newRow >= 0 && (vec[newRow][pCol] == nullptr || (!vec[newRow][pCol]->isGas() && vec[newRow][pCol]->isMoveable())))
+        while (std::abs(pRow - newRow) < spaceToRise && newRow >= 0 && (isSpaceFree(vec, newRow, pCol) && !(vec[newRow][pCol] != nullptr && vec[newRow][pCol] -> isGas())))
         {
             newRow--;
         }
@@ -77,8 +76,8 @@ void Gas::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int
         pRow = newRow;
     }
 
-    bool canMoveLeft = (pCol - 1 >= 0 && (vec[pRow][pCol - 1] == nullptr || vec[pRow][pCol - 1]->isGas()));
-    bool canMoveRight = (pCol + 1 < vecWidth && (vec[pRow][pCol + 1] == nullptr || vec[pRow][pCol + 1]->isGas()));
+    bool canMoveLeft = (pCol - 1 >= 0 && (isSpaceFree(vec, pRow, pCol-1)));
+    bool canMoveRight = (pCol + 1 < vecWidth && (isSpaceFree(vec, pRow, pCol + 1)));
 
     if (canMoveLeft && canMoveRight) {
         int incr = (std::rand() % 2) * 2 - 1;
