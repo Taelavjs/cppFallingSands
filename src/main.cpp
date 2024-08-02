@@ -12,11 +12,11 @@ int main(int argc, char *argv[])
 {
     const uint8_t rendererScalex{5};
     const uint8_t rendererScaley{5};
-    const int vecWidth{100};
-    const int vecHeight{100};
+    const int vecWidth{79};
+    const int vecHeight{79};
     const std::string title {"awesomepawsome"};
 
-    Game game(vecWidth, vecHeight);
+    Game game(vecWidth + 1, vecHeight + 1);
     game.init(&title, rendererScalex, rendererScaley);
 
     const int fps = 60;

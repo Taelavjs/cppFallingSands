@@ -1,14 +1,15 @@
 #include "Game.hpp"
 
-Game::Game(int vecWidth, int vecHeight)
-    : vecWidth(vecWidth), vecHeight(vecHeight),
-      isRunning(true), vec(vecHeight, std::vector<Pixel *>(vecWidth)) {
-        sand = new Sand();
-        water = new Water();
-        rock = new Rock();
-        smoke = new Smoke();
-        oil = new Oil();
-      }
+Game::Game(int vecWidthInp, int vecHeightInp)
+    : vecWidth(vecWidthInp-1), vecHeight(vecHeightInp-1),
+      isRunning(true), vec(vecHeightInp, std::vector<Pixel *>(vecWidthInp))
+{
+    sand = new Sand();
+    water = new Water();
+    rock = new Rock();
+    smoke = new Smoke();
+    oil = new Oil();
+}
 
 Game::~Game()
 {
@@ -52,21 +53,25 @@ void Game::init(const std::string *title, int scaleX, int scaleY)
         {
             if (randomnumber() < 0.0)
             {
-                vec[row][col] = sand -> clone(); // Create a Sand object and store its pointer
+                vec[row][col] = sand->clone(); // Create a Sand object and store its pointer
             }
         }
     }
 }
 
-void SquarePlace(std::vector<std::vector<Pixel *>> &vec, int x, int y, Pixel *elm){
+void SquarePlace(std::vector<std::vector<Pixel *>> &vec, int x, int y, Pixel *elm)
+{
     int numToPlace{1};
-    for (int j = x - numToPlace; j < x + numToPlace; j++) {
-        for (int k = y - numToPlace; k < y + numToPlace; k++) {
-            if (j < 0 || k < 0 || k >= vec.size() || j >= vec[k].size()) continue;
-            //if(rand() % 2 == 0) continue;
+    for (int j = x - numToPlace; j < x + numToPlace; j++)
+    {
+        for (int k = y - numToPlace; k < y + numToPlace; k++)
+        {
+            if (j < 0 || k < 0 || k >= vec.size() || j >= vec[k].size())
+                continue;
+            // if(rand() % 2 == 0) continue;
 
-            delete vec[k][j];  // Delete existing object to avoid memory leak
-            vec[k][j] = elm->clone();  // Assign new clone
+            delete vec[k][j];         // Delete existing object to avoid memory leak
+            vec[k][j] = elm->clone(); // Assign new clone
         }
     }
 }
@@ -88,60 +93,113 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
         if (e.type == SDL_KEYDOWN)
         {
             SDL_GetMouseState(&x, &y);
-            if(e.key.keysym.sym == SDLK_a){
-                SquarePlace(vec, x/xScale, y/yScale, water);
-            } else if(e.key.keysym.sym == SDLK_d){
-                SquarePlace(vec, x/xScale, y/yScale, rock);
-            } else if(e.key.keysym.sym == SDLK_s){
-                SquarePlace(vec, x/xScale, y/yScale, sand);
-            } else if(e.key.keysym.sym == SDLK_w){
-                SquarePlace(vec, x/xScale, y/yScale, smoke);
-            } else if(e.key.keysym.sym == SDLK_q){
-                SquarePlace(vec, x/xScale, y/yScale, oil);
+            if (e.key.keysym.sym == SDLK_a)
+            {
+                SquarePlace(vec, x / xScale, y / yScale, water);
+            }
+            else if (e.key.keysym.sym == SDLK_d)
+            {
+                SquarePlace(vec, x / xScale, y / yScale, rock);
+            }
+            else if (e.key.keysym.sym == SDLK_s)
+            {
+                SquarePlace(vec, x / xScale, y / yScale, sand);
+            }
+            else if (e.key.keysym.sym == SDLK_w)
+            {
+                SquarePlace(vec, x / xScale, y / yScale, smoke);
+            }
+            else if (e.key.keysym.sym == SDLK_q)
+            {
+                SquarePlace(vec, x / xScale, y / yScale, oil);
             }
         }
-
-        
     }
 }
 
+void Game::chunkUpdates(int chunkStart, int chunkEnd){
 
-void Game::update()
-{
-    for (int row = 0; row < vecHeight; ++row)
+
+    for (int row = chunkStart; row < chunkEnd; ++row)
     {
         if (row % 2 == 0)
         {
             // Even rows: left to right
-            for (int col = 0; col < vecWidth; ++col)
-            {
-                if (vec[row][col] == nullptr)
-                    continue;
-                if (vec[row][col]->getProcessed())
-                    continue;
-                vec[row][col]->setProcessed(true);
-                vec[row][col]->update(vec, row, col, vecWidth, vecHeight);
+            const int chunkSizeY = 8;
+            int numChunks = vecWidth / chunkSizeY;
+            int const maxChunks = numChunks;
+
+            while(numChunks >= 0){
+                for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
+                {
+                    updateSequence(vecWidth, vecHeight, row, col, vec);
+                }
+                numChunks--;
+            }
+
+            numChunks = maxChunks - 1;
+            while(numChunks >= 0){
+                for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
+                {
+                    updateSequence(vecWidth, vecHeight, row, col, vec);
+                }
+                numChunks -= 2;
             }
         }
         else
         {
             // Odd rows: right to left
-            for (int col = vecWidth - 1; col >= 0; --col)
-            {
-                if (vec[row][col] == nullptr)
-                    continue;
-                if (vec[row][col]->getProcessed())
-                    continue;
-                vec[row][col]->setProcessed(true);
-                vec[row][col]->update(vec, row, col, vecWidth, vecHeight);
+            const int chunkSizeY = 8;
+            int numChunks = vecWidth / chunkSizeY;
+            int const maxChunks = numChunks;
+            while(numChunks >= 0){
+                for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
+                {
+                    updateSequence(vecWidth, vecHeight, row, col, vec);
+                }
+                numChunks-=2;
+            }
+            numChunks = maxChunks - 1;
+            while(numChunks >= 0){
+                for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
+                {
+                    updateSequence(vecWidth, vecHeight, row, col, vec);
+                }
+                numChunks-=2;
             }
         }
     }
 }
 
+void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std::vector<std::vector<Pixel *>> &vec)
+{
+    if (vec[row][col] == nullptr)
+        return;
+    if (vec[row][col]->getProcessed())
+        return;
+    vec[row][col]->setProcessed(true);
+    vec[row][col]->update(vec, row, col, vecWidth, vecHeight);
+}
+
+void Game::update()
+{
+    const int chunkSizeX = 8;
+    int numChunks = vecWidth / chunkSizeX;
+    int const maxChunks = numChunks;
+    while(numChunks >= 0){
+        chunkUpdates(chunkSizeX * numChunks, (chunkSizeX * numChunks) + chunkSizeX);
+        numChunks -= 2;
+    }
+    numChunks = maxChunks - 1;
+    while(numChunks >= 0){
+        chunkUpdates(chunkSizeX * numChunks, (chunkSizeX * numChunks) + chunkSizeX);
+        numChunks -= 2;
+    }
+}
+
 void Game::render()
 {
-    rendering -> renderGrid(vec);
+    rendering->renderGrid(vec);
 }
 
 void Game::clean()

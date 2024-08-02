@@ -29,6 +29,8 @@ public:
     bool getRunning() const { return isRunning; }
     void swapElements(int x, int y, int x2, int y2);
     double randomnumber();
+    void updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std::vector<std::vector<Pixel *>> &vec);
+    void chunkUpdates(int chunkStart, int chunkEnd);
 private:
     int vecWidth;
     int vecHeight;
