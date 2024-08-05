@@ -32,7 +32,7 @@ void displayPixels(SDL_Texture *texture, uint32_t *pixels, SDL_Renderer *rendere
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
     SDL_PumpEvents();
-    SDL_Delay(500);
+    SDL_Delay(0);
 }
 
 void iterThroughPixels(void (*func)(int &, int &, uint32_t *, uint32_t *), uint32_t *pixels, uint32_t *newPixels){
@@ -212,7 +212,7 @@ void ProceduralGeneratedMap(uint32_t *pixels)
     delete[] newPixels;
     delete[] pixels;
     SDL_DestroyTexture(texture);
-    SDL_Delay(3000);
+    SDL_Delay(0);
     SDL_DestroyWindow(window);
 };
 

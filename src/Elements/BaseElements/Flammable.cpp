@@ -4,6 +4,7 @@ Flammable::Flammable(){}
 Flammable::~Flammable(){}
 
 void Flammable::ignite(){
+    if(getOnFire()) return; // already ignited
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(0, 1); 
@@ -13,8 +14,18 @@ void Flammable::ignite(){
     }
 }
 
-void Flammable::fireTick(){
+void Flammable::fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col){
     if(getOnFire()){
+        for(int i = -1; i <= 1; ++i){
+            for(int j = -1; j <= 1; ++j ){
+                if(j==i) continue;
+                if(vec[row+1][col+j]->isFlammable()){
+                    vec[row+1][col+j]->ignite();
+                    std::cout << "SET ON FIRE YAR" << '\n';
+                }
+            }
+        }
+
         hit();
     }
 }

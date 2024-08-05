@@ -2,7 +2,7 @@
 #define NAPALM_HPP
 #include "BaseElements/Liquid.hpp";
 #include "BaseElements/Pixel.hpp";
-#include "Flammable.hpp";
+#include "BaseElements/Flammable.hpp";
 
 class Napalm : public Liquid, public Flammable {
 public:
@@ -17,4 +17,4 @@ private:
     bool movingRight{false};
 };
 
-#endif NAPALM_HPP
+#endif /* NAPALM_HPP */

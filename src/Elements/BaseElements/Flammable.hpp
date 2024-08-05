@@ -1,14 +1,16 @@
 #ifndef FLAMMABLE_HPP
 #define FLAMMABLE_HPP
 #include <random>
+#include <vector>
+#include "Pixel.hpp";
 
 class Flammable {
 public:
     Flammable();
     ~Flammable();
-    void fireTick();
-    int hit() {hp--; return hp <= 0;}
     void ignite();
+    int hit() {hp--; return hp <= 0;}
+    void fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col);
     bool getOnFire(){return onFire;};
     void setOnFire(){onFire = true;};
 private:

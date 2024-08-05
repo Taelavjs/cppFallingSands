@@ -27,6 +27,11 @@ public:
     void swapElements(std::vector<std::vector<Pixel*>>& vec, int x1, int y1,int x2, int y2);
     virtual int getDensity(){return 0;};
     virtual int getMass(){return mass;};
+    virtual void ignite();
+    virtual int hit();
+    virtual void fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col);
+    virtual bool getOnFire();
+    virtual void setOnFire();
 
 protected:
     bool isProcessed{false};

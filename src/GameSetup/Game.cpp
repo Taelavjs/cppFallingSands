@@ -9,6 +9,8 @@ Game::Game(int vecWidthInp, int vecHeightInp)
     rock = new Rock();
     smoke = new Smoke();
     oil = new Oil();
+
+    napalm = new Napalm();
 }
 
 Game::~Game()
@@ -32,19 +34,6 @@ Game::~Game()
 
 void Game::init(const std::string *title, int scaleX, int scaleY)
 {
-    // if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-    //     std::cerr << "SDL Initialization failed: " << SDL_GetError() << std::endl;
-    //     return;
-    // }
-    // std::cout << "Everything SDL Initialized Correctly" << '\n';
-
-    // window = SDL_CreateWindow(title->c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, vecWidth * rendererScalex, vecHeight * rendererScaley, SDL_WINDOW_SHOWN);
-    // renderer = SDL_CreateRenderer(window, -1, 0);
-    // SDL_RenderSetScale(renderer, rendererScalex, rendererScaley);
-    // SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    // SDL_RenderDrawPoint(renderer, 5, 5);
-    // SDL_RenderPresent(renderer);
-    // SDL_PumpEvents();
     rendering = new Rendering(vecWidth, vecHeight, title, scaleX, scaleY);
 
     for (int row = 0; row < vecHeight; ++row)
@@ -112,6 +101,8 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
             else if (e.key.keysym.sym == SDLK_q)
             {
                 SquarePlace(vec, x / xScale, y / yScale, oil);
+            } else if (e.key.keysym.sym == SDLK_f) {
+                SquarePlace(vec, x / xScale, y / yScale, napalm);
             }
         }
     }
@@ -178,6 +169,9 @@ void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std
     if (vec[row][col]->getProcessed())
         return;
     vec[row][col]->setProcessed(true);
+    if(vec[row][col]->isFlammable()){
+        vec[row][col]->fireTick(vec, row, col);
+    }
     vec[row][col]->update(vec, row, col, vecWidth, vecHeight);
 }
 

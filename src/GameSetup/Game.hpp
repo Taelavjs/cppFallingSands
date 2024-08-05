@@ -12,6 +12,7 @@
 #include "../Elements/Rock.hpp"
 #include "../Elements/Smoke.hpp"
 #include "../Elements/Oil.hpp"
+#include "../Elements/Napalm.hpp"
 #include "Rendering.hpp"
 
 
@@ -45,6 +46,7 @@ private:
     Rock *rock;
     Smoke *smoke;
     Oil *oil;
+    Napalm *napalm;
 };
 
 #endif // GAME_HPP

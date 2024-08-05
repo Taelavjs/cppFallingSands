@@ -42,3 +42,11 @@ void Pixel::swapElements(std::vector<std::vector<Pixel*>>& vec,
         }
     }
 }
+
+// FIRE SECTION
+
+void Pixel::ignite(){};
+int Pixel::hit() {};
+void Pixel::fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col){};
+bool Pixel::getOnFire(){return false;};
+void Pixel::setOnFire(){};
