@@ -26,7 +26,6 @@ const double liveCellChance = 0.17f;
 const int liveNeightborFreshold = 3;
 const int seaLevel = 30;
 
-
 void displayPixels(SDL_Texture *texture, uint32_t *pixels, SDL_Renderer *renderer){
     SDL_UpdateTexture(texture, NULL, pixels, vecWidth * sizeof(uint32_t));
     SDL_RenderClear(renderer);

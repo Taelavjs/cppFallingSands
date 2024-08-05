@@ -22,7 +22,8 @@ public:
     virtual bool isLiquid();
     virtual bool isSolid(){return false;};
     virtual bool isGas(){return false;};
-    virtual bool isFlammable(){return false;};
+    virtual bool isFlammable(){return flammable;};
+    bool setFlammable(bool val){flammable = val;};
     void swapElements(std::vector<std::vector<Pixel*>>& vec, int x1, int y1,int x2, int y2);
     virtual int getDensity(){return 0;};
     virtual int getMass(){return mass;};
@@ -36,6 +37,7 @@ protected:
     int terminalX{3};
     int terminalY{3};
     bool moveable{false};
+    bool flammable{false};
 
 };
 

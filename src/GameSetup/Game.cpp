@@ -230,7 +230,8 @@ void Game::generateTerrain(uint32_t *pixels){
         for (int col = 0; col < vecWidth; ++col){
             const int pixColor = pixels[row * vecWidth + col];
             if (pixColor == blueColor){
-                vec[row][col] = water->clone();
+                if(randomnumber() > 0.5f)
+                    vec[row][col] = water->clone();
             } else if (pixColor == greenColor){
                 vec[row][col] = sand->clone();
             } else{

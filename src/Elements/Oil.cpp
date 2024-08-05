@@ -3,6 +3,7 @@
 Oil::Oil()
 {
     mass = 14;
+    setFlammable(true);
 }
 
 Oil::~Oil() {}

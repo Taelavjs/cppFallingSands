@@ -9,7 +9,6 @@ public:
     virtual ~Oil();
     virtual Pixel *clone() const { return new Oil(); }
     int getDensity(){return 10;};
-    bool isFlammable(){return true;};
 
 public:
     virtual uint32_t getColour();
