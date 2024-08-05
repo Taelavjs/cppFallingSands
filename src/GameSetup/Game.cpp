@@ -216,3 +216,26 @@ double Game::randomnumber()
     std::uniform_real_distribution<double> dist(0.0, 1.0);
     return dist(rng);
 }
+
+void Game::generateTerrain(uint32_t *pixels){
+    const int blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 0, 255);
+    const int whiteColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 255, 255, 255);
+    const int redColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 0, 0, 255);
+    const int greenColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 255, 0, 255);
+    const int blueColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 255, 255);
+    const int yellowColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 201, 217, 98, 255);
+    const int vertColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 50, 168, 127, 255);
+
+    for(int row = 0; row < vecHeight; ++row){
+        for (int col = 0; col < vecWidth; ++col){
+            const int pixColor = pixels[row * vecWidth + col];
+            if (pixColor == blueColor){
+                vec[row][col] = water->clone();
+            } else if (pixColor == greenColor){
+                vec[row][col] = sand->clone();
+            } else{
+                vec[row][col] = rock->clone();
+            }
+        }
+    }
+}

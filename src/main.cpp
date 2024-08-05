@@ -22,9 +22,140 @@ const int blueColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0,
 const int yellowColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 201, 217, 98, 255);
 const int vertColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 50, 168, 127, 255);
 
-const double liveCellChance = 0.25f;
+const double liveCellChance = 0.17f;
 const int liveNeightborFreshold = 3;
 const int seaLevel = 30;
+
+
+void displayPixels(SDL_Texture *texture, uint32_t *pixels, SDL_Renderer *renderer){
+    SDL_UpdateTexture(texture, NULL, pixels, vecWidth * sizeof(uint32_t));
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderPresent(renderer);
+    SDL_PumpEvents();
+    SDL_Delay(500);
+}
+
+void iterThroughPixels(void (*func)(int &, int &, uint32_t *, uint32_t *), uint32_t *pixels, uint32_t *newPixels){
+    for (int row = 0; row < vecWidth; ++row)
+    {
+        for (int col = 0; col < vecWidth; ++col)
+        {
+            func(row, col, pixels, newPixels);
+        }
+    }
+}
+void waterLevelLimit(int &row, int &col, uint32_t *pixels, uint32_t *newPixels){
+    uint32_t color{};
+    int yellowNeighborCount{0};
+    int greenNeighborCount{0};
+    int BlueNeighborCount{0};
+    for (int i = -1; i <= 1; ++i)
+    {
+        for (int j = -1; j <= 1; ++j)
+        {
+            if (i == 0 && j == 0)
+                continue;
+            int neighborRow = row + i;
+            int neighborCol = col + j;
+
+            if (neighborRow >= 0 && neighborRow < vecHeight && neighborCol >= 0 && neighborCol < vecWidth)
+            {
+                if (pixels[neighborRow * vecWidth + neighborCol] == greenColor)
+                {
+                    greenNeighborCount++;
+                } else if(pixels[neighborRow * vecWidth + neighborCol] == yellowColor){
+                    yellowNeighborCount++;
+
+                } else if(pixels[neighborRow * vecWidth + neighborCol] == blueColor){
+                    BlueNeighborCount++;
+                }
+            }
+        }
+    }
+
+    if (greenNeighborCount < 3)
+    {
+        color = blueColor;
+    }
+    else
+    {
+        color = greenNeighborCount  >= 4 ? greenColor : vertColor;
+        if(BlueNeighborCount > 2 && BlueNeighborCount <= 5){
+            color = yellowColor;
+        } else if(BlueNeighborCount > 2){
+            color = blueColor;
+        }
+    }
+    newPixels[row * vecWidth + col] = color;
+}
+void colorCells(int &row, int &col, uint32_t *pixels, uint32_t *newPixels){
+    uint32_t color{};
+
+    int neighborCount{0};
+    for (int i = -1; i <= 1; ++i)
+    {
+        for (int j = -1; j <= 1; ++j)
+        {
+            if (i == 0 && j == 0)
+                continue;
+            int neighborRow = row + i;
+            int neighborCol = col + j;
+
+            if (neighborRow >= 0 && neighborRow < vecHeight && neighborCol >= 0 && neighborCol < vecWidth)
+            {
+                if (pixels[neighborRow * vecWidth + neighborCol] == whiteColor || 
+                    pixels[neighborRow * vecWidth + neighborCol] == greenColor)
+                {
+                    neighborCount++;
+                }
+            }
+        }
+    }
+    if (neighborCount < liveNeightborFreshold)
+    {
+        color = blueColor;
+    }
+    else
+    {
+        color = neighborCount == 8 ? greenColor : yellowColor;
+    }
+
+    newPixels[row * vecWidth + col] = color;
+}
+void placeLiveDeadCells(int &row, int &col, uint32_t *pixels, uint32_t *newPixels){
+    uint32_t color{};
+
+    int neighborCount{0};
+    for (int i = -1; i <= 1; ++i)
+    {
+        for (int j = -1; j <= 1; ++j)
+        {
+            if (i == 0 && j == 0)
+                continue;
+            int neighborRow = row + i;
+            int neighborCol = col + j;
+
+            if (neighborRow >= 0 && neighborRow < vecHeight && neighborCol >= 0 && neighborCol < vecWidth)
+            {
+                if (pixels[neighborRow * vecWidth + neighborCol] == whiteColor)
+                {
+                    neighborCount++;
+                }
+            }
+        }
+    }
+    if (neighborCount < liveNeightborFreshold)
+    {
+        color = blackColor;
+    }
+    else
+    {
+        color = whiteColor;
+    }
+
+    newPixels[row * vecWidth + col] = color;
+};
 
 void ProceduralGeneratedMap(uint32_t *pixels)
 {
@@ -36,14 +167,9 @@ void ProceduralGeneratedMap(uint32_t *pixels)
     SDL_PumpEvents();
 
     SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, vecWidth, vecHeight);
-    if (texture == nullptr)
-    {
-        std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
-        return;
-    }
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(0, 1); // uniform distribution between 0 and 1
+    std::uniform_real_distribution<> dis(0, 1); 
 
     for (int row = 0; row < vecWidth; ++row)
     {
@@ -62,190 +188,34 @@ void ProceduralGeneratedMap(uint32_t *pixels)
             pixels[row * vecWidth + col] = color;
         }
     }
-    SDL_UpdateTexture(texture, NULL, pixels, vecWidth * sizeof(uint32_t));
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
-    SDL_RenderPresent(renderer);
-    SDL_PumpEvents();
 
-    SDL_Delay(500);
+    displayPixels(texture, pixels, renderer);
 
     uint32_t *newPixels = new uint32_t[vecWidth * vecHeight];
 
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < 7; ++i)
     {
-        for (int row = 0; row < vecWidth; ++row)
-        {
-            for (int col = 0; col < vecWidth; ++col)
-            {
-                uint32_t color{};
-
-                int neighborCount{0};
-                for (int i = -1; i <= 1; ++i)
-                {
-                    for (int j = -1; j <= 1; ++j)
-                    {
-                        if (i == 0 && j == 0)
-                            continue;
-                        int neighborRow = row + i;
-                        int neighborCol = col + j;
-
-                        if (neighborRow >= 0 && neighborRow < vecHeight && neighborCol >= 0 && neighborCol < vecWidth)
-                        {
-                            if (pixels[neighborRow * vecWidth + neighborCol] == whiteColor)
-                            {
-                                neighborCount++;
-                            }
-                        }
-                    }
-                }
-                if (neighborCount < liveNeightborFreshold)
-                {
-                    color = blackColor;
-                }
-                else
-                {
-                    color = whiteColor;
-                }
-
-                newPixels[row * vecWidth + col] = color;
-            }
-        }
-
-        SDL_UpdateTexture(texture, NULL, newPixels, vecWidth * sizeof(uint32_t));
-        SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, texture, NULL, NULL);
-        SDL_RenderPresent(renderer);
-        SDL_PumpEvents();
-        SDL_Delay(500);
+        iterThroughPixels(placeLiveDeadCells, pixels, newPixels);
         std::swap(pixels, newPixels);
+        displayPixels(texture, pixels, renderer);
     }
 
-    for (int row = 0; row < vecWidth; ++row)
-        {
-            for (int col = 0; col < vecWidth; ++col)
-            {
-                uint32_t color{};
-
-                int neighborCount{0};
-                for (int i = -1; i <= 1; ++i)
-                {
-                    for (int j = -1; j <= 1; ++j)
-                    {
-                        if (i == 0 && j == 0)
-                            continue;
-                        int neighborRow = row + i;
-                        int neighborCol = col + j;
-
-                        if (neighborRow >= 0 && neighborRow < vecHeight && neighborCol >= 0 && neighborCol < vecWidth)
-                        {
-                            if (pixels[neighborRow * vecWidth + neighborCol] == whiteColor || 
-                                pixels[neighborRow * vecWidth + neighborCol] == greenColor)
-                            {
-                                neighborCount++;
-                            }
-                        }
-                    }
-                }
-                if (neighborCount < liveNeightborFreshold)
-                {
-                    color = blueColor;
-                }
-                else
-                {
-                    color = neighborCount == 8 ? greenColor : yellowColor;
-                }
-
-                newPixels[row * vecWidth + col] = color;
-            }
-        }
+    iterThroughPixels(colorCells, pixels, newPixels);
     std::swap(pixels, newPixels);
-    
-    for(int p = 0; p < 2; ++p){
-        for (int row = 0; row < vecWidth; ++row)
-        {
-            for (int col = 0; col < vecWidth; ++col)
-            {
-                uint32_t color{};
+    displayPixels(texture, pixels, renderer);
 
-                int yellowNeighborCount{0};
-                int greenNeighborCount{0};
-                int BlueNeighborCount{0};
-                for (int i = -1; i <= 1; ++i)
-                {
-                    for (int j = -1; j <= 1; ++j)
-                    {
-                        if (i == 0 && j == 0)
-                            continue;
-                        int neighborRow = row + i;
-                        int neighborCol = col + j;
-
-                        if (neighborRow >= 0 && neighborRow < vecHeight && neighborCol >= 0 && neighborCol < vecWidth)
-                        {
-                            if (pixels[neighborRow * vecWidth + neighborCol] == greenColor)
-                            {
-                                greenNeighborCount++;
-                            } else if(pixels[neighborRow * vecWidth + neighborCol] == yellowColor){
-                                yellowNeighborCount++;
-
-                            } else if(pixels[neighborRow * vecWidth + neighborCol] == blueColor){
-                                BlueNeighborCount++;
-                            }
-                        }
-                    }
-                }
-
-                if (greenNeighborCount < 3)
-                {
-                    color = blueColor;
-                }
-                else
-                {
-                    color = greenNeighborCount  >= 4 ? greenColor : vertColor;
-                    if(BlueNeighborCount > 2 && BlueNeighborCount <= 5){
-                        color = yellowColor;
-                    } else if(BlueNeighborCount > 2){
-                        color = blueColor;
-                    }
-
-                }
-                if(row  < vecHeight - seaLevel && color == blueColor){
-                    color = blackColor;
-                }
-                newPixels[row * vecWidth + col] = color;
-            }
-        }
-        SDL_UpdateTexture(texture, NULL, newPixels, vecWidth * sizeof(uint32_t));
-        SDL_RenderClear(renderer);
-        SDL_RenderCopy(renderer, texture, NULL, NULL);
-        SDL_RenderPresent(renderer);
-        SDL_PumpEvents();
-        SDL_Delay(500);
-        std::swap(pixels, newPixels);
-    }
+    // for(int p = 0; p < 2; ++p){
+    //     iterThroughPixels(waterLevelLimit, pixels, newPixels);
+    //     std::swap(pixels, newPixels);
+    //     displayPixels(texture, pixels, renderer);
+    // }
 
     delete[] newPixels;
+    delete[] pixels;
     SDL_DestroyTexture(texture);
-    SDL_Delay(2000);
-}
-
-// ONE
-
-
-
-
-
-
-// Two
-
-
-
-
-
-
-// Three
-
-
+    SDL_Delay(3000);
+    SDL_DestroyWindow(window);
+};
 
 int main(int argc, char *argv[])
 {
@@ -259,7 +229,11 @@ int main(int argc, char *argv[])
     int frameTime{};
     int i{0};
     const bool debug = true;
-    while (!debug && game.getRunning())
+    if (debug){
+        ProceduralGeneratedMap(pixels);
+        game.generateTerrain(pixels);
+    }
+    while (game.getRunning())
     {
         frameStart = SDL_GetTicks();
         i++;
@@ -275,8 +249,7 @@ int main(int argc, char *argv[])
             SDL_Delay(timeBetweenFrames - frameTime);
         }
     }
-    if (debug)
-        ProceduralGeneratedMap(pixels);
+
 
     SDL_Quit();
     return 0;

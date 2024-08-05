@@ -31,6 +31,7 @@ public:
     double randomnumber();
     void updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std::vector<std::vector<Pixel *>> &vec);
     void chunkUpdates(int chunkStart, int chunkEnd);
+    void generateTerrain(uint32_t *pixels);
 private:
     int vecWidth;
     int vecHeight;
