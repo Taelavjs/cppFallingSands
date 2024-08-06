@@ -28,6 +28,8 @@ Rendering::~Rendering()
 }
 
 void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec){
+    SDL_RenderClear(renderer);
+
     SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight);
     if (texture == nullptr)
     {
@@ -51,12 +53,24 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec){
             vec[row][col]->setProcessed(false);
         }
     }
-    SDL_UpdateTexture(texture, NULL, pixels, screenWidth * sizeof(uint32_t));
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
-    SDL_RenderPresent(renderer);
 
-    // Clean up
+    SDL_UpdateTexture(texture, NULL, pixels, screenWidth * sizeof(uint32_t));
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+
     delete[] pixels;
     SDL_DestroyTexture(texture);
+
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); 
+    for (int y = 0; y < screenWidth; y += 8) {
+        for (int x = 0; x < screenHeight; x += 8) {
+            SDL_Rect rect = {x, y, 8, 1};
+            SDL_RenderFillRect(renderer, &rect);
+
+            rect = {x, y, 1, 8};
+            SDL_RenderFillRect(renderer, &rect); 
+        }
+    }
+    SDL_RenderPresent(renderer);
+
+
 }
