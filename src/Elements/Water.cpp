@@ -4,6 +4,7 @@ Water::Water()
 {
     mass=8;
     movingRight = (randomNumber() > 0.5f);
+    setHp(10);
 }
 
 Water::~Water() {}

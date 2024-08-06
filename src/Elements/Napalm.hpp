@@ -4,7 +4,7 @@
 #include "BaseElements/Pixel.hpp";
 #include "BaseElements/Flammable.hpp";
 
-class Napalm : public Liquid, public Flammable {
+class Napalm : public Liquid {
 public:
     Napalm();
     virtual ~Napalm();

@@ -8,6 +8,9 @@ Napalm::Napalm()
 {
     mass=8;
     movingRight = (randomNumber() > 0.5f);
+    setOnFire();
+    setFlammable(true);
+    setHp(60);
 }
 
 Napalm::~Napalm() {}

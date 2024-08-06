@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <random>
 #include <vector>
 #include <SDL2/SDL.h> // Include SDL2 header for SDL_Color
 #include <iostream> // Include SDL2 header for SDL_Color
@@ -28,11 +29,14 @@ public:
     virtual int getDensity(){return 0;};
     virtual int getMass(){return mass;};
     virtual void ignite();
-    virtual int hit();
-    virtual void fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col);
+    virtual bool hit();
+    virtual bool fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col, int vecHeight, Pixel *elm);
     virtual bool getOnFire();
     virtual void setOnFire();
-
+    void setHp(int health){hp = health;};
+    int hp{5};
+    double chanceToIgnite{0.9f};
+    bool onFire{false};
 protected:
     bool isProcessed{false};
     int mass{1};

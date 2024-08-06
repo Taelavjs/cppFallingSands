@@ -3,7 +3,7 @@
 #include "BaseElements/Flammable.hpp"
 #include "BaseElements/Liquid.hpp"
 
-class Oil : public Liquid, public Flammable {
+class Oil : public Liquid {
 public:
     Oil();
     virtual ~Oil();

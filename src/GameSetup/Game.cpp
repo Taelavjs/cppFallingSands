@@ -170,7 +170,9 @@ void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std
         return;
     vec[row][col]->setProcessed(true);
     if(vec[row][col]->isFlammable()){
-        vec[row][col]->fireTick(vec, row, col);
+        if(vec[row][col]->fireTick(vec, row, col, vecHeight, smoke)){
+            vec[row][col] = smoke->clone();
+        };
     }
     vec[row][col]->update(vec, row, col, vecWidth, vecHeight);
 }
