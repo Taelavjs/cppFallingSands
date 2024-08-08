@@ -94,20 +94,24 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec){
                 continue;
             vec[row][col]->setProcessed(false);
         }
-    }
 
-    for (int row = 0; row < screenWidth; ++row)
-    {
-        for (int col = 0; col < screenWidth; ++col)
-        {
-            if (vec[row][col] == nullptr)
-                continue;
-
-            if(vec[row][col]->getOnFire()){
-                castRays(pixels, renderer, vec, screenWidth, screenHeight, row, col);
-            }
-        }
     }
+    // X => 0 IS THE RIGHT HAND SIDE ( col )
+    // Y => 0 IS THE TOP ( row )
+
+    // for (int row = 0; row < screenWidth; ++row)
+    // {
+    //     for (int col = 0; col < screenWidth; ++col)
+    //     {
+    //         if (vec[row][col] == nullptr)
+    //             continue;
+
+    //         if(vec[row][col]->getOnFire()){
+    //             castRays(pixels, renderer, vec, screenWidth, screenHeight, row, col);
+    //         }
+    //     }
+    // }
+
 
     SDL_UpdateTexture(texture, NULL, pixels, screenWidth * sizeof(uint32_t));
     SDL_RenderCopy(renderer, texture, NULL, NULL);
@@ -115,16 +119,17 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec){
     delete[] pixels;
     SDL_DestroyTexture(texture);
 
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); 
-    for (int y = 0; y < screenWidth; y += 8) {
-        for (int x = 0; x < screenHeight; x += 8) {
-            SDL_Rect rect = {x, y, 8, 1};
-            SDL_RenderFillRect(renderer, &rect);
+    // SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); 
+    // for (int y = 0; y < screenWidth; y += 8) {
+    //     for (int x = 0; x < screenHeight; x += 8) {
+    //         SDL_Rect rect = {x, y, 8, 1};
+    //         SDL_RenderFillRect(renderer, &rect);
 
-            rect = {x, y, 1, 8};
-            SDL_RenderFillRect(renderer, &rect); 
-        }
-    }
+    //         rect = {x, y, 1, 8};
+    //         SDL_RenderFillRect(renderer, &rect); 
+    //     }
+    // }
+
 
 
     SDL_RenderPresent(renderer);

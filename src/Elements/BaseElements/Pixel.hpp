@@ -54,7 +54,7 @@ public:
     void setMass(int val){mass = val;}
     void setChanceToIgnite(double val){chanceToIgnite = val;}
     void setDensity(int val){density = val;}
-    void setColor(uint32_t val){color = val;}
+    virtual void setColor(uint32_t val){color = val;}
     
 private:
     int hp{5};

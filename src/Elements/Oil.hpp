@@ -8,7 +8,6 @@ public:
     Oil();
     virtual ~Oil();
     virtual Pixel *clone() const { return new Oil(); }
-    int getDensity(){return 10;};
 
 public:
     virtual uint32_t getColour();

@@ -10,7 +10,6 @@ public:
     ~Liquid();
     bool swapOnDensity(std::vector<std::vector<Pixel *>> &vec, int x1, int y1, int x2, int y2, int density1, int density2);
     int getDispersionRate(){return 5;};
-    virtual bool isLiquid(){return true;};
     virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
     void moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor);
 private:

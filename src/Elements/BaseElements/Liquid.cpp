@@ -4,7 +4,7 @@
 
 Liquid::Liquid() {
     setIsMoveable(true);
-
+    setIsLiquid(true);
 }
 Liquid::~Liquid() {}
 
@@ -21,6 +21,7 @@ void Liquid::moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &
 
 void Liquid::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
 {
+    setProcessed(true);
     bool colLeftInBounds = col - 1 >= 0;
     bool colRightInBounds = col + 1 < vecWidth;
     bool dropInBounds = row + 1 < vecHeight;
@@ -70,7 +71,7 @@ void Liquid::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, 
         pCol -= 1;
     }
 
-    if(pRow-1 >= 0 && (vec[pRow - 1][pCol] != nullptr && vec[pRow-1][pCol]->getIsMoveable() && (vec[pRow][pCol]->getDensity() > vec[pRow-1][pCol]->getDensity()))){
+    if(pRow-1 >= 0 && (vec[pRow - 1][pCol] != nullptr && vec[pRow-1][pCol]->getIsMoveable() && !vec[pRow-1][pCol] -> getIsGas() && (vec[pRow][pCol]->getDensity() > vec[pRow-1][pCol]->getDensity()))){
         swapElements(vec, pRow, pCol, pRow-1, pCol);
     }
 }

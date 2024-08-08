@@ -9,8 +9,6 @@ void Pixel::swapElements(std::vector<std::vector<Pixel*>>& vec,
                                 int x1, int y1,
                                 int x2, int y2)
 {
-
-
     if (x1 != x2) {
         // Swap elements in different rows
         Pixel* temp = vec[x1][y1];
@@ -67,7 +65,7 @@ bool Pixel::fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col, i
                 if(ptrToNeighbor != nullptr && ptrToNeighbor->getIsFlammable() && !ptrToNeighbor-> getOnFire()){
                     vec[row+i][col+j]->ignite();
                 } else if(ptrToNeighbor != nullptr && ptrToNeighbor-> getIsLiquid() && !ptrToNeighbor->getIsFlammable()){
-                    if(elm->hit()){
+                    if(ptrToNeighbor->hit()){
                         vec[row+i][col+j] = elm->clone();
                     }
                 }

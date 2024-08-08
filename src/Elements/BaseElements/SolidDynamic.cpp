@@ -2,6 +2,7 @@
 
 SolidDynamic::SolidDynamic() {
     setIsMoveable(true);
+    setIsSolid(true);
 
 }
 SolidDynamic::~SolidDynamic() {}
@@ -36,7 +37,7 @@ bool SolidDynamic::checkMoveableMat(Pixel *space)
 
 void SolidDynamic::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
 {
-    vec[row][col]->setProcessed(true);
+    setProcessed(true);
 
     int xDispersion{5}; // Distance to check for dispersion
     int res{col};       // Default to current column

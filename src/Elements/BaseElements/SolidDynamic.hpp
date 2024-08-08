@@ -9,7 +9,6 @@
 #include "Moveable.hpp"
 class SolidDynamic : public Moveable {
 public:
-    bool isSolid(){return true;};
 
 protected:    
     SolidDynamic();

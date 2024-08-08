@@ -7,11 +7,10 @@
 
 class Moveable : public Pixel {
 public:
+    Moveable();
+    ~Moveable();
     double randomNumber();
     void updateVelocity(int &newCol, int upDown);
-    bool isMoveable() {
-        return true; 
-    }  
     void resetVelocity(){
         yVelocity = 0;
     }

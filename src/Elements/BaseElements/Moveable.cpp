@@ -1,5 +1,13 @@
 #include "Moveable.hpp"
 
+Moveable::Moveable(){
+    setIsMoveable(true);
+}
+
+Moveable::~Moveable(){
+
+}
+
 void Moveable::updateVelocity(int &newCol, int upDown)
 {
     newCol += ((int)2.0f/getMass() + yVelocity) * upDown;

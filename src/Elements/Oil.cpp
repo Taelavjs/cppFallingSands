@@ -4,7 +4,8 @@ Oil::Oil()
 {
     setMass(14);
     setFlammable(true);
-    setHp(25);
+    setHp(55);
+    setDensity(10);
 }
 
 Oil::~Oil() {}
