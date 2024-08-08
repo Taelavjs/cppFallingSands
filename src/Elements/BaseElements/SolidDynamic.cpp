@@ -1,7 +1,7 @@
 #include "SolidDynamic.hpp"
 
 SolidDynamic::SolidDynamic() {
-    moveable = true;
+    setIsMoveable(true);
 
 }
 SolidDynamic::~SolidDynamic() {}
@@ -31,7 +31,7 @@ void SolidDynamic::xDisperse(std::vector<std::vector<Pixel *>> &vec, int row, in
 
 bool SolidDynamic::checkMoveableMat(Pixel *space)
 {
-    return (space->isLiquid() || space->isGas());
+    return (space->getIsLiquid() || space->getIsGas());
 }
 
 void SolidDynamic::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)

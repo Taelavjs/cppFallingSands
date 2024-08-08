@@ -39,7 +39,7 @@ void Rendering::castRay(uint32_t *pixels, SDL_Renderer* renderer, const std::vec
     while (true) {
 
         if (startX >= 0 && startX < screenWidth && startY >= 0 && startY < screenHeight) {
-            if ((vec[startX][startY] == nullptr || vec[startX][startY] -> isMoveable())&& limit > 0) {
+            if ((vec[startX][startY] == nullptr || vec[startX][startY] -> getIsMoveable())&& limit > 0) {
                 limit--;
                 pixels[startX * screenWidth + startY] = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 182, 130, 124, 90);
             } else if(vec[startX][startY] != nullptr || limit <= 0) {

@@ -19,7 +19,7 @@ void Flammable::fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int co
         for(int i = -1; i <= 1; ++i){
             for(int j = -1; j <= 1; ++j ){
                 if(j==i) continue;
-                if(vec[row+1][col+j]->isFlammable()){
+                if(vec[row+1][col+j]->getIsFlammable()){
                     vec[row+1][col+j]->ignite();
                     std::cout << "SET ON FIRE YAR" << '\n';
                 }

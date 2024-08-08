@@ -2,8 +2,8 @@
 
 Sand::Sand()
 {
-    density = 5;
-    mass = 2;
+    setDensity(5);
+    setMass(2);
 }
 Sand::~Sand() {}
 

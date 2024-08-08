@@ -2,7 +2,7 @@
 
 Oil::Oil()
 {
-    mass = 14;
+    setMass(14);
     setFlammable(true);
     setHp(25);
 }

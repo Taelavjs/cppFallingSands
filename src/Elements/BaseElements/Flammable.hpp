@@ -2,7 +2,7 @@
 #define FLAMMABLE_HPP
 #include <random>
 #include <vector>
-#include "Pixel.hpp";
+#include "Pixel.hpp"
 
 class Flammable {
 public:

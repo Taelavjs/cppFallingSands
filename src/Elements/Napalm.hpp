@@ -1,8 +1,8 @@
 #ifndef NAPALM_HPP
 #define NAPALM_HPP
-#include "BaseElements/Liquid.hpp";
-#include "BaseElements/Pixel.hpp";
-#include "BaseElements/Flammable.hpp";
+#include "BaseElements/Liquid.hpp"
+#include "BaseElements/Pixel.hpp"
+#include "BaseElements/Flammable.hpp"
 
 class Napalm : public Liquid {
 public:

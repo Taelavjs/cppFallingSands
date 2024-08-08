@@ -5,14 +5,6 @@
 Pixel::Pixel(){}
 Pixel::~Pixel(){}
 
-bool Pixel::isLiquid(){
-    return false;
-}
-
-bool Pixel::isMoveable(){
-    return moveable;
-}
-
 void Pixel::swapElements(std::vector<std::vector<Pixel*>>& vec,
                                 int x1, int y1,
                                 int x2, int y2)
@@ -56,7 +48,6 @@ void Pixel::ignite(){
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(0.0, 1.0);
-    double rng = dis(gen);
     if(dis(gen) > chanceToIgnite){
         setOnFire();
     }
@@ -73,9 +64,9 @@ bool Pixel::fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col, i
                 if(j==i) continue;
                 if(row+i > vecHeight -1 || row+i < 0 || col+j > vecHeight -1 || col+j < 0) continue;
                 Pixel *ptrToNeighbor = vec[row+i][col+j];
-                if(ptrToNeighbor != nullptr && ptrToNeighbor->isFlammable() && !ptrToNeighbor-> getOnFire()){
+                if(ptrToNeighbor != nullptr && ptrToNeighbor->getIsFlammable() && !ptrToNeighbor-> getOnFire()){
                     vec[row+i][col+j]->ignite();
-                } else if(ptrToNeighbor != nullptr && ptrToNeighbor-> isLiquid() && !ptrToNeighbor->isFlammable()){
+                } else if(ptrToNeighbor != nullptr && ptrToNeighbor-> getIsLiquid() && !ptrToNeighbor->getIsFlammable()){
                     if(elm->hit()){
                         vec[row+i][col+j] = elm->clone();
                     }

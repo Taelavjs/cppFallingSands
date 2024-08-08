@@ -5,8 +5,8 @@
 Gas::Gas()
 {
     // Constructor implementation
-    mass = 300;
-    moveable = true;
+    setMass(300);
+    setIsMoveable(true);
 }
 
 Gas::~Gas()
@@ -22,7 +22,7 @@ bool Gas::isGas()
 void Gas::updateYPosition(int &newCol){
     newCol -= (int)1.0f/getMass() + yVelocity;
     yVelocity -= (int)1.0f;
-    if(yVelocity < (-1 * terminalY)) yVelocity = (-1 * terminalY);
+    if(yVelocity < (-1 * getTerminalY())) yVelocity = (-1 * getTerminalY());
 }
 
 void Gas::xDisp(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res)
@@ -67,7 +67,7 @@ void Gas::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int
         int newRow = pRow - 1;
         int spaceToRise{};
         updateYPosition(spaceToRise);
-        while (std::abs(pRow - newRow) < spaceToRise && newRow >= 0 && (isSpaceFree(vec, newRow, pCol) && !(vec[newRow][pCol] != nullptr && vec[newRow][pCol] -> isGas())))
+        while (std::abs(pRow - newRow) < spaceToRise && newRow >= 0 && (isSpaceFree(vec, newRow, pCol) && !(vec[newRow][pCol] != nullptr && vec[newRow][pCol] -> getIsGas())))
         {
             newRow--;
         }

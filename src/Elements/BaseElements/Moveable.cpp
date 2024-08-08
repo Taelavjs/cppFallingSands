@@ -4,7 +4,7 @@ void Moveable::updateVelocity(int &newCol, int upDown)
 {
     newCol += ((int)2.0f/getMass() + yVelocity) * upDown;
     yVelocity += (int)2.0f * upDown;
-    if(yVelocity > terminalY * upDown) yVelocity = terminalY;
+    if(yVelocity > getTerminalY() * upDown) yVelocity = getTerminalY();
 }
 
 double Moveable::randomNumber()
@@ -19,5 +19,5 @@ double Moveable::randomNumber()
 }
 
 bool Moveable::isSpaceFree(std::vector<std::vector<Pixel *>> &vec, int row, int col){
-    return ( vec[row][col] == nullptr || vec[row][col]->isLiquid() || vec[row][col]-> isGas());
+    return ( vec[row][col] == nullptr || vec[row][col]->getIsLiquid() || vec[row][col]-> getIsGas());
 };

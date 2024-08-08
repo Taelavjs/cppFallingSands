@@ -2,7 +2,7 @@
 
 Water::Water()
 {
-    mass=8;
+    setMass(8);
     movingRight = (randomNumber() > 0.5f);
     setHp(10);
 }

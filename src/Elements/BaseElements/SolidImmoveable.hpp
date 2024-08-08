@@ -4,7 +4,7 @@
 
 class SolidImmoveable : public Pixel {
 public:
-    SolidImmoveable(){moveable = false;};
+    SolidImmoveable(){setIsMoveable(false);};
     ~SolidImmoveable(){};
 };
 
