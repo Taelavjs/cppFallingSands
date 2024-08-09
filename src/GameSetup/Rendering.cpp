@@ -4,11 +4,7 @@ Rendering::Rendering(int vecWidth, int vecHeight, const std::string* title, int 
     :    rendererScalex(scaleX), rendererScaley(scaleY), screenHeight(vecHeight), screenWidth(vecWidth)
 {
 
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
-        std::cerr << "SDL Initialization failed: " << SDL_GetError() << std::endl;
-        return;
-    }
+    SDL_Init(SDL_INIT_VIDEO);
     std::cout << "Everything SDL Initialized Correctly" << '\n';
 
     window = SDL_CreateWindow(title->c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, vecWidth * rendererScalex, vecHeight * rendererScaley, SDL_WINDOW_SHOWN);
@@ -66,7 +62,7 @@ void Rendering::castRays(uint32_t *pixels,SDL_Renderer* renderer, const std::vec
     }
 }
 
-void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec){
+void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* player){
     SDL_RenderClear(renderer);
 
     SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight);
@@ -76,10 +72,8 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec){
         return;
     }
     uint32_t *pixels = new uint32_t[screenWidth * screenHeight];
-        // Assuming pixels is already allocated
     uint32_t blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 0, 255);
 
-    // Fill the entire array with the black color
     std::fill(pixels, pixels + (screenWidth * screenHeight), blackColor);
 
     for (int row = 0; row < screenWidth; ++row)
@@ -113,8 +107,19 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec){
     // }
 
 
+
+
     SDL_UpdateTexture(texture, NULL, pixels, screenWidth * sizeof(uint32_t));
     SDL_RenderCopy(renderer, texture, NULL, NULL);
+
+    // Retrieve the texture
+    Sprite* playerText = player->getSprite();
+    SDL_Texture* playTexture = playerText->runCycle();
+    // Create and initialize the destination rectangle
+    SDL_Rect* dst = new SDL_Rect{30, 30, 50, 50};
+
+    SDL_RenderCopy(renderer, playTexture, NULL, dst);
+
 
     delete[] pixels;
     SDL_DestroyTexture(texture);
@@ -133,6 +138,10 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec){
 
 
     SDL_RenderPresent(renderer);
+    delete dst;
 
+}
 
+SDL_Renderer* Rendering::getRenderer(){
+    return renderer;
 }

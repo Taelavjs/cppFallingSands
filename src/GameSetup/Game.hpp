@@ -14,6 +14,8 @@
 #include "../Elements/Oil.hpp"
 #include "../Elements/Napalm.hpp"
 #include "Rendering.hpp"
+#include "../Playables/Player.hpp"
+#include "../Textures/Sprite.hpp"
 
 
 class Game {
@@ -39,6 +41,9 @@ private:
     // int rendererScalex;
     // int rendererScaley;
     bool isRunning;
+
+    Player* player;
+
     Rendering *rendering{nullptr};
     std::vector<std::vector<Pixel *>> vec;
     Sand *sand;

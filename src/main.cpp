@@ -4,8 +4,10 @@
 #include <vector>
 #include <random>
 #include "SDL2/SDL.h"
+#include <SDL2/SDL_image.h>
 #include "./GameSetup/Game.hpp"
 #include "./Elements/BaseElements/Pixel.hpp"
+#include "Textures/Sprite.hpp"
 constexpr double GLOBAL_CONST_VAR{3.5f};
 
 const uint8_t rendererScalex{3};
@@ -216,8 +218,33 @@ void ProceduralGeneratedMap(uint32_t *pixels)
     SDL_DestroyWindow(window);
 };
 
+    // TESTING TEXTURES
+void textureTesting(){
+        SDL_Window* window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 500, 500, SDL_WINDOW_SHOWN );
+        SDL_Renderer* renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
+        char* testPath{"Sprites/AnimationSheet_Character.png"};
+        int width{32};
+        int height{32};
+        int rows{6};
+        int cols{6};
+        Sprite* testSheet = new Sprite(testPath, renderer, width, height, rows, cols);
+ 
+        for(int i = 0; i < 10; ++i){
+            SDL_RenderCopy(renderer,testSheet->runCycle(), NULL, NULL);
+            SDL_RenderPresent(renderer);
+            SDL_PumpEvents();
+            SDL_Delay(500); 
+        }
+        delete testSheet;
+
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+    }
+
 int main(int argc, char *argv[])
 {
+    char* charSpritePath{"Sprites/AnimationSheet_Character.png"};
+
     uint32_t *pixels = new uint32_t[vecWidth * vecHeight];
     Game game(vecWidth + 1, vecHeight + 1);
     game.init(&title, rendererScalex, rendererScaley);
@@ -248,6 +275,7 @@ int main(int argc, char *argv[])
             SDL_Delay(timeBetweenFrames - frameTime);
         }
     }
+
 
 
     SDL_Quit();
