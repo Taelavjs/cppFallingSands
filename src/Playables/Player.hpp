@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <tuple>
 
 class Player {
 public:
@@ -20,8 +21,16 @@ public:
     void playerReleaseHandler(SDL_Event& e);
     void renderPlayer(SDL_Renderer* renderer);
     void update();
+    std::tuple <int, int> getCoordinates(){
+        return std::make_tuple(x, y);
+    }
+
+    std::tuple <int, int> getDimensions(){
+        return std::make_tuple(xScale, yScale);
+    }
 
 private:
+
     Sprite* playerSprite;
     std::string directionMove{"None"};
     double xVel{0}, yVel{0};
@@ -29,7 +38,7 @@ private:
     double maxVel{2.5f};
     double acceleration{0.75f};
     double deacceleration{1.85f};
-    int xScale{16}, yScale{16};
+    int xScale{8}, yScale{8};
     double speed{3};
     bool dLeft{false}, dRight{false}, dUp{false}, dDown{false};
     

@@ -25,7 +25,7 @@ public:
 
     void init(const std::string* title, int scaleX, int scaleY);
     void handleEvents(const uint8_t &xScale, const uint8_t &yScale);
-    void update();
+    void update( const int& xScale, const int& yScale);
     void render();
     void clean();
     void setRunning(bool running) { isRunning = running; }

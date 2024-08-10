@@ -209,7 +209,7 @@ void ProceduralGeneratedMap(uint32_t *pixels)
 
     uint32_t *newPixels = new uint32_t[vecWidth * vecHeight];
 
-    for (int i = 0; i < 7; ++i)
+    for (int i = 0; i < 5; ++i)
     {
         iterThroughPixels(placeLiveDeadCells, pixels, newPixels);
         std::swap(pixels, newPixels);
@@ -287,11 +287,9 @@ int main(int argc, char *argv[])
             // Events
             game.handleEvents(rendererScalex, rendererScaley);
             // frame runing
-            game.update();
+            game.update(rendererScalex, rendererScaley);
             // Render
             game.render();
-
-            std::cout << i << '\n';
         }
         // frameStart = SDL_GetTicks();
 
