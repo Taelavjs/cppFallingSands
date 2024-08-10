@@ -24,8 +24,13 @@ public:
 private:
     Sprite* playerSprite;
     std::string directionMove{"None"};
-    int16_t x{0}, y{0};
-    int16_t speed{3};
+    double xVel{0}, yVel{0};
+    int x{0}, y{0};
+    double maxVel{2.5f};
+    double acceleration{0.75f};
+    double deacceleration{1.85f};
+    int xScale{16}, yScale{16};
+    double speed{3};
     bool dLeft{false}, dRight{false}, dUp{false}, dDown{false};
     
 };

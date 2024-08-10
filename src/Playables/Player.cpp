@@ -12,11 +12,14 @@ Player::~Player(){
 void Player::playerReleaseHandler(SDL_Event& e){
         if(e.key.keysym.sym == SDLK_RIGHT){
             dRight = false;
-        } else if(e.key.keysym.sym == SDLK_LEFT){
+        }  
+        if(e.key.keysym.sym == SDLK_LEFT){
             dLeft = false;
-        } else if(e.key.keysym.sym == SDLK_UP){
+        }  
+        if(e.key.keysym.sym == SDLK_UP){
             dUp = false;
-        } else if(e.key.keysym.sym == SDLK_DOWN){
+        }  
+        if(e.key.keysym.sym == SDLK_DOWN){
             dDown = false;
         }
 }
@@ -25,25 +28,45 @@ void Player::playerReleaseHandler(SDL_Event& e){
 void Player::playerInputHandler(SDL_Event& e){
     if(e.key.keysym.sym == SDLK_RIGHT){
         dRight = true;
-    } else if(e.key.keysym.sym == SDLK_LEFT){
+    }  
+    if(e.key.keysym.sym == SDLK_LEFT){
         dLeft = true;
-    } else if(e.key.keysym.sym == SDLK_UP){
+    }  
+    if(e.key.keysym.sym == SDLK_UP){
         dUp = true;
-    } else if(e.key.keysym.sym == SDLK_DOWN){
+    }  
+    if(e.key.keysym.sym == SDLK_DOWN){
         dDown = true;
     }
 }
 
 void Player::update(){
-    x += (dRight) ? speed : 0;
-    x -= (dLeft) ? speed : 0;
-    y += (dDown) ? speed : 0;
-    y -= (dUp) ? speed : 0;
+    xVel += (dRight) ? acceleration : 0;
+    xVel -= (dLeft) ? acceleration : 0;
+    yVel += (dDown) ? acceleration : 0;
+    yVel -= (dUp) ? acceleration : 0;
+
+    x += (std::abs(xVel) > maxVel) ? (xVel > 0 ? maxVel : -maxVel) : xVel;
+    y += (std::abs(yVel) > maxVel) ? (yVel > 0 ? maxVel : -maxVel) : yVel;
 }
 
 void Player::renderPlayer(SDL_Renderer* renderer){
     SDL_Texture* playerTexture = playerSprite->runCycle();
-    SDL_Rect* dst = new SDL_Rect{x, y, 50, 50};
+    SDL_Rect* dst = new SDL_Rect{x, y, xScale, yScale};
     SDL_RenderCopy(renderer, playerTexture, NULL, dst);
     delete dst;
+    if (!(dRight || dLeft)) {
+        if (std::abs(xVel) <= acceleration) {
+            xVel = 0;
+        } else {
+            xVel -= (xVel > 0 ? deacceleration : -deacceleration);
+        }
+    }
+    if (!(dUp || dDown)) {
+        if (std::abs(yVel) <= acceleration) {
+            yVel = 0;
+        } else {
+            yVel -= (yVel > 0 ? deacceleration : -deacceleration);
+        }
+    }
 }
