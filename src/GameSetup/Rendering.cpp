@@ -63,7 +63,7 @@ void Rendering::castRays(uint32_t *pixels,SDL_Renderer* renderer, const std::vec
 }
 
 void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* player){
-    SDL_RenderClear(renderer);
+    //SDL_RenderClear(renderer);
 
     SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight);
     if (texture == nullptr)

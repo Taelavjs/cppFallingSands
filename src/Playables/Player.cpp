@@ -41,10 +41,10 @@ void Player::playerInputHandler(SDL_Event& e){
 }
 
 void Player::update(){
-    xVel += (dRight) ? acceleration : 0;
-    xVel -= (dLeft) ? acceleration : 0;
-    yVel += (dDown) ? acceleration : 0;
-    yVel -= (dUp) ? acceleration : 0;
+    xVel += (dRight) ? (xVel < -acceleration ? deacceleration + acceleration : acceleration) : 0;
+    xVel -= (dLeft) ? (xVel > acceleration ? deacceleration + acceleration : acceleration) : 0;
+    yVel += (dDown) ? (yVel < -acceleration ? deacceleration + acceleration : acceleration) : 0;
+    yVel -= (dUp) ? (yVel > acceleration ? deacceleration + acceleration : acceleration) : 0;
 
     x += (std::abs(xVel) > maxVel) ? (xVel > 0 ? maxVel : -maxVel) : xVel;
     y += (std::abs(yVel) > maxVel) ? (yVel > 0 ? maxVel : -maxVel) : yVel;

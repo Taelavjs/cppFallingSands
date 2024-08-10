@@ -189,7 +189,28 @@ void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std
     vec[row][col]->update(vec, row, col, vecWidth, vecHeight);
 }
 
-void Game::update()
+void checkCollision(std::vector<std::vector<Pixel*>> &vec, int x, int y, int playerWidth, int playerHeight, int vecWidth) {
+    SDL_Rect player = {x, y, playerWidth -2 , playerHeight - 2}; // leniency
+
+    for(int i = x - 30; i <= x + 30; ++i) {
+        for(int j = y - 30; j <= y + 30; ++j) {
+            // Check boundaries
+            if (j < 0 || j >= vecWidth || i < 0 || i >= vecWidth) continue;
+
+            if (vec[j][i] != nullptr) {
+                SDL_Rect pxl = {i, j, 1, 1}; 
+
+                if (SDL_HasIntersection(&pxl, &player)) {
+                    std::cout << "COLLIDED" << '\n';
+                    return;  // Exit after detecting a collision
+                }
+            }
+        }
+    }
+}
+
+
+void Game::update( const int& xScale, const int& yScale)
 {
     player->update();
     const int chunkSizeX = 8;
@@ -204,6 +225,16 @@ void Game::update()
         chunkUpdates(chunkSizeX * numChunks, (chunkSizeX * numChunks) + chunkSizeX);
         numChunks -= 2;
     }
+
+    std::tuple coords = player->getCoordinates();
+    std::tuple dimensions = player->getDimensions();
+
+    int playerY = std::get<1>(coords); //swapped since vec x and y are swapped
+    int playerX = std::get<0>(coords);
+    int scaleY = std::get<1>(dimensions);
+    int scaleX = std::get<0>(dimensions);
+    checkCollision(vec, playerX, playerY, scaleX, scaleY, vecHeight);
+    std::cout << playerX / xScale << " " << playerY / yScale << '\n';
 }
 
 void Game::render()
