@@ -28,6 +28,21 @@ const double liveCellChance = 0.17f;
 const int liveNeightborFreshold = 3;
 const int seaLevel = 30;
 
+struct Timer
+{
+    Uint64 previous_ticks{};
+    float elapsed_seconds{};
+
+    void tick()
+    {
+        const Uint64 current_ticks{ SDL_GetPerformanceCounter() };
+        const Uint64 delta{ current_ticks - previous_ticks };
+        previous_ticks = current_ticks;
+        static const Uint64 TICKS_PER_SECOND{ SDL_GetPerformanceFrequency() };
+        elapsed_seconds = delta / static_cast<float>(TICKS_PER_SECOND);
+    }
+};
+
 void displayPixels(SDL_Texture *texture, uint32_t *pixels, SDL_Renderer *renderer){
     SDL_UpdateTexture(texture, NULL, pixels, vecWidth * sizeof(uint32_t));
     SDL_RenderClear(renderer);
@@ -250,9 +265,11 @@ int main(int argc, char *argv[])
     game.init(&title, rendererScalex, rendererScaley);
 
     const int fps = 60;
-    const int timeBetweenFrames = 1000 / fps;
-    Uint32 frameStart{};
-    int frameTime{};
+    const float timeBetweenFrames = 1.0f / fps;
+    static Timer system_timer;
+    float accumulated_seconds{ 0.0f };
+    // Uint32 frameStart{};
+    // int frameTime{};
     int i{0};
     const bool debug = true;
     if (debug){
@@ -261,19 +278,28 @@ int main(int argc, char *argv[])
     }
     while (game.getRunning())
     {
-        frameStart = SDL_GetTicks();
-        i++;
-        // Events
-        game.handleEvents(rendererScalex, rendererScaley);
-        // frame runing
-        game.update();
-        // Render
-        game.render();
-        frameTime = SDL_GetTicks() - frameStart;
-        if (frameTime < timeBetweenFrames)
-        {
-            SDL_Delay(timeBetweenFrames - frameTime);
+        system_timer.tick();
+        accumulated_seconds += system_timer.elapsed_seconds;
+        if (std::isgreater(accumulated_seconds, timeBetweenFrames)){
+            accumulated_seconds = -timeBetweenFrames;
+
+            i++;
+            // Events
+            game.handleEvents(rendererScalex, rendererScaley);
+            // frame runing
+            game.update();
+            // Render
+            game.render();
+
+            std::cout << i << '\n';
         }
+        // frameStart = SDL_GetTicks();
+
+        // frameTime = SDL_GetTicks() - frameStart;
+        // if (frameTime < timeBetweenFrames)
+        // {
+        //     SDL_Delay(timeBetweenFrames - frameTime);
+        // }
     }
 
 

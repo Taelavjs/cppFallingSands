@@ -16,11 +16,18 @@ public:
         return playerSprite;
     }
 
+    void playerInputHandler(SDL_Event& e);
+    void playerReleaseHandler(SDL_Event& e);
+    void renderPlayer(SDL_Renderer* renderer);
+    void update();
+
 private:
     Sprite* playerSprite;
     std::string directionMove{"None"};
-
-
+    int16_t x{0}, y{0};
+    int16_t speed{3};
+    bool dLeft{false}, dRight{false}, dUp{false}, dDown{false};
+    
 };
 
 #endif /* PLAYER_HPP */
