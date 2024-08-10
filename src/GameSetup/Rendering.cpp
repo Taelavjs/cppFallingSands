@@ -111,15 +111,7 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* playe
 
     SDL_UpdateTexture(texture, NULL, pixels, screenWidth * sizeof(uint32_t));
     SDL_RenderCopy(renderer, texture, NULL, NULL);
-
-    // Retrieve the texture
-    Sprite* playerText = player->getSprite();
-    SDL_Texture* playTexture = playerText->runCycle();
-    // Create and initialize the destination rectangle
-    SDL_Rect* dst = new SDL_Rect{30, 30, 50, 50};
-
-    SDL_RenderCopy(renderer, playTexture, NULL, dst);
-
+    player->renderPlayer(renderer);
 
     delete[] pixels;
     SDL_DestroyTexture(texture);
@@ -138,8 +130,6 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* playe
 
 
     SDL_RenderPresent(renderer);
-    delete dst;
-
 }
 
 SDL_Renderer* Rendering::getRenderer(){

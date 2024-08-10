@@ -4,14 +4,11 @@ Game::Game(int vecWidthInp, int vecHeightInp)
     : vecWidth(vecWidthInp-1), vecHeight(vecHeightInp-1),
       isRunning(true), vec(vecHeightInp, std::vector<Pixel *>(vecWidthInp))
 {
-
-
     sand = new Sand();
     water = new Water();
     rock = new Rock();
     smoke = new Smoke();
     oil = new Oil();
-
     napalm = new Napalm();
 }
 
@@ -81,6 +78,7 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
     int x{}, y{};
     while (SDL_PollEvent(&e))
     {
+
         if (e.type == SDL_QUIT)
         {
             setRunning(false);
@@ -115,9 +113,9 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
                 SquarePlace(vec, x / xScale, y / yScale, napalm);
             }
 
-            if(e.key.keysym.sym == SDLK_l){
-
-            }
+            player->playerInputHandler(e);
+        } else if(e.type == SDL_KEYUP){
+            player->playerReleaseHandler(e);
         }
     }
 }
@@ -193,6 +191,7 @@ void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std
 
 void Game::update()
 {
+    player->update();
     const int chunkSizeX = 8;
     int numChunks = vecWidth / chunkSizeX;
     int const maxChunks = numChunks;
@@ -215,9 +214,6 @@ void Game::render()
 void Game::clean()
 {
     delete rendering;
-    // SDL_DestroyRenderer(renderer);
-    // SDL_DestroyWindow(window);
-    // SDL_Quit();
 };
 
 double Game::randomnumber()
