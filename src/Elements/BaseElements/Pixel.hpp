@@ -64,8 +64,8 @@ private:
     bool isProcessed{false};
     int mass{1};
     int density{0};
-    int terminalX{3};
-    int terminalY{3};
+    int terminalX{2};
+    int terminalY{2};
 
 public:
     Pixel();

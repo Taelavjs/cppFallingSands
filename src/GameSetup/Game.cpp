@@ -34,13 +34,13 @@ Game::~Game()
 
 void Game::init(const std::string *title, int scaleX, int scaleY)
 {
-    char* testPath{"Sprites/AnimationSheet_Character.png"};
+    char* playerSpritePath{"Sprites/AnimationSheet_Character.png"};
     int width{32};
     int height{32};
     int rows{6};
     int cols{6};
     rendering = new Rendering(vecWidth, vecHeight, title, scaleX, scaleY);
-    Sprite* playerSprite = new Sprite(testPath, rendering->getRenderer(), width, height, rows, cols);
+    Sprite* playerSprite = new Sprite(playerSpritePath, rendering->getRenderer(), width, height, rows, cols);
     player = new Player(playerSprite);
 
     for (int row = 0; row < vecHeight; ++row)
@@ -49,7 +49,7 @@ void Game::init(const std::string *title, int scaleX, int scaleY)
         {
             if (randomnumber() < 0.0)
             {
-                vec[row][col] = sand->clone(); // Create a Sand object and store its pointer
+                vec[row][col] = sand->clone();
             }
         }
     }
@@ -189,30 +189,48 @@ void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std
     vec[row][col]->update(vec, row, col, vecWidth, vecHeight);
 }
 
-void checkCollision(std::vector<std::vector<Pixel*>> &vec, int x, int y, int playerWidth, int playerHeight, int vecWidth) {
-    SDL_Rect player = {x, y, playerWidth -2 , playerHeight - 2}; // leniency
+void checkCollision(std::vector<std::vector<Pixel*>> &vec, int x, int y, int playerWidth, int playerHeight, int vecWidth, Player* playerObj) {
+    // SDL_Rect player = {x+4, y+4, playerWidth -8 , playerHeight - 8}; // leniency
 
-    for(int i = x - 30; i <= x + 30; ++i) {
-        for(int j = y - 30; j <= y + 30; ++j) {
-            // Check boundaries
-            if (j < 0 || j >= vecWidth || i < 0 || i >= vecWidth) continue;
+    // for(int i = x - 30; i <= x + 30; ++i) {
+    //     for(int j = y - 30; j <= y + 30; ++j) {
+    //         if (j < 0 || j >= vecWidth || i < 0 || i >= vecWidth) continue;
 
-            if (vec[j][i] != nullptr) {
-                SDL_Rect pxl = {i, j, 1, 1}; 
+    //         if (vec[j][i] != nullptr && vec[j][i] -> getIsSolid()) {
+    //             SDL_Rect pxl = {i, j, 1, 1}; 
 
-                if (SDL_HasIntersection(&pxl, &player)) {
-                    std::cout << "COLLIDED" << '\n';
-                    return;  // Exit after detecting a collision
-                }
-            }
-        }
-    }
+    //             if (SDL_HasIntersection(&pxl, &player)) {
+    //                 SDL_Rect tmp = {pxl.x, pxl.y, pxl.w, pxl.h};
+    //                 SDL_Rect tmp2 = {player.x, player.y, player.w, player.h};
+    //                 SDL_Rect result;  // No need for dynamic allocation
+
+    //                 // Calculate the intersection
+    //                 if (SDL_IntersectRect(&tmp, &tmp2, &result)) {
+    //                     playerObj->handleCollision(&result);
+
+
+    //                 }
+
+    //                     std::tuple coords = playerObj->getCoordinates();
+    //                     std::tuple dimensions = playerObj->getDimensions();
+
+    //                     int playerY = std::get<1>(coords); //swapped since vec x and y are swapped
+    //                     int playerX = std::get<0>(coords);
+    //                     int scaleY = std::get<1>(dimensions);
+    //                     int scaleX = std::get<0>(dimensions); 
+
+    //                     player = {playerX+2, playerY+2, scaleX -4 , scaleY - 4}; // leniency
+
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 
 void Game::update( const int& xScale, const int& yScale)
 {
-    player->update();
+    player->update(vec, rendering->getRenderer(), vecWidth);
     const int chunkSizeX = 8;
     int numChunks = vecWidth / chunkSizeX;
     int const maxChunks = numChunks;
@@ -233,7 +251,7 @@ void Game::update( const int& xScale, const int& yScale)
     int playerX = std::get<0>(coords);
     int scaleY = std::get<1>(dimensions);
     int scaleX = std::get<0>(dimensions);
-    checkCollision(vec, playerX, playerY, scaleX, scaleY, vecHeight);
+    checkCollision(vec, playerX, playerY, scaleX, scaleY, vecHeight, player);
     std::cout << playerX / xScale << " " << playerY / yScale << '\n';
 }
 
