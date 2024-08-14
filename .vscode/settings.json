@@ -70,6 +70,9 @@
         "iterator": "cpp",
         "memory_resource": "cpp",
         "utility": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "stack": "cpp",
+        "deque": "cpp",
+        "__availability": "cpp"
     },
 }

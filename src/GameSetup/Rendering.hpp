@@ -7,6 +7,7 @@
 #include <vector>
 #include "../Elements/BaseElements/Pixel.hpp"
 #include "../Playables/Player.hpp"
+#include <stack>
 
 class Rendering {
 public:
