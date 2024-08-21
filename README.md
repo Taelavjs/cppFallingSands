@@ -1,6 +1,6 @@
 Falling Sands Simulation Demonstration :
 
-![](https://github.com/Taelavjs/cppFallingSands/blob/master/fallingSandsDemonstration.gif)
+<img src="https://github.com/Taelavjs/cppFallingSands/blob/master/fallingSandsDemonstration.gif" width=50% height = 50%>
 
 Involves initial procedural generation of the terrain
 Elemental effects between each other
