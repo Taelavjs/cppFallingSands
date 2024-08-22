@@ -77,8 +77,8 @@ void Gas::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int
         pRow = newRow;
     }
 
-    bool canMoveLeft = (pCol - 1 >= 0 && (isSpaceFree(vec, pRow, pCol-1)) && !(vec[pRow][pCol - 1] != nullptr && vec[pRow][pCol-1] -> getIsLiquid()));
-    bool canMoveRight = (pCol + 1 < vecWidth && (isSpaceFree(vec, pRow, pCol + 1) && !(vec[pRow][pCol + 1] != nullptr && vec[pRow][pCol+1] -> getIsLiquid())));
+    bool canMoveLeft = (pCol - 1 >= 0 && (isSpaceFree(vec, pRow, pCol-1)));
+    bool canMoveRight = (pCol + 1 < vecWidth && (isSpaceFree(vec, pRow, pCol + 1)));
 
     if (canMoveLeft && canMoveRight) {
         int incr = (std::rand() % 2) * 2 - 1;
