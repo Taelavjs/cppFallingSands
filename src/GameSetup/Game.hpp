@@ -2,6 +2,7 @@
 #define GAME_HPP
 
 #include <vector>
+#include <thread>
 #include <random>
 #include <string>
 #include <iostream>
@@ -35,6 +36,9 @@ public:
     void updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std::vector<std::vector<Pixel *>> &vec);
     void chunkUpdates(int chunkStart, int chunkEnd);
     void generateTerrain(uint32_t *pixels);
+    void ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, std::vector<std::vector<Pixel*>> &vec);
+    void worker(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, std::vector<std::vector<Pixel*>> &vec, int rowChunk, int colChunk);
+
 private:
     int vecWidth;
     int vecHeight;

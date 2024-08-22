@@ -22,7 +22,7 @@ public:
 private:
     int randomDir{0};
     int yDispersion{7}; // Distance to check for dispersion
-    int xDispersion{15}; // Distance to check for dispersion
+    int xDispersion{7}; // Distance to check for dispersion
     int yVelocity{0};
 };
 #endif /* GAS_HPP */

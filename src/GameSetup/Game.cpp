@@ -227,22 +227,51 @@ void checkCollision(std::vector<std::vector<Pixel*>> &vec, int x, int y, int pla
     // }
 }
 
+void Game::worker(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, std::vector<std::vector<Pixel*>> &vec, int rowChunk, int colChunk){
+            // Calculate the boundaries of the current chunk
+    int rowStart = rowChunk * chunkSizeY;
+    int colStart = colChunk * chunkSizeX;
+    int rowEnd = std::min(rowStart + chunkSizeY, vecHeight);
+    int colEnd = std::min(colStart + chunkSizeX, vecWidth);
+
+    // Update the 8x8 chunk
+    for(int row = rowStart; row < rowEnd; ++row) {
+        for(int col = colStart; col < colEnd; ++col) {
+            updateSequence(vecWidth, vecHeight, row, col, vec);
+        }
+    }
+}
+
+void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, std::vector<std::vector<Pixel*>> &vec){
+    std::vector<std::thread> threads;
+    for(int rowChunk = startingChunkRow; rowChunk < numChunksY; rowChunk += 2) {
+        for(int colChunk = startingChunkCol; colChunk < numChunksX; colChunk += 2) {
+            threads.emplace_back([this, startingChunkRow, startingChunkCol, numChunksY, numChunksX, chunkSizeY, chunkSizeX, vecHeight, vecWidth, &vec, rowChunk, colChunk]() {
+                this->worker(startingChunkRow, startingChunkCol, numChunksY, numChunksX, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec, rowChunk, colChunk);
+            }); 
+        }
+    }
+
+    std::cout << threads.size() << " threads ammount " << '\n';
+    for (auto& t : threads) { 
+        t.join(); 
+    } 
+}
+
 
 void Game::update( const int& xScale, const int& yScale)
 {
     player->update(vec, rendering->getRenderer(), vecWidth);
-    const int chunkSizeX = 8;
-    int numChunks = vecWidth / chunkSizeX;
-    int const maxChunks = numChunks;
-    while(numChunks >= 0){
-        chunkUpdates(chunkSizeX * numChunks, (chunkSizeX * numChunks) + chunkSizeX);
-        numChunks -= 2;
-    }
-    numChunks = maxChunks - 1;
-    while(numChunks >= 0){
-        chunkUpdates(chunkSizeX * numChunks, (chunkSizeX * numChunks) + chunkSizeX);
-        numChunks -= 2;
-    }
+    const int chunkSizeX = 16;
+    const int chunkSizeY = 16;
+    int numChunksX = vecWidth / chunkSizeX;
+    int numChunksY = vecHeight / chunkSizeY;
+
+    ChunkUpdateSkipping(1, 1, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec);
+    ChunkUpdateSkipping(1, 0, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec);
+    ChunkUpdateSkipping(0, 1, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec);
+    ChunkUpdateSkipping(0, 0, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec);
+
 
     std::tuple coords = player->getCoordinates();
     std::tuple dimensions = player->getDimensions();

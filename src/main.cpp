@@ -12,8 +12,8 @@ constexpr double GLOBAL_CONST_VAR{3.5f};
 
 const uint8_t rendererScalex{3};
 const uint8_t rendererScaley{3};
-const int vecWidth{159};
-const int vecHeight{159};
+const int vecWidth{160};
+const int vecHeight{160};
 const std::string title{"awesomepawsome"};
 
 const int blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 0, 255);
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
     Game game(vecWidth + 1, vecHeight + 1);
     game.init(&title, rendererScalex, rendererScaley);
 
-    const int fps = 60;
+    const int fps = 600;
     const float timeBetweenFrames = 1.0f / fps;
     static Timer system_timer;
     float accumulated_seconds{ 0.0f };
