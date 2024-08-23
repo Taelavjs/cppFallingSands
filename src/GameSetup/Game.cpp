@@ -39,8 +39,8 @@ void Game::init(const std::string *title, int scaleX, int scaleY)
     int height{32};
     int rows{6};
     int cols{6};
-    rendering = new Rendering(vecWidth, vecHeight, title, scaleX, scaleY);
-    Sprite* playerSprite = new Sprite(playerSpritePath, rendering->getRenderer(), width, height, rows, cols);
+    Rendering::setValues(vecWidth, vecHeight, title, scaleX, scaleY);
+    Sprite* playerSprite = new Sprite(playerSpritePath, width, height, rows, cols);
     player = new Player(playerSprite);
 
     for (int row = 0; row < vecHeight; ++row)
@@ -261,7 +261,7 @@ void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int n
 
 void Game::update( const int& xScale, const int& yScale)
 {
-    player->update(vec, rendering->getRenderer(), vecWidth);
+    player->update(vec, Rendering::getRenderer(), vecWidth);
     const int chunkSizeX = 48;
     const int chunkSizeY = 48;
     int numChunksX = vecWidth / chunkSizeX;
@@ -286,12 +286,11 @@ void Game::update( const int& xScale, const int& yScale)
 
 void Game::render()
 {
-    rendering->renderGrid(vec, player);
+    Rendering::renderGrid(vec, player);
 }
 
 void Game::clean()
 {
-    delete rendering;
 };
 
 double Game::randomnumber()
@@ -301,7 +300,7 @@ double Game::randomnumber()
     return dist(rng);
 }
 
-void Game::generateTerrain(uint32_t *pixels){
+void Game::generateTerrain(std::vector<float> pixels){
     const int blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 0, 255);
     const int whiteColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 255, 255, 255);
     const int redColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 0, 0, 255);
@@ -312,14 +311,19 @@ void Game::generateTerrain(uint32_t *pixels){
 
     for(int row = 0; row < vecHeight; ++row){
         for (int col = 0; col < vecWidth; ++col){
-            const int pixColor = pixels[row * vecWidth + col];
-            if (pixColor == blueColor){
-                if(randomnumber() > 0.5f)
-                    vec[row][col] = water->clone();
-            } else if (pixColor == greenColor){
-                vec[row][col] = sand->clone();
-            } else{
+            const float pixValue = pixels[row * vecWidth + col];
+            if(pixValue < -0.4f){
                 vec[row][col] = rock->clone();
+
+            } else if(pixValue < 0.3){
+                if(randomnumber() > 0.7){
+                    vec[row][col] = water->clone();
+                    
+                }
+            } else {
+                if(randomnumber() > 0.7){
+                    vec[row][col] = sand->clone();
+                }            
             }
         }
     }

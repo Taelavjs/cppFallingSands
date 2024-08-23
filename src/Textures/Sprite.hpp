@@ -4,11 +4,13 @@
 #include "SDL2/SDL_image.h"
 #include <vector>
 #include <iostream>
+#include "../GameSetup/Rendering.hpp"
 
-class Sprite {
+
+class Sprite{
 public:
-    Sprite(char* srcPath, SDL_Renderer* renderer);
-    Sprite(char* srcPath, SDL_Renderer* renderer, int& width, int& height, int& rows, int& cols);
+    Sprite(char* srcPath);
+    Sprite(char* srcPath, int& width, int& height, int& rows, int& cols);
     ~Sprite();
 
     SDL_Texture* getTexture(){

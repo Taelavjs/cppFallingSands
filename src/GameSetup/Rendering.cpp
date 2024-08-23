@@ -1,18 +1,29 @@
 #include "Rendering.hpp"
 
-Rendering::Rendering(int vecWidth, int vecHeight, const std::string* title, int scaleX, int scaleY) 
-    :    rendererScalex(scaleX), rendererScaley(scaleY), screenHeight(vecHeight), screenWidth(vecWidth)
-{
+SDL_Window* Rendering::window = nullptr;
+SDL_Renderer* Rendering::renderer = nullptr;
+int Rendering::rendererScalex = 1;
+int Rendering::rendererScaley = 1;
+int Rendering::screenHeight = 600;  // Default values
+int Rendering::screenWidth = 800;   // Default values
+const std::string* Rendering::title = nullptr;
 
+void Rendering::setValues(int vecWidth, int vecHeight, const std::string* title, int scaleX, int scaleY){
+    Rendering::screenWidth = vecWidth;
+    Rendering::screenHeight = vecHeight;
+    Rendering::rendererScalex = scaleX;
+    Rendering::rendererScaley = scaleY;
+
+    Rendering::title = title;
     SDL_Init(SDL_INIT_VIDEO);
     std::cout << "Everything SDL Initialized Correctly" << '\n';
 
-    window = SDL_CreateWindow(title->c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, vecWidth * rendererScalex, vecHeight * rendererScaley, SDL_WINDOW_SHOWN);
-    renderer = SDL_CreateRenderer(window, -1, 0);
-    SDL_RenderSetScale(renderer, rendererScalex, rendererScaley);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDrawPoint(renderer, 5, 5);
-    SDL_RenderPresent(renderer);
+    Rendering::window = SDL_CreateWindow(Rendering::title->c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Rendering::screenWidth * Rendering::rendererScalex, Rendering::screenHeight * Rendering::rendererScaley, SDL_WINDOW_SHOWN);
+    Rendering::renderer = SDL_CreateRenderer(Rendering::window, -1, 0);
+    SDL_RenderSetScale(Rendering::renderer, Rendering::rendererScalex, Rendering::rendererScaley);
+    SDL_SetRenderDrawColor(Rendering::renderer, 255, 255, 255, 255);
+    SDL_RenderDrawPoint(Rendering::renderer, 5, 5);
+    SDL_RenderPresent(Rendering::renderer);
     SDL_PumpEvents();
 }
 
@@ -140,6 +151,3 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* playe
     SDL_RenderPresent(renderer);
 }
 
-SDL_Renderer* Rendering::getRenderer(){
-    return renderer;
-}

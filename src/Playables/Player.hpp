@@ -9,7 +9,7 @@
 #include <tuple>
 #include "../Elements/BaseElements/Pixel.hpp"
 #include <stack>
-
+class Sprite;
 class Player {
 public:
     Player(Sprite* sprite);

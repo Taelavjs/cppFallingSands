@@ -1,6 +1,7 @@
 #include "Sprite.hpp"
 
-Sprite::Sprite(char* srcPath, SDL_Renderer* renderer){
+Sprite::Sprite(char* srcPath){
+    SDL_Renderer* renderer = Rendering::getRenderer();
     surface = IMG_Load(srcPath); 
     if (!surface) {
         std::cerr << "Failed to load surface: " << IMG_GetError() << std::endl;
@@ -14,8 +15,9 @@ Sprite::Sprite(char* srcPath, SDL_Renderer* renderer){
     }
 }
 
-Sprite::Sprite(char* srcPath, SDL_Renderer* renderer, int& width, int& height, int& rows, int& cols)
+Sprite::Sprite(char* srcPath, int& width, int& height, int& rows, int& cols)
 {
+    SDL_Renderer* renderer = Rendering::getRenderer();
     textureSheet.resize(rows);
     for (int i = 0; i < rows; ++i) {
         textureSheet[i].resize(cols, nullptr);

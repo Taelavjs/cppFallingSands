@@ -2,7 +2,6 @@
 
 Player::Player(Sprite* sprite):playerSprite(sprite)
 {
-
 }
 
 Player::~Player(){
