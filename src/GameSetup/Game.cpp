@@ -262,8 +262,8 @@ void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int n
 void Game::update( const int& xScale, const int& yScale)
 {
     player->update(vec, rendering->getRenderer(), vecWidth);
-    const int chunkSizeX = 16;
-    const int chunkSizeY = 16;
+    const int chunkSizeX = 48;
+    const int chunkSizeY = 48;
     int numChunksX = vecWidth / chunkSizeX;
     int numChunksY = vecHeight / chunkSizeY;
 

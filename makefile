@@ -6,8 +6,13 @@ LIB_DIR = /usr/local/lib  # Replace with the correct library path
 
 # Compiler and flags
 CC = g++
-CXXFLAGS = -std=c++17 -Wall -g -O0 -Wextra -Wshadow -Wnon-virtual-dtor -pedantic
-INCLUDE_PATHS = -I$(INCLUDE_DIR) -I/usr/local/Cellar/sdl2/2.26.4/include/SDL2 -I/usr/local/Cellar/sdl2_image/2.8.2_1/include/SDL2
+CXXFLAGS = -std=c++17 -Wall -g -O0 -Wextra -Wshadow -Wnon-virtual-dtor -pedantic 
+INCLUDE_PATHS = -I$(INCLUDE_DIR) \
+                -I/usr/local/Cellar/sdl2/2.26.4/include/SDL2 \
+                -I/usr/local/Cellar/sdl2_image/2.8.2_1/include/SDL2 \
+                -I/usr/local/Cellar/sdl2/2.26.4/include/SDL2 \
+                -I/Users/tvjsenior/cmakeSDL2/lib/FastNoise2/include/FastNoise  # Add FastNoise include path
+
 LIBRARY_PATHS = -L$(LIB_DIR)
 LIBS = -lSDL2_image -lSDL2
 

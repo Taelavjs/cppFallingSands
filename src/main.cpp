@@ -7,13 +7,14 @@
 #include <SDL2/SDL_image.h>
 #include "./GameSetup/Game.hpp"
 #include "./Elements/BaseElements/Pixel.hpp"
+#include "FastNoise/FastNoise.h"
 #include "Textures/Sprite.hpp"
 constexpr double GLOBAL_CONST_VAR{3.5f};
 
-const uint8_t rendererScalex{3};
-const uint8_t rendererScaley{3};
-const int vecWidth{160};
-const int vecHeight{160};
+const uint8_t rendererScalex{1};
+const uint8_t rendererScaley{1};
+const int vecWidth{160 * 4};
+const int vecHeight{160 * 4};
 const std::string title{"awesomepawsome"};
 
 const int blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 0, 255);
@@ -209,11 +210,12 @@ void ProceduralGeneratedMap(uint32_t *pixels)
 
     uint32_t *newPixels = new uint32_t[vecWidth * vecHeight];
 
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < 9; ++i)
     {
         iterThroughPixels(placeLiveDeadCells, pixels, newPixels);
         std::swap(pixels, newPixels);
         displayPixels(texture, pixels, renderer);
+        SDL_Delay(1000);
     }
 
     iterThroughPixels(colorCells, pixels, newPixels);
@@ -264,7 +266,7 @@ int main(int argc, char *argv[])
     Game game(vecWidth + 1, vecHeight + 1);
     game.init(&title, rendererScalex, rendererScaley);
 
-    const int fps = 600;
+    const int fps = 60;
     const float timeBetweenFrames = 1.0f / fps;
     static Timer system_timer;
     float accumulated_seconds{ 0.0f };
