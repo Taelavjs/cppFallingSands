@@ -26,13 +26,8 @@ Sprite::Sprite(char* srcPath, int& width, int& height, int& rows, int& cols)
     surface = IMG_Load(srcPath);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
-    if (!texture) {
-        std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
-        return;
-    }    
     SDL_SetRenderTarget(renderer, nullptr);
     SDL_RenderClear(renderer);  
-
     
     for (int y = 0; y < rows; ++y) {
         for (int x = 0; x < cols; ++x) {
@@ -61,7 +56,7 @@ Sprite::Sprite(char* srcPath, int& width, int& height, int& rows, int& cols)
             SDL_Rect rect = {
                 j * (tileSize + spacing), 
                 i * (tileSize + spacing), 
-                tileSize, 
+                tileSize , 
                 tileSize
             };
             SDL_RenderCopy(renderer, textureSheet[i][j], NULL, &rect);

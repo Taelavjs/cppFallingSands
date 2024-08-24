@@ -101,24 +101,6 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* playe
         }
 
     }
-    // X => 0 IS THE RIGHT HAND SIDE ( col )
-    // Y => 0 IS THE TOP ( row )
-
-    // for (int row = 0; row < screenWidth; ++row)
-    // {
-    //     for (int col = 0; col < screenWidth; ++col)
-    //     {
-    //         if (vec[row][col] == nullptr)
-    //             continue;
-
-    //         if(vec[row][col]->getOnFire()){
-    //             castRays(pixels, renderer, vec, screenWidth, screenHeight, row, col);
-    //         }
-    //     }
-    // }
-
-
-
 
     SDL_UpdateTexture(texture, NULL, pixels, screenWidth * sizeof(uint32_t));
     SDL_RenderCopy(renderer, texture, NULL, NULL);
@@ -126,11 +108,11 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* playe
     SDL_Rect AABB = player->getPlayerRect();
     SDL_RenderDrawRect(renderer, &AABB);
     std::stack<SDL_Rect> toRender = player->getStackRender();
-    while(!toRender.empty()){
-        SDL_Rect cube = toRender.top();
-        SDL_RenderDrawRect(renderer, &cube);
-        toRender.pop();
-    }
+    // while(!toRender.empty()){
+    //     SDL_Rect cube = toRender.top();
+    //     SDL_RenderDrawRect(renderer, &cube);
+    //     toRender.pop();
+    // }
 
     delete[] pixels;
     SDL_DestroyTexture(texture);

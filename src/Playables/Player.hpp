@@ -9,6 +9,7 @@
 #include <tuple>
 #include "../Elements/BaseElements/Pixel.hpp"
 #include <stack>
+#include "../Utility/Velocity.hpp"
 class Sprite;
 class Player {
 public:
@@ -38,20 +39,17 @@ public:
 
 private:
     SDL_Rect playerAABB;
-
+    SDL_Rect groundedRect;
     std::stack<SDL_Rect> stckToRender;
     Sprite* playerSprite;
-    std::string directionMove{"None"};
-    double xVel{0}, yVel{0};
     int x{0}, y{0};
+    int validX{0}, validY{0};
     int playerXCenter{0}, playerYCenter{0};
-    double maxVel{2.5f};
-    double acceleration{0.75f};
-    double deacceleration{1.85f};
-    int xScale{8}, yScale{8};
-    double speed{3};
+    int xScale{16}, yScale{16};
     bool dLeft{false}, dRight{false}, dUp{false}, dDown{false};
-    
+    Velocity velocity;
+
+    bool isGrounded{false};
 };
 
 #endif /* PLAYER_HPP */

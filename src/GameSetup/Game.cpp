@@ -252,7 +252,6 @@ void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int n
         }
     }
 
-    std::cout << threads.size() << " threads ammount " << '\n';
     for (auto& t : threads) { 
         t.join(); 
     } 
@@ -261,7 +260,6 @@ void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int n
 
 void Game::update( const int& xScale, const int& yScale)
 {
-    player->update(vec, Rendering::getRenderer(), vecWidth);
     const int chunkSizeX = 48;
     const int chunkSizeY = 48;
     int numChunksX = vecWidth / chunkSizeX;
@@ -280,8 +278,9 @@ void Game::update( const int& xScale, const int& yScale)
     int playerX = std::get<0>(coords);
     int scaleY = std::get<1>(dimensions);
     int scaleX = std::get<0>(dimensions);
-    checkCollision(vec, playerX, playerY, scaleX, scaleY, vecHeight, player);
-    std::cout << playerX / xScale << " " << playerY / yScale << '\n';
+    //checkCollision(vec, playerX, playerY, scaleX, scaleY, vecHeight, player);
+    player->update(vec, Rendering::getRenderer(), vecWidth);
+
 }
 
 void Game::render()
@@ -319,6 +318,10 @@ void Game::generateCorridors(std::vector<float> pixels){
             if(vec[row][col] != nullptr && vec[row][col]->getIsSolid() && pixValue > 0.6){
                 vec[row][col] = nullptr;
             } 
+
+            if(row < 30){
+                vec[row][col] = nullptr;
+            }
         }
     }
 }
