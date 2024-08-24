@@ -38,6 +38,7 @@ public:
     void generateTerrain(std::vector<float> pixels);
     void ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, std::vector<std::vector<Pixel*>> &vec);
     void worker(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, std::vector<std::vector<Pixel*>> &vec, int rowChunk, int colChunk);
+    void generateCorridors(std::vector<float> pixels);
 
 private:
     int vecWidth;

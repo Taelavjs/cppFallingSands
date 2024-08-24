@@ -15,10 +15,10 @@ class Pixel;
 class Game;
 constexpr double GLOBAL_CONST_VAR{3.5f};
 
-const uint8_t rendererScalex{1};
-const uint8_t rendererScaley{1};
-const int vecWidth{48 * 18};
-const int vecHeight{48 * 18};
+const uint8_t rendererScalex{4};
+const uint8_t rendererScaley{4};
+const int vecWidth{48 * 4};
+const int vecHeight{48 * 4};
 const std::string title{"awesomepawsome"};
 
 const int blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 0, 255);
@@ -92,6 +92,9 @@ int main(int argc, char *argv[])
     if (debug){
         pixels = ProceduralTerrainGen::createNoise(vecWidth, vecHeight);
         game.generateTerrain(pixels);
+        pixels = ProceduralTerrainGen::createTerrain(vecWidth, vecHeight);
+        game.generateCorridors(pixels);
+
     }
     while (game.getRunning())
     {

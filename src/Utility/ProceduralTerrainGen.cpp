@@ -3,18 +3,17 @@
 
 std::vector<float> ProceduralTerrainGen::createNoise(int w, int h){
     FastNoiseLite noise;
-    noise.SetNoiseType(FastNoiseLite::NoiseType_Cellular);
-    noise.SetFrequency(0.1);
-    noise.SetFractalType(FastNoiseLite::FractalType_None);
+    noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
+    noise.SetFrequency(0.5f);
     noise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Hybrid);
     noise.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
     noise.SetCellularJitter(1.9);
-    noise.SetDomainWarpType(FastNoiseLite::DomainWarpType_OpenSimplex2);
-    noise.SetDomainWarpAmp(5.0f);
-    noise.SetFractalType(FastNoiseLite::FractalType_DomainWarpIndependent);
-    noise.SetFractalLacunarity(1.920);
-    noise.SetFractalOctaves(3);
-    noise.SetFractalGain(2.180f);
+    noise.SetFractalType(FastNoiseLite::FractalType_FBm);
+    noise.SetFractalLacunarity(0.36f);
+    noise.SetFractalWeightedStrength(1000.0f);
+    noise.SetFractalOctaves(4);
+    noise.SetFractalGain(6.3f);
+
 
     // Gather noise data
     std::vector<float> noiseData(w * h);
@@ -24,7 +23,38 @@ std::vector<float> ProceduralTerrainGen::createNoise(int w, int h){
     {
         for (int x = 0; x < h; x++)
         {
-            noiseData[index++] = noise.GetNoise((float)x, (float)y);
+            noiseData[index++] = noise.GetNoise((float)x, (float)y) ;
+        }
+    }
+
+    return noiseData;
+}
+
+std::vector<float> ProceduralTerrainGen::createTerrain(int w, int h){
+    FastNoiseLite noise2;
+    noise2.SetNoiseType(FastNoiseLite::NoiseType_Value);
+    noise2.SetFrequency(0.07);
+
+    noise2.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Hybrid);
+    noise2.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
+    noise2.SetCellularJitter(1.9);
+    noise2.SetDomainWarpType(FastNoiseLite::DomainWarpType_OpenSimplex2);
+    noise2.SetDomainWarpAmp(1.0f);
+    noise2.SetFractalType(FastNoiseLite::FractalType_DomainWarpIndependent);
+    noise2.SetFractalLacunarity(1.920);
+    noise2.SetFractalOctaves(3);
+    noise2.SetFractalGain(2.180f);
+
+
+    // Gather noise data
+    std::vector<float> noiseData(w * h);
+    int index = 0;
+
+    for (int y = 0; y < w; y++)
+    {
+        for (int x = 0; x < h; x++)
+        {
+            noiseData[index++] = noise2.GetNoise((float)x, (float)y);
         }
     }
 
