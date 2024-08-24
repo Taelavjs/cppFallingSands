@@ -35,7 +35,9 @@ public:
     void handleCollision(SDL_Rect* colliderRect);
     SDL_Rect getPlayerRect(){return playerAABB;}
     std::stack<SDL_Rect> getStackRender(){return stckToRender;};
-
+    void playerForcesInputs();
+    void collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> vec);
+    bool isFlipTexture();
 
 private:
     SDL_Rect playerAABB;
@@ -48,6 +50,7 @@ private:
     int xScale{16}, yScale{16};
     bool dLeft{false}, dRight{false}, dUp{false}, dDown{false};
     Velocity velocity;
+    bool isFlipped{false};
 
     bool isGrounded{false};
 };

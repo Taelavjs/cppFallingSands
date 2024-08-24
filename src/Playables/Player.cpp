@@ -39,12 +39,7 @@ void Player::playerInputHandler(SDL_Event& e){
     }
 }
 
-void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* renderer, int vecWidth)
-{
-    float prevX = x;
-    float prevY = y;
-    velocity.velocityTick();
-
+void Player::playerForcesInputs(){
     if(dLeft){
         velocity.addForce(3, 180);
     }
@@ -55,57 +50,76 @@ void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* rendere
         velocity.addForce(3, 270);
     }
     if(dUp){
-        velocity.addForce(3, 90);
+        velocity.addForce(15, 90);
     }
-    //Debugging rendering
-    while(!stckToRender.empty()){
-        stckToRender.pop();
-    }
-    // Player Collider
+}
 
+void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> vec){
+    // Player Collider
     playerXCenter = x + (xScale/2) - 1;
     playerYCenter = y + (yScale/2);
-
-
-    playerAABB = {x + 3, y, xScale - 6, yScale}; // leniency
+    playerAABB = {x + 5, y, xScale - 10, yScale}; // leniency
 
     // check for isGrounded
-    groundedRect = {playerXCenter, playerYCenter + yScale/2, 2, 2};
+    groundedRect = {playerXCenter - 2, playerYCenter + yScale/2, 4, 2};
     SDL_Rect collisionResult;
+
+    // Slopes Collider
+    SDL_Rect slopeLeft = {validX - 1, validY + yScale, 1, 1};
+    SDL_Rect slopeRight = {validX + xScale + 1, validY + yScale, 1, 1};
+
+    stckToRender.push(slopeLeft);
+    stckToRender.push(slopeRight);
 
     // flag to check for collisions with environment once
     bool wasGrounded{false};
     bool isBlockInPlayer{false};
-
-    for(int i = x + 3; i < x + 3 + xScale - 6; ++i){
-        if(isBlockInPlayer) break;
-        for(int j = y; j < y + yScale; ++j){
+    for(int l = 0; l < 8; l++){
+        for(int i = x + 3; i < x + 3 + xScale - 6; ++i){
             if(isBlockInPlayer) break;
+            for(int j = y; j < y + yScale; ++j){
+                if(isBlockInPlayer) break;
 
-            if(!(i > 0 && j > 0 && j < vecWidth && i < vecWidth)) continue;
+                if(!(i > 0 && j > 0 && j < vecWidth && i < vecWidth)) continue;
 
-            SDL_Rect cube = {i, j, 1, 1};
+                SDL_Rect cube = {i, j, 1, 1};
 
-            if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
-                
+                if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
+                    
+                    if(j < playerYCenter + (0.25f * yScale)){
+                        // Reset player center coords
+                        playerXCenter = x + (xScale/2) - 1;
+                        playerYCenter = y + (yScale/2);
 
-                // Reset player center coords
-                playerXCenter = x + (xScale/2) - 1;
-                playerYCenter = y + (yScale/2);
+                        // Reset players center coords
+                        playerAABB = {x + 5, y, xScale - 10, yScale}; // leniency
 
-                // Reset players center coords
-                playerAABB = {x + 3, y, xScale - 6, yScale}; // leniency
+                        // Reset players grounded rect
+                        groundedRect = {playerXCenter - 2, playerYCenter + yScale/2, 4, 2};
 
-                // Reset players grounded rect
-                groundedRect = {playerXCenter, playerYCenter + yScale/2, 2, 2};
+                        isBlockInPlayer = true;
+                    } else {
+                        y--;
+                                            // Reset player center coords
+                        playerXCenter = x + (xScale/2) - 1;
+                        playerYCenter = y + (yScale/2);
 
-                isBlockInPlayer = true;
-                break;
+                        // Reset players center coords
+                        playerAABB = {x + 5, y, xScale - 10, yScale}; // leniency
+
+                        // Reset players grounded rect
+                        groundedRect = {playerXCenter - 2, playerYCenter + yScale/2, 4, 2};
+                    }
+
+                }
             }
         }
     }
 
-    for(int i = playerXCenter; i < playerXCenter + 2; ++i){
+
+
+
+    for(int i = playerXCenter - 4; i < playerXCenter + 8; ++i){
         if(wasGrounded) break;
         for(int j = playerYCenter + yScale/2; j < playerYCenter + 2 + yScale/2; ++j){
             if(wasGrounded) break;
@@ -120,7 +134,6 @@ void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* rendere
             }
         }
     }
-
     if(wasGrounded){
         isGrounded = true;
     } else {
@@ -128,18 +141,11 @@ void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* rendere
     }
     velocity.setIsGrounded(isGrounded);
 
-
-    // ********************
-
-
-
-
-    // ********************
-
-    // Calculate blocks to move
+        // Calculate blocks to move
     if(isBlockInPlayer){
         x = validX;
         y = validY;
+        velocity.resetVelocity();
     } else {
         validX = x;
         validY = y;
@@ -148,25 +154,55 @@ void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* rendere
         float xBlocksMove{playerVelocity.x};
         y += yBlocksMove;
         x += xBlocksMove;
-        velocity.resetVelocity();
     }
+}
+
+void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* renderer, int vecWidth)
+{
+    float prevX = x;
+    float prevY = y;
+    velocity.velocityTick();
+    //Debugging rendering
+    while(!stckToRender.empty()){
+        stckToRender.pop();
+    }
+    playerForcesInputs();
+    collisionHandler(vecWidth, vec);
                 
-    playerAABB = {validX + 3, validY, xScale - 6, yScale}; // leniency
-    groundedRect = {playerXCenter, playerYCenter + yScale/2, 2, 2};
+    playerAABB = {x + 5, y, xScale - 10, yScale}; // leniency
+    groundedRect = {playerXCenter - 4, playerYCenter + yScale/2, 8, 2};
     playerXCenter = validX + (xScale/2) - 1;
     playerYCenter = validY + (yScale/2);
 
     stckToRender.push(groundedRect);
     stckToRender.push(playerAABB);
-
 }
 
 void Player::renderPlayer(SDL_Renderer* renderer){
     SDL_Texture* playerTexture = playerSprite->runCycle();
     SDL_Rect* dst = new SDL_Rect{validX, validY, xScale, yScale};
-    SDL_RenderCopy(renderer, playerTexture, NULL, dst);
+    SDL_RendererFlip flip;
+    if(isFlipTexture()){
+        flip = SDL_FLIP_HORIZONTAL;
+    } else {
+        flip = SDL_FLIP_NONE;
+    }
+
+    SDL_RenderCopyEx(renderer, playerTexture, NULL, dst, NULL, NULL, flip);
     delete dst;
 }
 
 void Player::handleCollision(SDL_Rect* colliderRect){
 }
+
+bool Player::isFlipTexture(){
+    Vector2D playerVelocity = velocity.getVelocity();
+    if(playerVelocity.x == 0) return isFlipped;
+    if(playerVelocity.x < 0){
+        isFlipped = true;
+    } else {
+        isFlipped = false;
+    }
+    return isFlipped;
+}
+

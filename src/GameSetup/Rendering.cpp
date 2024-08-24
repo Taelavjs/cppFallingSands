@@ -83,7 +83,7 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* playe
         return;
     }
     uint32_t *pixels = new uint32_t[screenWidth * screenHeight];
-    uint32_t blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 0, 255);
+    uint32_t blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 30, 255);
 
     std::fill(pixels, pixels + (screenWidth * screenHeight), blackColor);
 
@@ -106,8 +106,8 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* playe
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     player->renderPlayer(renderer);
     SDL_Rect AABB = player->getPlayerRect();
-    SDL_RenderDrawRect(renderer, &AABB);
-    std::stack<SDL_Rect> toRender = player->getStackRender();
+    // SDL_RenderDrawRect(renderer, &AABB);
+    // std::stack<SDL_Rect> toRender = player->getStackRender();
     // while(!toRender.empty()){
     //     SDL_Rect cube = toRender.top();
     //     SDL_RenderDrawRect(renderer, &cube);
