@@ -40,21 +40,11 @@ void Velocity::velocityTick(){
             velocity.x = 0;
         }
     }
-
-
-    std::cout << "Velocity X : " << velocity.x << '\n';
-    std::cout << "Velocity Y : " << velocity.y << '\n';
 }
 
 void Velocity::addForce(float vectorLength, float angle){
     float radianAngle = angle * (M_PI / 180.0f);
-    if(isGrounded){
-        velocity.x += std::cos(radianAngle) * vectorLength * 0.7f;
-        velocity.y += std::sin(radianAngle) * vectorLength * 0.7f;
-    } else {
-        velocity.x += std::cos(radianAngle) * vectorLength * 0.3f;
-        velocity.y += std::sin(270) * 10 * 0.7f;
-
-    }
+    velocity.x += std::cos(radianAngle) * vectorLength;
+    velocity.y += std::sin(radianAngle) * vectorLength;
 
 }

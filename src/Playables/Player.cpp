@@ -1,6 +1,6 @@
 #include "Player.hpp"
 
-Player::Player(Sprite* sprite):playerSprite(sprite), velocity()
+Player::Player(Sprite* sprite):playerSprite(sprite), velocity(), stateManager()
 {
 }
 
@@ -54,7 +54,7 @@ void Player::playerForcesInputs(){
     }
 }
 
-void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> vec){
+void Player::resetPlayerColliders(){
     // Player Collider
     playerXCenter = x + (xScale/2) - 1;
     playerYCenter = y + (yScale/2);
@@ -62,6 +62,11 @@ void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> ve
 
     // check for isGrounded
     groundedRect = {playerXCenter - 2, playerYCenter + yScale/2, 4, 2};
+}
+
+void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> vec)
+{
+    resetPlayerColliders();
     SDL_Rect collisionResult;
 
     // Slopes Collider
@@ -87,28 +92,11 @@ void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> ve
                 if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
                     
                     if(j < playerYCenter + (0.25f * yScale)){
-                        // Reset player center coords
-                        playerXCenter = x + (xScale/2) - 1;
-                        playerYCenter = y + (yScale/2);
-
-                        // Reset players center coords
-                        playerAABB = {x + 5, y, xScale - 10, yScale}; // leniency
-
-                        // Reset players grounded rect
-                        groundedRect = {playerXCenter - 2, playerYCenter + yScale/2, 4, 2};
-
+                        resetPlayerColliders();
                         isBlockInPlayer = true;
                     } else {
                         y--;
-                                            // Reset player center coords
-                        playerXCenter = x + (xScale/2) - 1;
-                        playerYCenter = y + (yScale/2);
-
-                        // Reset players center coords
-                        playerAABB = {x + 5, y, xScale - 10, yScale}; // leniency
-
-                        // Reset players grounded rect
-                        groundedRect = {playerXCenter - 2, playerYCenter + yScale/2, 4, 2};
+                        resetPlayerColliders();
                     }
 
                 }
@@ -169,13 +157,10 @@ void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* rendere
     playerForcesInputs();
     collisionHandler(vecWidth, vec);
                 
-    playerAABB = {x + 5, y, xScale - 10, yScale}; // leniency
-    groundedRect = {playerXCenter - 4, playerYCenter + yScale/2, 8, 2};
-    playerXCenter = validX + (xScale/2) - 1;
-    playerYCenter = validY + (yScale/2);
-
+    resetPlayerColliders();
     stckToRender.push(groundedRect);
     stckToRender.push(playerAABB);
+    stateManager.updatePlayerState(velocity.getVelocity(), isGrounded);
 }
 
 void Player::renderPlayer(SDL_Renderer* renderer){

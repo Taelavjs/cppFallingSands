@@ -10,6 +10,7 @@
 #include "../Elements/BaseElements/Pixel.hpp"
 #include <stack>
 #include "../Utility/Velocity.hpp"
+#include "PlayerHandlers/PlayerStateManager.hpp"
 class Sprite;
 class Player {
 public:
@@ -38,6 +39,7 @@ public:
     void playerForcesInputs();
     void collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> vec);
     bool isFlipTexture();
+    void resetPlayerColliders();
 
 private:
     SDL_Rect playerAABB;
@@ -53,6 +55,7 @@ private:
     bool isFlipped{false};
 
     bool isGrounded{false};
+    PlayerStateManager stateManager;
 };
 
 #endif /* PLAYER_HPP */
