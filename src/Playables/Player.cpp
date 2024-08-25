@@ -46,12 +46,14 @@ void Player::playerForcesInputs(){
     if(dRight){
         velocity.addForce(3, 0);
     }
-    if(dDown){
-        velocity.addForce(3, 270);
-    }
     if(dUp){
-        velocity.addForce(15, 90);
+        playerStates currentState = stateManager.getCurrentState();
+        if(currentState == playerStates::Idle || currentState == playerStates::Running){
+            velocity.addForce(10, 90);
+        }
     }
+
+
 }
 
 void Player::resetPlayerColliders(){
@@ -128,6 +130,11 @@ void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> ve
         isGrounded = false;
     }
     velocity.setIsGrounded(isGrounded);
+
+    if(!isGrounded && stateManager.getCurrentState() == playerStates::Running)
+    {
+        velocity.addForce(7, 270);
+    }
 
         // Calculate blocks to move
     if(isBlockInPlayer){
