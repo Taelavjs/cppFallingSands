@@ -26,11 +26,11 @@ public:
     void renderPlayer(SDL_Renderer* renderer);
     void update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* renderer, int vecWidth);
     std::tuple <int, int> getCoordinates(){
-        return std::make_tuple(x, y);
+        return std::make_tuple(position.x, position.y);
     }
 
     std::tuple <int, int> getDimensions(){
-        return std::make_tuple(xScale, yScale);
+        return std::make_tuple(playerScale.x, playerScale.y);
     }
 
     void handleCollision(SDL_Rect* colliderRect);
@@ -39,6 +39,7 @@ public:
     void playerForcesInputs();
     void collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> vec);
     bool isFlipTexture();
+    Velocity velocity;
     void resetPlayerColliders();
 
 private:
@@ -46,12 +47,11 @@ private:
     SDL_Rect groundedRect;
     std::stack<SDL_Rect> stckToRender;
     Sprite* playerSprite;
-    int x{0}, y{0};
-    int validX{0}, validY{0};
-    int playerXCenter{0}, playerYCenter{0};
-    int xScale{16}, yScale{16};
+    Vector2D position;
+    Vector2D validPosition;
+    Vector2D playerCenterPosition;
+    Vector2D playerScale;
     bool dLeft{false}, dRight{false}, dUp{false}, dDown{false};
-    Velocity velocity;
     bool isFlipped{false};
 
     bool isGrounded{false};
