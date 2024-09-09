@@ -27,6 +27,11 @@ public:
         velocity.y = 0;
     }
 
+    void setVelocity(int pX, int pY){
+        velocity.x = pX;
+        velocity.y = pY;
+    }
+
     void addForce(float vectorLength, float angle);
     void setIsGrounded(bool value){
         isGrounded = value;

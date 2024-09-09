@@ -63,7 +63,7 @@ void Player::resetPlayerColliders(){
     playerAABB = {(int)position.x + 5, (int)position.y, (int)playerScale.x - 10, (int)playerScale.y}; // leniency
 
     // check for isGrounded
-    groundedRect = {(int)playerCenterPosition.x - 2, (int)(playerCenterPosition.y + playerScale.y/2), 4, 2};
+    groundedRect = {(int)playerCenterPosition.x - 1, (int)(playerCenterPosition.y + playerScale.y/2), 2, 5};
 }
 
 void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> vec)
@@ -86,7 +86,7 @@ void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> ve
 
                 if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
                     
-                    if(j < playerCenterPosition.y + (0.25f * playerScale.y)){
+                    if(j < playerCenterPosition.y + (0.25f * playerScale.y)){ // If collision is not at players feet
                         resetPlayerColliders();
                         isBlockInPlayer = true;
                     } else {
@@ -132,8 +132,22 @@ void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> ve
         // Calculate blocks to move
     if(isBlockInPlayer){
         position.x = validPosition.x;
-        position.y = validPosition.y;
-        velocity.resetVelocity();
+
+        if(!wasGrounded){
+            Vector2D playerVelocity = velocity.getVelocity();
+            if(playerVelocity.y > 0){
+                position.y = validPosition.y;
+            } else {
+                validPosition.y = position.y;
+                float yBlocksMove{-playerVelocity.y};
+                position.y += yBlocksMove;
+                velocity.setVelocity(0, playerVelocity.y);
+                resetPlayerColliders();
+            }
+        } else {
+            position.y = validPosition.y;
+            velocity.setVelocity(0, 0);
+        }
     } else {
         validPosition.x = position.x;
         validPosition.y = position.y;
@@ -156,8 +170,6 @@ void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* rendere
     collisionHandler(vecWidth, vec);
                 
     resetPlayerColliders();
-    stckToRender.push(groundedRect);
-    stckToRender.push(playerAABB);
     stateManager.updatePlayerState(velocity.getVelocity(), isGrounded);
 }
 
