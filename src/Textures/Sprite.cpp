@@ -43,10 +43,19 @@ Sprite::Sprite(char* srcPath, int& width, int& height, int& rows, int& cols)
         }
     }
 
+
+
+    showSpriteSheet(rows, cols);
+}
+
+void Sprite::showSpriteSheet(int &rows, int &cols){
+    // RENDERER DEBUG SETUP PRIOR TO INITIAL SETUP IN RENDERING CLASS
+    SDL_Renderer* renderer = Rendering::getRenderer();
     SDL_SetRenderTarget(renderer, nullptr);  // Reset the rendering target after the loop
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     SDL_RenderClear(renderer);
-
+    // ***
+    
     int tileSize = 32;
     int spacing = 0;
     for(int i = 0; i < rows; ++i)
@@ -66,6 +75,7 @@ Sprite::Sprite(char* srcPath, int& width, int& height, int& rows, int& cols)
     SDL_PumpEvents();
     SDL_Delay(500);
 
+    std::cout << "TextureSheet Loaded Correctly" << '\n';
 }
 
 

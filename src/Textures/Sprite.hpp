@@ -19,7 +19,7 @@ public:
 
     SDL_Texture* blinkCycle();
     SDL_Texture* runCycle();
-
+    void showSpriteSheet(int &rows, int &cols);
 private:
     SDL_Texture* texture;
     std::vector<std::vector<SDL_Texture*>> textureSheet;
