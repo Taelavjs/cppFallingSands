@@ -12,6 +12,7 @@ public:
     int getDispersionRate(){return 5;};
     virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
     void moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor);
+    int getMovingDirection();
 private:
     int maxDispersionRate{9};
     int minDispersionRate{3};

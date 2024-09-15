@@ -49,7 +49,7 @@ void Player::playerForcesInputs(){
     if(dUp){
         playerStates currentState = stateManager.getCurrentState();
         if(currentState == playerStates::Idle || currentState == playerStates::Running){
-            velocity.addForce(10, 90);
+            velocity.addForce(3, 90);
         }
     }
 
@@ -71,18 +71,18 @@ void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> ve
     resetPlayerColliders();
     SDL_Rect collisionResult;
 
+
     // flag to check for collisions with environment once
     bool wasGrounded{false};
     bool isBlockInPlayer{false};
     for(int l = 0; l < 8; l++){
         for(int i = position.x + 3; i < position.x + 3 + playerScale.x - 6; ++i){
-            if(isBlockInPlayer) break;
             for(int j = position.y; j < position.y + playerScale.y; ++j){
+                SDL_Rect cube = {i, j, 1, 1};
                 if(isBlockInPlayer) break;
 
                 if(!(i > 0 && j > 0 && j < vecWidth && i < vecWidth)) continue;
 
-                SDL_Rect cube = {i, j, 1, 1};
 
                 if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
                     
@@ -124,10 +124,7 @@ void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> ve
     }
     velocity.setIsGrounded(isGrounded);
 
-    if(!isGrounded && stateManager.getCurrentState() == playerStates::Running)
-    {
-        velocity.addForce(7, 270);
-    }
+
 
         // Calculate blocks to move
     if(isBlockInPlayer){
@@ -157,6 +154,20 @@ void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> ve
         position.y += yBlocksMove;
         position.x += xBlocksMove;
     }
+
+    for(int i = position.x + 3; i < position.x + 3 + playerScale.x - 6; ++i){
+        for(int j = position.y; j < position.y + playerScale.y; ++j){
+            SDL_Rect cube = {i, j, 1, 1};
+
+            // if(vec[j][i] != nullptr && vec[j][i]->getIsLiquid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
+            //     if(vec[j][i]->getMovingDirection() < 0){
+            //         velocity.addForce(0.5, 180);
+            //     } else {
+            //         velocity.addForce(0.5, 180);
+            //     }
+            // }
+        }
+    }
 }
 
 void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* renderer, int vecWidth)
@@ -173,9 +184,9 @@ void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* rendere
     stateManager.updatePlayerState(velocity.getVelocity(), isGrounded);
 }
 
-void Player::renderPlayer(SDL_Renderer* renderer){
+void Player::renderPlayer(SDL_Renderer* renderer, int screenWidth){
     SDL_Texture* playerTexture = playerSprite->runCycle();
-    SDL_Rect* dst = new SDL_Rect{(int)validPosition.x, (int)validPosition.y, (int)playerScale.x, (int)playerScale.y};
+    SDL_Rect* dst = new SDL_Rect{0 + screenWidth/2, 0 + screenWidth/2, (int)playerScale.x, (int)playerScale.y};
     SDL_RendererFlip flip;
     if(isFlipTexture()){
         flip = SDL_FLIP_HORIZONTAL;

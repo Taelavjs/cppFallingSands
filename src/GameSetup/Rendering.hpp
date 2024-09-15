@@ -31,6 +31,8 @@ private:
     static int screenHeight;
     static int screenWidth;
     static const std::string* title;
+    static int offsetX;
+    static int offsetY;
 };
 
 #endif /* RENDERING_HPP */

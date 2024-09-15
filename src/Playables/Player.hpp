@@ -23,7 +23,7 @@ public:
 
     void playerInputHandler(SDL_Event& e);
     void playerReleaseHandler(SDL_Event& e);
-    void renderPlayer(SDL_Renderer* renderer);
+    void renderPlayer(SDL_Renderer* renderer, int screenWidth);
     void update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* renderer, int vecWidth);
     std::tuple <int, int> getCoordinates(){
         return std::make_tuple(position.x, position.y);

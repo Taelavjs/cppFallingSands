@@ -8,6 +8,10 @@ Liquid::Liquid() {
 }
 Liquid::~Liquid() {}
 
+int Liquid::getMovingDirection(){
+    return x_direction;
+}
+
 void Liquid::moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor)
 {
     int newCol = col + incrementor;

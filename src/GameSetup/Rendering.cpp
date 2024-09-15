@@ -6,6 +6,8 @@ int Rendering::rendererScalex = 1;
 int Rendering::rendererScaley = 1;
 int Rendering::screenHeight = 600;  // Default values
 int Rendering::screenWidth = 800;   // Default values
+int Rendering::offsetX = 0;
+int Rendering::offsetY = 0;
 const std::string* Rendering::title = nullptr;
 
 void Rendering::setValues(int vecWidth, int vecHeight, const std::string* title, int scaleX, int scaleY){
@@ -101,11 +103,15 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* playe
         }
 
     }
+    SDL_RenderClear(renderer);
+    SDL_Rect AABB = player->getPlayerRect();
+    Rendering::offsetX = AABB.x - 5;
+    Rendering::offsetY = AABB.y - 1;
+    SDL_Rect dstRect = {(Rendering::screenWidth/2)-Rendering::offsetX, (Rendering::screenWidth/2)-Rendering::offsetY, screenWidth, screenWidth};
 
     SDL_UpdateTexture(texture, NULL, pixels, screenWidth * sizeof(uint32_t));
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
-    player->renderPlayer(renderer);
-    SDL_Rect AABB = player->getPlayerRect();
+    SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+    player->renderPlayer(renderer, Rendering::screenHeight);
     // SDL_RenderDrawRect(renderer, &AABB);
     std::stack<SDL_Rect> toRender = player->getStackRender();
     while(!toRender.empty()){
