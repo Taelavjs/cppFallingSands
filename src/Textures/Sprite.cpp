@@ -18,33 +18,23 @@ Sprite::Sprite(char* srcPath){
 Sprite::Sprite(char* srcPath, int& width, int& height, int& rows, int& cols)
 {
     SDL_Renderer* renderer = Rendering::getRenderer();
-    textureSheet.resize(rows);
+    rectSheet.resize(rows);
     for (int i = 0; i < rows; ++i) {
-        textureSheet[i].resize(cols, nullptr);
+        rectSheet[i].resize(cols, {0, 0, 0, 0});
     }
 
     surface = IMG_Load(srcPath);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
     SDL_SetRenderTarget(renderer, nullptr);
-    SDL_RenderClear(renderer);  
     
     for (int y = 0; y < rows; ++y) {
         for (int x = 0; x < cols; ++x) {
 
-            textureSheet[y][x] = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
-
-            SDL_SetTextureBlendMode(textureSheet[y][x], SDL_BLENDMODE_BLEND);
             SDL_Rect srcRect = {x * width, y * height, width, height}; 
-            SDL_SetRenderTarget(renderer, textureSheet[y][x]);
-
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-            SDL_RenderCopy(renderer, texture, &srcRect, nullptr);
+            rectSheet[y][x] = srcRect;
+            SDL_RenderCopy(renderer, texture, &rectSheet[y][x], nullptr);
         }
     }
-
-
-
     showSpriteSheet(rows, cols);
 }
 
@@ -68,43 +58,37 @@ void Sprite::showSpriteSheet(int &rows, int &cols){
                 tileSize , 
                 tileSize
             };
-            SDL_RenderCopy(renderer, textureSheet[i][j], NULL, &rect);
+            SDL_RenderCopy(renderer, texture, &rectSheet[i][j], &rect);
         }
     }
     SDL_RenderPresent(renderer);
     SDL_PumpEvents();
-    SDL_Delay(500);
+    SDL_Delay(2500);
 
     std::cout << "TextureSheet Loaded Correctly" << '\n';
 }
 
-
 Sprite::~Sprite(){
     SDL_DestroyTexture(texture);
-
-    for (size_t i = 0; i < textureSheet.size(); ++i) {
-        for (size_t j = 0; j < textureSheet[i].size(); ++j) {
-            SDL_DestroyTexture(textureSheet[i][j]);  
-        }
-        textureSheet[i].clear();  
-    }
-
-    textureSheet.clear(); 
+    SDL_FreeSurface(surface);
 }
-SDL_Texture* Sprite::blinkCycle(){
+
+// This is flawed but works fine - sprite animation is based on fps not time currently
+SDL_Rect* Sprite::blinkCycle(){
     if(rowTwoCounter >= 2) {
         rowTwoCounter = 0;
     }
-
     rowTwoCounter++;
-    return textureSheet[1][rowTwoCounter-1];
-
+    return &rectSheet[1][rowTwoCounter-1];
 }
 
-SDL_Texture* Sprite::runCycle(){
+SDL_Rect* Sprite::runCycle(){
     if(rowFourCounter >=5) {
         rowFourCounter = 0;
     }
-    return textureSheet[3][rowFourCounter++];
+    return &rectSheet[3][rowFourCounter++];
+}
 
+SDL_Texture* Sprite::getTexture(){
+    return texture;
 }

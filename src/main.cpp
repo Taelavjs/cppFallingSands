@@ -29,10 +29,6 @@ const int blueColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0,
 const int yellowColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 201, 217, 98, 255);
 const int vertColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 50, 168, 127, 255);
 
-const double liveCellChance = 0.17f;
-const int liveNeightborFreshold = 3;
-const int seaLevel = 30;
-
 struct Timer
 {
     Uint64 previous_ticks{};
@@ -47,31 +43,6 @@ struct Timer
         elapsed_seconds = delta / static_cast<float>(TICKS_PER_SECOND);
     }
 };
-
-
-
-    // TESTING TEXTURES
-void textureTesting(){
-        SDL_Window* window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 500, 500, SDL_WINDOW_SHOWN );
-        SDL_Renderer* renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED );
-        char* testPath{"Sprites/AnimationSheet_Character.png"};
-        int width{32};
-        int height{32};
-        int rows{6};
-        int cols{6};
-        Sprite* testSheet = new Sprite(testPath, width, height, rows, cols);
- 
-        for(int i = 0; i < 10; ++i){
-            SDL_RenderCopy(renderer,testSheet->runCycle(), NULL, NULL);
-            SDL_RenderPresent(renderer);
-            SDL_PumpEvents();
-            SDL_Delay(500); 
-        }
-        delete testSheet;
-
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(window);
-    }
 
 int main(int argc, char *argv[])
 {

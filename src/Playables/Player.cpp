@@ -185,7 +185,8 @@ void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* rendere
 }
 
 void Player::renderPlayer(SDL_Renderer* renderer, int screenWidth){
-    SDL_Texture* playerTexture = playerSprite->runCycle();
+    SDL_Texture* texture = playerSprite -> getTexture();
+    SDL_Rect* textureRect = playerSprite->runCycle();
     SDL_Rect* dst = new SDL_Rect{0 + screenWidth/2, 0 + screenWidth/2, (int)playerScale.x, (int)playerScale.y};
     SDL_RendererFlip flip;
     if(isFlipTexture()){
@@ -194,7 +195,7 @@ void Player::renderPlayer(SDL_Renderer* renderer, int screenWidth){
         flip = SDL_FLIP_NONE;
     }
 
-    SDL_RenderCopyEx(renderer, playerTexture, NULL, dst, NULL, NULL, flip);
+    SDL_RenderCopyEx(renderer, texture, textureRect, dst, NULL, NULL, flip);
     delete dst;
 }
 
