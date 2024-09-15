@@ -37,8 +37,8 @@ void Game::init(const std::string *title, int scaleX, int scaleY)
     char* playerSpritePath{"Sprites/AnimationSheet_Character.png"};
     int width{32};
     int height{32};
-    int rows{6};
-    int cols{6};
+    int rows{9};
+    int cols{8};
     Rendering::setValues(vecWidth, vecHeight, title, scaleX, scaleY);
     Sprite* playerSprite = new Sprite(playerSpritePath, width, height, rows, cols);
     player = new Player(playerSprite);

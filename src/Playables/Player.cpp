@@ -4,10 +4,10 @@ Player::Player(Sprite* sprite):playerSprite(sprite), velocity(), stateManager(),
 {
     SDL_Texture* texture = playerSprite -> getTexture();
     
-    animations[playerStates::Idle] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[0], texture, 2, 5);
-    animations[playerStates::Running] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[1], texture, 2, 5);
-    animations[playerStates::Jumping] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[2], texture, 4, 30);
-    animations[playerStates::Falling] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[3], texture, 6, 30);
+    animations[playerStates::Idle] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[1], texture, 2, 2);
+    animations[playerStates::Running] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[3], texture, 4, 30);
+    animations[playerStates::Jumping] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[5], texture, 5, 15);
+    animations[playerStates::Falling] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[7], texture, 4, 10);
 }
 
 Player::~Player(){
