@@ -62,7 +62,7 @@ void Sprite::showSpriteSheet(int &rows, int &cols){
     }
     SDL_RenderPresent(renderer);
     SDL_PumpEvents();
-    SDL_Delay(2500);
+    SDL_Delay(200);
 
     std::cout << "TextureSheet Loaded Correctly" << '\n';
 }

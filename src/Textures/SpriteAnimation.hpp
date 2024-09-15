@@ -9,7 +9,7 @@ class SpriteAnimation{
 public:
     SpriteAnimation() = delete;
 
-    static Animation createAnimation(std::string title, std::vector<SDL_Rect> rects, SDL_Texture *texture, int noFrames, int fps);
+    static Animation createAnimation(std::string title, std::vector<SDL_Rect> rects, SDL_Texture *texture, int noFrames, int fps, bool isLoop);
     
 };
 

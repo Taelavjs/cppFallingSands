@@ -59,6 +59,7 @@ private:
     std::map<playerStates, Animation> animations;
     bool isGrounded{false};
     PlayerStateManager stateManager;
+    playerStates prev;
 };
 
 #endif /* PLAYER_HPP */

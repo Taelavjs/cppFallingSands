@@ -3,11 +3,12 @@
 Player::Player(Sprite* sprite):playerSprite(sprite), velocity(), stateManager(), position(0 ,0), validPosition(0,0),playerScale(16 , 16), playerCenterPosition(0 ,0)
 {
     SDL_Texture* texture = playerSprite -> getTexture();
+    prev = playerStates::Falling;
     
-    animations[playerStates::Idle] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[1], texture, 2, 2);
-    animations[playerStates::Running] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[3], texture, 4, 30);
-    animations[playerStates::Jumping] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[5], texture, 5, 15);
-    animations[playerStates::Falling] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[7], texture, 4, 10);
+    animations[playerStates::Idle] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[1], texture, 2, 2, true);
+    animations[playerStates::Running] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[3], texture, 4, 12, true);
+    animations[playerStates::Jumping] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[5], texture, 7, 10, false);
+    animations[playerStates::Falling] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[7], texture, 7, 2, false);
 }
 
 Player::~Player(){
@@ -191,6 +192,10 @@ void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* rendere
 }
 
 void Player::renderPlayer(SDL_Renderer* renderer, int screenWidth){
+    if(prev != stateManager.getCurrentState()){
+        animations[prev].resetCounter();
+        prev = stateManager.getCurrentState();
+    }
     SDL_Texture* texture = playerSprite -> getTexture();
     SDL_Rect* rect = animations[stateManager.getCurrentState()].play();
     // SDL_Rect* textureRect = playerSprite->runCycle();

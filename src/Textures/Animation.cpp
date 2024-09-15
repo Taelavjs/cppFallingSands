@@ -1,7 +1,7 @@
 #include "Animation.hpp"
 
-Animation::Animation(std::string iTitle, std::vector<SDL_Rect> iFrameReel, SDL_Texture* iTexture, int fps)
-    :frameRects(iFrameReel), title(iTitle), texture(iTexture), animationRate(fps)
+Animation::Animation(std::string iTitle, std::vector<SDL_Rect> iFrameReel, SDL_Texture* iTexture, int fps, bool isLoop)
+    :frameRects(iFrameReel), title(iTitle), texture(iTexture), animationRate(fps), loop(isLoop)
 {
     totalFrames = frameRects.size();
 }
@@ -30,11 +30,16 @@ void Animation::updateFrame() {
 
     if (deltaTime >= frameDuration) {
         if (currentFrame >= totalFrames - 1) {
-            currentFrame = 0;
+            if(loop)
+                currentFrame = 0;
         } else {
             currentFrame++;
         }
         deltaTime -= frameDuration;
     }
+}
+
+void Animation::resetCounter(){
+    currentFrame = 0;
 }
 
