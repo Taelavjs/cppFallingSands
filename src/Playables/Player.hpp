@@ -5,12 +5,15 @@
 #include "SDL2/SDL_image.h"
 #include <vector>
 #include <iostream>
+#include <map>
 #include <string>
 #include <tuple>
 #include "../Elements/BaseElements/Pixel.hpp"
 #include <stack>
 #include "../Utility/Velocity.hpp"
 #include "PlayerHandlers/PlayerStateManager.hpp"
+#include "../Textures/SpriteAnimation.hpp"
+#include "../Textures/Animation.hpp"
 class Sprite;
 class Player {
 public:
@@ -53,7 +56,7 @@ private:
     Vector2D playerScale;
     bool dLeft{false}, dRight{false}, dUp{false}, dDown{false};
     bool isFlipped{false};
-
+    std::map<playerStates, Animation> animations;
     bool isGrounded{false};
     PlayerStateManager stateManager;
 };

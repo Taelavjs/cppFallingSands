@@ -9,7 +9,6 @@ Sprite::Sprite(char* srcPath){
     }
 
     texture = SDL_CreateTextureFromSurface(renderer, surface); 
-    SDL_FreeSurface(surface);  
     if (!texture) {
         std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
     }
@@ -74,21 +73,26 @@ Sprite::~Sprite(){
 }
 
 // This is flawed but works fine - sprite animation is based on fps not time currently
-SDL_Rect* Sprite::blinkCycle(){
-    if(rowTwoCounter >= 2) {
-        rowTwoCounter = 0;
-    }
-    rowTwoCounter++;
-    return &rectSheet[1][rowTwoCounter-1];
-}
+// This is not universally reusable
+// SDL_Rect* Sprite::blinkCycle(){
+//     if(rowTwoCounter >= 2) {
+//         rowTwoCounter = 0;
+//     }
+//     rowTwoCounter++;
+//     return &rectSheet[1][rowTwoCounter-1];
+// }
 
-SDL_Rect* Sprite::runCycle(){
-    if(rowFourCounter >=5) {
-        rowFourCounter = 0;
-    }
-    return &rectSheet[3][rowFourCounter++];
-}
+// SDL_Rect* Sprite::runCycle(){
+//     if(rowFourCounter >=5) {
+//         rowFourCounter = 0;
+//     }
+//     return &rectSheet[3][rowFourCounter++];
+// }
 
 SDL_Texture* Sprite::getTexture(){
     return texture;
+}
+
+std::vector<std::vector<SDL_Rect>> Sprite::getRects(){
+    return rectSheet;
 }

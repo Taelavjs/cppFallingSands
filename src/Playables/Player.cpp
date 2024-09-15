@@ -2,6 +2,12 @@
 
 Player::Player(Sprite* sprite):playerSprite(sprite), velocity(), stateManager(), position(0 ,0), validPosition(0,0),playerScale(16 , 16), playerCenterPosition(0 ,0)
 {
+    SDL_Texture* texture = playerSprite -> getTexture();
+    
+    animations[playerStates::Idle] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[0], texture, 2, 5);
+    animations[playerStates::Running] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[1], texture, 2, 5);
+    animations[playerStates::Jumping] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[2], texture, 4, 30);
+    animations[playerStates::Falling] = SpriteAnimation::createAnimation("myFirstAnimation", playerSprite -> getRects()[3], texture, 6, 30);
 }
 
 Player::~Player(){
@@ -186,7 +192,10 @@ void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* rendere
 
 void Player::renderPlayer(SDL_Renderer* renderer, int screenWidth){
     SDL_Texture* texture = playerSprite -> getTexture();
-    SDL_Rect* textureRect = playerSprite->runCycle();
+    SDL_Rect* rect = animations[stateManager.getCurrentState()].play();
+    // SDL_Rect* textureRect = playerSprite->runCycle();
+
+
     SDL_Rect* dst = new SDL_Rect{0 + screenWidth/2, 0 + screenWidth/2, (int)playerScale.x, (int)playerScale.y};
     SDL_RendererFlip flip;
     if(isFlipTexture()){
@@ -195,7 +204,7 @@ void Player::renderPlayer(SDL_Renderer* renderer, int screenWidth){
         flip = SDL_FLIP_NONE;
     }
 
-    SDL_RenderCopyEx(renderer, texture, textureRect, dst, NULL, NULL, flip);
+    SDL_RenderCopyEx(renderer, texture, rect, dst, NULL, NULL, flip);
     delete dst;
 }
 

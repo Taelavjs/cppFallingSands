@@ -13,14 +13,18 @@ public:
     Sprite(char* srcPath, int& width, int& height, int& rows, int& cols);
     ~Sprite();
 
-    SDL_Rect* blinkCycle();
-    SDL_Rect* runCycle();
-    void showSpriteSheet(int &rows, int &cols);
+    // GETTERS/SETTERS
     SDL_Texture* getTexture();
+    std::vector<std::vector<SDL_Rect>> getRects();
+
+    // DEBUG
+    void showSpriteSheet(int &rows, int &cols);
 private:
     SDL_Texture* texture;
     std::vector<std::vector<SDL_Rect>> rectSheet;
     SDL_Surface* surface;
+
+    // ???
     int rowOneCounter{0};
     int rowTwoCounter{1};
 
