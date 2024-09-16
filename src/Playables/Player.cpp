@@ -128,26 +128,34 @@ void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> ve
         } else {
             isGrounded = false;
         }
-        velocity.setIsGrounded(isGrounded);
         Vector2D playerVelocity = velocity.getVelocity();
         float yBlocksMove{-playerVelocity.y};
         float xBlocksMove{playerVelocity.x};
         position.y += yBlocksMove;
-        position.x += xBlocksMove;
+        resetPlayerColliders();
+        checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
         if(isBlockInPlayer){
-            position = validPosition;
-            velocity.resetVelocity();
+            position.y = validPosition.y;
+            velocity.setVelocity(velocity.getVelocity().x, 0);
         }
 
         resetPlayerColliders();
-    } else {
-        velocity.resetVelocity();
+        position.x += xBlocksMove;
+        resetPlayerColliders();
+        checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        if(isBlockInPlayer){
+            position.x = validPosition.x;
+            velocity.setVelocity(0, velocity.getVelocity().y);
+        }
+
+        resetPlayerColliders();
+
+
     }
 
     // Move player horizontal/vertical if x/y is larger
     int tries = 0;
-    while(isBlockInPlayer && tries < 10){
-
+    if(isBlockInPlayer && tries < 10){
         double dispX = 0.0f;
         double dispY = 0.0f;
         for (auto i = collisions.begin(); i != collisions.end(); ++i)
@@ -159,20 +167,45 @@ void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> ve
         dispX = (dispX * 1) / collisions.size();
         std::cout << "Y DISP  : " << dispY << '\n';
         std::cout << "X DISP  : " << dispX << '\n';
-        if(dispX > dispY){
-            position.x += dispX;
-            position.y += dispY * 0.5;
+        position.y -=  2.5;
+        position.x += velocity.getVelocity().x;
+        resetPlayerColliders();
 
-            resetPlayerColliders();
-            checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
-        } else {
-            position.y += dispY;
-            position.x += dispX * 0.5;
-            resetPlayerColliders();
-            checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        if(!isBlockInPlayer) return;
+        
+        resetPlayerColliders();
+        checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        if(isBlockInPlayer){
+            position.y = validPosition.y;
+            velocity.setVelocity(velocity.getVelocity().x, 0);
         }
 
-        tries++;
+        resetPlayerColliders();
+        resetPlayerColliders();
+        checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        if(isBlockInPlayer){
+            position.x = validPosition.x;
+            velocity.setVelocity(0, velocity.getVelocity().y);
+        }
+
+        resetPlayerColliders();
+
+
+        // if(dispX > dispY){
+        //     position.x += dispX;
+        //     position.y += dispY * 0.5;
+
+        //     resetPlayerColliders();
+        //     checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        // } else {
+        //     position.y += dispY;
+        //     position.x += dispX * 0.5;
+        //     resetPlayerColliders();
+        //     checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        // }
+
+        // tries++;
     }
 
     if(tries >= 10){
