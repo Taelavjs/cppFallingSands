@@ -15,33 +15,33 @@ Player::~Player(){
     delete playerSprite;
 }
 
-void Player::playerReleaseHandler(SDL_Event& e){
-        if(e.key.keysym.sym == SDLK_RIGHT){
+void Player::playerReleaseHandler(SDL_Scancode e){
+        if(e == SDL_SCANCODE_RIGHT){
             dRight = false;
         }  
-        if(e.key.keysym.sym == SDLK_LEFT){
+        if(e == SDL_SCANCODE_LEFT){
             dLeft = false;
         }  
-        if(e.key.keysym.sym == SDLK_UP){
+        if(e == SDL_SCANCODE_UP){
             dUp = false;
         }  
-        if(e.key.keysym.sym == SDLK_DOWN){
+        if(e == SDL_SCANCODE_DOWN){
             dDown = false;
         }
 }
 
 
-void Player::playerInputHandler(SDL_Event& e){
-    if(e.key.keysym.sym == SDLK_RIGHT){
+void Player::playerInputHandler(SDL_Scancode e){
+    if(e == SDL_SCANCODE_RIGHT){
         dRight = true;
     }  
-    if(e.key.keysym.sym == SDLK_LEFT){
+    if(e == SDL_SCANCODE_LEFT){
         dLeft = true;
     }  
-    if(e.key.keysym.sym == SDLK_UP){
+    if(e == SDL_SCANCODE_UP){
         dUp = true;
     }  
-    if(e.key.keysym.sym == SDLK_DOWN){
+    if(e == SDL_SCANCODE_DOWN){
         dDown = true;
     }
 }
@@ -70,111 +70,117 @@ void Player::resetPlayerColliders(){
     playerAABB = {(int)position.x + 5, (int)position.y, (int)playerScale.x - 10, (int)playerScale.y}; // leniency
 
     // check for isGrounded
-    groundedRect = {(int)playerCenterPosition.x - 1, (int)(playerCenterPosition.y + playerScale.y/2), 2, 5};
+    groundedRect = {(int)playerCenterPosition.x - 1, (int)(playerCenterPosition.y + playerScale.y/2), 5, 5};
+}
+
+void Player::checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &collisions, int vecWidth, std::vector<std::vector<Pixel *>> vec){
+    SDL_Rect collisionResult;
+    isBlockInPlayer = false;
+    collisions.clear();
+    for(int l = 0; l < 8; l++){
+        for(int i = position.x + 3; i < position.x + 3 + playerScale.x - 6; ++i){
+            for(int j = position.y; j < position.y + playerScale.y; ++j){
+                SDL_Rect cube = {i, j, 1, 1};
+                if(!(i > 0 && j > 0 && j < vecWidth && i < vecWidth)) continue;
+                if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
+                    collisions.push_back(cube);
+                    isBlockInPlayer = true;
+                }
+            }
+        }
+    }
 }
 
 void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> vec)
 {
     resetPlayerColliders();
-    SDL_Rect collisionResult;
-
+    validPosition = position;
 
     // flag to check for collisions with environment once
     bool wasGrounded{false};
     bool isBlockInPlayer{false};
-    for(int l = 0; l < 8; l++){
-        for(int i = position.x + 3; i < position.x + 3 + playerScale.x - 6; ++i){
-            for(int j = position.y; j < position.y + playerScale.y; ++j){
-                SDL_Rect cube = {i, j, 1, 1};
-                if(isBlockInPlayer) break;
+    std::vector<SDL_Rect> collisions;
+    checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+
+    
+    // Calculate average displacement from players center
+
+
+    if(!isBlockInPlayer){
+        SDL_Rect col;
+        for(int i = playerCenterPosition.x - 4; i < playerCenterPosition.x + 8; ++i){
+            if(wasGrounded) break;
+            for(int j = playerCenterPosition.y + playerScale.y/2; j < playerCenterPosition.y + 2 + playerScale.y/2; ++j){
+                if(wasGrounded) break;
 
                 if(!(i > 0 && j > 0 && j < vecWidth && i < vecWidth)) continue;
+                SDL_Rect cube = {i, j, 1, 1};
+                stckToRender.push(cube);
 
-
-                if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
-                    
-                    if(j < playerCenterPosition.y + (0.25f * playerScale.y)){ // If collision is not at players feet
-                        resetPlayerColliders();
-                        isBlockInPlayer = true;
-                    } else {
-                        position.y--;
-                        resetPlayerColliders();
-                    }
-
+                if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &groundedRect, &col)){
+                    wasGrounded = true;
+                    break;
                 }
             }
         }
-    }
-
-
-
-
-    for(int i = playerCenterPosition.x - 4; i < playerCenterPosition.x + 8; ++i){
-        if(wasGrounded) break;
-        for(int j = playerCenterPosition.y + playerScale.y/2; j < playerCenterPosition.y + 2 + playerScale.y/2; ++j){
-            if(wasGrounded) break;
-
-            if(!(i > 0 && j > 0 && j < vecWidth && i < vecWidth)) continue;
-            SDL_Rect cube = {i, j, 1, 1};
-            stckToRender.push(cube);
-
-            if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &groundedRect, &collisionResult)){
-                wasGrounded = true;
-                break;
-            }
-        }
-    }
-    if(wasGrounded){
-        isGrounded = true;
-    } else {
-        isGrounded = false;
-    }
-    velocity.setIsGrounded(isGrounded);
-
-
-
-        // Calculate blocks to move
-    if(isBlockInPlayer){
-        position.x = validPosition.x;
-
-        if(!wasGrounded){
-            Vector2D playerVelocity = velocity.getVelocity();
-            if(playerVelocity.y > 0){
-                position.y = validPosition.y;
-            } else {
-                validPosition.y = position.y;
-                float yBlocksMove{-playerVelocity.y};
-                position.y += yBlocksMove;
-                velocity.setVelocity(0, playerVelocity.y);
-                resetPlayerColliders();
-            }
+        if(wasGrounded){
+            isGrounded = true;
         } else {
-            position.y = validPosition.y;
-            velocity.setVelocity(0, 0);
+            isGrounded = false;
         }
-    } else {
-        validPosition.x = position.x;
-        validPosition.y = position.y;
+        velocity.setIsGrounded(isGrounded);
         Vector2D playerVelocity = velocity.getVelocity();
         float yBlocksMove{-playerVelocity.y};
         float xBlocksMove{playerVelocity.x};
         position.y += yBlocksMove;
         position.x += xBlocksMove;
-    }
-
-    for(int i = position.x + 3; i < position.x + 3 + playerScale.x - 6; ++i){
-        for(int j = position.y; j < position.y + playerScale.y; ++j){
-            SDL_Rect cube = {i, j, 1, 1};
-
-            // if(vec[j][i] != nullptr && vec[j][i]->getIsLiquid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
-            //     if(vec[j][i]->getMovingDirection() < 0){
-            //         velocity.addForce(0.5, 180);
-            //     } else {
-            //         velocity.addForce(0.5, 180);
-            //     }
-            // }
+        if(isBlockInPlayer){
+            position = validPosition;
+            velocity.resetVelocity();
         }
+
+        resetPlayerColliders();
+    } else {
+        velocity.resetVelocity();
     }
+
+    // Move player horizontal/vertical if x/y is larger
+    int tries = 0;
+    while(isBlockInPlayer && tries < 10){
+
+        double dispX = 0.0f;
+        double dispY = 0.0f;
+        for (auto i = collisions.begin(); i != collisions.end(); ++i)
+        {  
+            dispY += playerCenterPosition.y - i->y;
+            dispX += playerCenterPosition.x - i->x;
+        }
+        dispY = (dispY * 1) / collisions.size();
+        dispX = (dispX * 1) / collisions.size();
+        std::cout << "Y DISP  : " << dispY << '\n';
+        std::cout << "X DISP  : " << dispX << '\n';
+        if(dispX > dispY){
+            position.x += dispX;
+            position.y += dispY * 0.5;
+
+            resetPlayerColliders();
+            checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        } else {
+            position.y += dispY;
+            position.x += dispX * 0.5;
+            resetPlayerColliders();
+            checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        }
+
+        tries++;
+    }
+
+    if(tries >= 10){
+        position = validPosition;
+    }
+
+
+
 }
 
 void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* renderer, int vecWidth)

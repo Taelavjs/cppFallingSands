@@ -23,12 +23,6 @@ private:
     SDL_Texture* texture;
     std::vector<std::vector<SDL_Rect>> rectSheet;
     SDL_Surface* surface;
-
-    // ???
-    int rowOneCounter{0};
-    int rowTwoCounter{1};
-
-    int rowFourCounter{0};
 };
 
 #endif /* SPRITE_HPP */

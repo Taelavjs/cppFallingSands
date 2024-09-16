@@ -48,7 +48,8 @@ private:
     bool isRunning;
 
     Player* player;
-
+    Uint8* prevKeys = nullptr;
+    int numKeys = 0;
     std::vector<std::vector<Pixel *>> vec;
     Sand *sand;
     Water *water;

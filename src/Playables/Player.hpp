@@ -24,8 +24,8 @@ public:
         return playerSprite;
     }
 
-    void playerInputHandler(SDL_Event& e);
-    void playerReleaseHandler(SDL_Event& e);
+    void playerInputHandler(SDL_Scancode e);
+    void playerReleaseHandler(SDL_Scancode e);
     void renderPlayer(SDL_Renderer* renderer, int screenWidth);
     void update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* renderer, int vecWidth);
     std::tuple <int, int> getCoordinates(){
@@ -44,6 +44,7 @@ public:
     bool isFlipTexture();
     Velocity velocity;
     void resetPlayerColliders();
+    void checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &collisions, int vecWidth, std::vector<std::vector<Pixel *>> vec);
 
 private:
     SDL_Rect playerAABB;
