@@ -25,6 +25,7 @@ public:
     std::vector<std::vector<Pixel *>>& getLocalVec();
     Vector2D getGlobalCoordinates(Vector2D position);
     std::map<Vector2D, std::vector<std::vector<Pixel *>>>& getVecStore();
+    Vector2D getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY);
 
 private:
     std::map<Vector2D, std::vector<std::vector<Pixel *>>> worldVecStore;

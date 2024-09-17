@@ -138,3 +138,7 @@ Vector2D WorldGeneration::getGlobalCoordinates(Vector2D position){
     std::cout << "Global Coordinates : " << result.x << " " << result.y << '\n';
     return result;
 }
+
+Vector2D WorldGeneration::getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY) {
+    return Vector2D(chunkX * width + localX, chunkY * width + localY);
+}
