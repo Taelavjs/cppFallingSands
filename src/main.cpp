@@ -56,17 +56,8 @@ int main(int argc, char *argv[])
     const float timeBetweenFrames = 1.0f / fps;
     static Timer system_timer;
     float accumulated_seconds{ 0.0f };
-    // Uint32 frameStart{};
-    // int frameTime{};
     int i{0};
-    const bool debug = true;
-    if (debug){
-        pixels = ProceduralTerrainGen::createNoise(vecWidth, vecHeight);
-        game.generateTerrain(pixels);
-        pixels = ProceduralTerrainGen::createTerrain(vecWidth, vecHeight);
-        game.generateCorridors(pixels);
 
-    }
     while (game.getRunning())
     {
         system_timer.tick();

@@ -38,6 +38,8 @@ Game::~Game()
 
 void Game::init(const std::string *title, int scaleX, int scaleY)
 {
+    WorldGeneration::generateBlock(vecWidth);
+    vec = WorldGeneration::getLocalVec();
     char *playerSpritePath{"Sprites/AnimationSheet_Character.png"};
     int width{32};
     int height{32};
@@ -320,7 +322,7 @@ double Game::randomnumber()
     return dist(rng);
 }
 
-void Game::generateTerrain(std::vector<float> pixels)
+void Game::pixelsToBlocks(std::vector<float> pixels)
 {
     for (int row = 0; row < vecHeight; ++row)
     {
