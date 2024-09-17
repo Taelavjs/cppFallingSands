@@ -47,15 +47,13 @@ void WorldGeneration::generateBlock() {
 
     for (auto& mapEntry : worldVecStore) {
         std::vector<std::vector<Pixel *>>& vec2D = mapEntry.second;
-        std::vector<float> pixels(width * width * 4);
+        std::vector<float> pixels(width * width);
         pixels = ProceduralTerrainGen::createNoise(width, width);
         pixelsToBlocks(pixels, mapEntry.first, vec2D);
         pixels = ProceduralTerrainGen::createTerrain(width, width);
-        std::cout << "Pixels Length : " << pixels.size()/(width * width) << '\n';
+        std::cout << "Pixels Length : " << pixels.size()/(width) << '\n';
         generateCorridors(pixels, mapEntry.first, vec2D);
     }
-
-
 }
 
 
@@ -68,23 +66,37 @@ void WorldGeneration::cleanUp(){
     delete napalm;
 }
 
+void printVector(const std::vector<float>& vec) {
+    std::cout << "Vector elements:\n";
+    std::cout << std::fixed << std::setprecision(2);
+    for (const auto& element : vec) {
+        std::cout << element << " ";
+    }
+    std::cout << std::endl;
+}
+
 void WorldGeneration::pixelsToBlocks(std::vector<float> noise, Vector2D worldQuad, std::vector<std::vector<Pixel *>> &vec)
 {
     int chunkStartX = worldQuad.x * width;
     int chunkStartY = worldQuad.y * width;
+    std::cout << worldQuad.x << worldQuad.y << '\n';
+    int total = 0;
+    std::setprecision(2);
     for (int row = 0; row < width; ++row)
     {
         for (int col = 0; col < width; ++col)
         {
             int globalRow = chunkStartX + row;
             int globalCol = chunkStartY + col;
-            const float pixValue = noise[globalRow * width + globalCol];
+            const float pixValue = noise[(globalRow) * (width * 2) + (globalCol)];
             if (pixValue > -0.2f)
             {
                 vec[row][col] = rock->clone();
-            }
+                total += 1;
+            } 
         }
     }
+    std::cout << "total : " << total << '\n';
 }
 
 void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D worldQuad, std::vector<std::vector<Pixel *>> &vec)
@@ -97,11 +109,11 @@ void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D world
         {
             int globalRow = chunkStartX + row;
             int globalCol = chunkStartY + col;
-            const float pixValue = noise[globalRow * (width * 2) + globalCol];            if (vec[row][col] != nullptr && vec[row][col]->getIsSolid() && pixValue > 0.6)
+            const float pixValue = noise[(globalRow) * (width*2) + (globalCol)];            
+            if (vec[row][col] != nullptr && vec[row][col]->getIsSolid() && pixValue > 0.6)
             {
                 vec[row][col] = nullptr;
             }
-
             if (row < 30)
             {
                 vec[row][col] = nullptr;
@@ -112,6 +124,10 @@ void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D world
 
 std::vector<std::vector<Pixel *>>& WorldGeneration::getLocalVec(){
     return worldVecStore[Vector2D(0, 0)];
+}
+
+std::map<Vector2D, std::vector<std::vector<Pixel *>>>& WorldGeneration::getVecStore(){
+    return worldVecStore;
 }
 
 Vector2D WorldGeneration::getGlobalCoordinates(Vector2D position){

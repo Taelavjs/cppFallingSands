@@ -2,7 +2,7 @@
 
 Game::Game(int vecWidthInp, int vecHeightInp)
     : vecWidth(vecWidthInp - 1), vecHeight(vecHeightInp - 1),
-      isRunning(true), vec(vecHeightInp, std::vector<Pixel *>(vecWidthInp)), worldGeneration(vecWidthInp)
+      isRunning(true), worldGeneration(vecWidthInp)
 {
     sand = new Sand();
     water = new Water();
@@ -17,15 +17,6 @@ Game::Game(int vecWidthInp, int vecHeightInp)
 
 Game::~Game()
 {
-    for (int i = vecHeight - 1; i >= 0; i--)
-    {
-        for (int k = vecWidth - 1; k >= 0; k--)
-        {
-            if (vec[i][k] == nullptr)
-                continue;
-            delete vec[i][k];
-        }
-    }
     // SDL_DestroyRenderer(renderer);
     // SDL_DestroyWindow(window);
     // SDL_Quit();
@@ -40,7 +31,6 @@ Game::~Game()
 void Game::init(const std::string *title, int scaleX, int scaleY)
 {
     worldGeneration.generateBlock();
-    vec = worldGeneration.getLocalVec();
     char *playerSpritePath{"Sprites/AnimationSheet_Character.png"};
     int width{32};
     int height{32};
@@ -49,17 +39,6 @@ void Game::init(const std::string *title, int scaleX, int scaleY)
     Rendering::setValues(vecWidth, vecHeight, title, scaleX, scaleY);
     Sprite *playerSprite = new Sprite(playerSpritePath, width, height, rows, cols);
     player = new Player(playerSprite);
-
-    for (int row = 0; row < vecHeight; ++row)
-    {
-        for (int col = 0; col < vecWidth; ++col)
-        {
-            if (randomnumber() < 0.0)
-            {
-                vec[row][col] = sand->clone();
-            }
-        }
-    }
 }
 
 void SquarePlace(std::vector<std::vector<Pixel *>> &vec, int x, int y, Pixel *elm)
@@ -82,6 +61,8 @@ void SquarePlace(std::vector<std::vector<Pixel *>> &vec, int x, int y, Pixel *el
 void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
 {
     const Uint8 *e = SDL_GetKeyboardState(&numKeys);
+    std::vector<std::vector<Pixel *>> vec = worldGeneration.getLocalVec();
+
     int x{}, y{};
     if (e)
     {
@@ -139,59 +120,59 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
 void Game::chunkUpdates(int chunkStart, int chunkEnd)
 {
 
-    for (int row = chunkStart; row < chunkEnd; ++row)
-    {
-        if (row % 2 == 0)
-        {
-            // Even rows: left to right
-            const int chunkSizeY = 8;
-            int numChunks = vecWidth / chunkSizeY;
-            int const maxChunks = numChunks;
+    // for (int row = chunkStart; row < chunkEnd; ++row)
+    // {
+    //     if (row % 2 == 0)
+    //     {
+    //         // Even rows: left to right
+    //         const int chunkSizeY = 8;
+    //         int numChunks = vecWidth / chunkSizeY;
+    //         int const maxChunks = numChunks;
 
-            while (numChunks >= 0)
-            {
-                for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
-                {
-                    updateSequence(vecWidth, vecHeight, row, col, vec);
-                }
-                numChunks--;
-            }
+    //         while (numChunks >= 0)
+    //         {
+    //             for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
+    //             {
+    //                 updateSequence(vecWidth, vecHeight, row, col, vec);
+    //             }
+    //             numChunks--;
+    //         }
 
-            numChunks = maxChunks - 1;
-            while (numChunks >= 0)
-            {
-                for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
-                {
-                    updateSequence(vecWidth, vecHeight, row, col, vec);
-                }
-                numChunks -= 2;
-            }
-        }
-        else
-        {
-            // Odd rows: right to left
-            const int chunkSizeY = 8;
-            int numChunks = vecWidth / chunkSizeY;
-            int const maxChunks = numChunks;
-            while (numChunks >= 0)
-            {
-                for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
-                {
-                    updateSequence(vecWidth, vecHeight, row, col, vec);
-                }
-                numChunks -= 2;
-            }
-            numChunks = maxChunks - 1;
-            while (numChunks >= 0)
-            {
-                for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
-                {
-                    updateSequence(vecWidth, vecHeight, row, col, vec);
-                }
-                numChunks -= 2;
-            }
-        }
-    }
+    //         numChunks = maxChunks - 1;
+    //         while (numChunks >= 0)
+    //         {
+    //             for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
+    //             {
+    //                 updateSequence(vecWidth, vecHeight, row, col, vec);
+    //             }
+    //             numChunks -= 2;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         // Odd rows: right to left
+    //         const int chunkSizeY = 8;
+    //         int numChunks = vecWidth / chunkSizeY;
+    //         int const maxChunks = numChunks;
+    //         while (numChunks >= 0)
+    //         {
+    //             for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
+    //             {
+    //                 updateSequence(vecWidth, vecHeight, row, col, vec);
+    //             }
+    //             numChunks -= 2;
+    //         }
+    //         numChunks = maxChunks - 1;
+    //         while (numChunks >= 0)
+    //         {
+    //             for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
+    //             {
+    //                 updateSequence(vecWidth, vecHeight, row, col, vec);
+    //             }
+    //             numChunks -= 2;
+    //         }
+    //     }
+    // }
 }
 
 void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std::vector<std::vector<Pixel *>> &vec)
@@ -233,15 +214,15 @@ void checkCollision(std::vector<std::vector<Pixel *>> &vec, int x, int y, int pl
 
     //                 }
 
-    //                     std::tuple coords = playerObj->getCoordinates();
-    //                     std::tuple dimensions = playerObj->getDimensions();
+    //                     Vector2D coords = playerObj->getCoordinates();
+    //                     Vector2D dimensions = playerObj->getDimensions();
 
     //                     int playerY = std::get<1>(coords); //swapped since vec x and y are swapped
     //                     int playerX = std::get<0>(coords);
     //                     int scaleY = std::get<1>(dimensions);
     //                     int scaleX = std::get<0>(dimensions);
 
-    //                     player = {playerX+2, playerY+2, scaleX -4 , scaleY - 4}; // leniency
+    //                     player = {coords.x+2, coords.y+2, scaleX -4 , scaleY - 4}; // leniency
 
     //             }
     //         }
@@ -292,13 +273,20 @@ void Game::update(const int &xScale, const int &yScale)
     int numChunksX = vecWidth / chunkSizeX;
     int numChunksY = vecHeight / chunkSizeY;
 
-    ChunkUpdateSkipping(1, 1, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec);
-    ChunkUpdateSkipping(1, 0, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec);
-    ChunkUpdateSkipping(0, 1, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec);
-    ChunkUpdateSkipping(0, 0, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec);
+    std::vector<std::vector<Pixel *>> vec = worldGeneration.getLocalVec();
+
 
     Vector2D coords = player->getCoordinates();
     Vector2D dimensions = player->getDimensions();
+    std::map<Vector2D, std::vector<std::vector<Pixel *>>> temp = worldGeneration.getVecStore();
+    for (auto& mapEntry : temp) {
+        std::vector<std::vector<Pixel *>>& vec2D = mapEntry.second;
+        Vector2D globalCoords = mapEntry.first;
+        ChunkUpdateSkipping(1, 1, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec2D);
+        ChunkUpdateSkipping(1, 0, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec2D);
+        ChunkUpdateSkipping(0, 1, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec2D);
+        ChunkUpdateSkipping(0, 0, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec2D);
+    }
     player->update(vec, Rendering::getRenderer(), vecWidth);
 
     worldGeneration.getGlobalCoordinates(coords);
@@ -306,7 +294,14 @@ void Game::update(const int &xScale, const int &yScale)
 
 void Game::render()
 {
-    Rendering::renderGrid(vec, player);
+    std::map<Vector2D, std::vector<std::vector<Pixel *>>> temp = worldGeneration.getVecStore();
+    for (auto& mapEntry : temp) {
+        std::vector<std::vector<Pixel *>>& vec2D = mapEntry.second;
+        Vector2D globalCoords = mapEntry.first;
+        Rendering::renderGrid(vec2D, player, globalCoords);
+    }
+    Rendering::renderPlayer(player);
+    Rendering::showRendering();
 }
 
 void Game::clean() {
@@ -317,39 +312,4 @@ double Game::randomnumber()
     static std::default_random_engine rng;
     std::uniform_real_distribution<double> dist(0.0, 1.0);
     return dist(rng);
-}
-
-void Game::pixelsToBlocks(std::vector<float> pixels)
-{
-    for (int row = 0; row < vecHeight; ++row)
-    {
-        for (int col = 0; col < vecWidth; ++col)
-        {
-            const float pixValue = pixels[row * vecWidth + col];
-            if (pixValue > -0.2f)
-            {
-                vec[row][col] = rock->clone();
-            }
-        }
-    }
-}
-
-void Game::generateCorridors(std::vector<float> pixels)
-{
-    for (int row = 0; row < vecHeight; ++row)
-    {
-        for (int col = 0; col < vecWidth; ++col)
-        {
-            const float pixValue = pixels[row * vecWidth + col];
-            if (vec[row][col] != nullptr && vec[row][col]->getIsSolid() && pixValue > 0.6)
-            {
-                vec[row][col] = nullptr;
-            }
-
-            if (row < 30)
-            {
-                vec[row][col] = nullptr;
-            }
-        }
-    }
 }

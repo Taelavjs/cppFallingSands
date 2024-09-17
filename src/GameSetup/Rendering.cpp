@@ -75,8 +75,11 @@ void Rendering::castRays(uint32_t *pixels,SDL_Renderer* renderer, const std::vec
     }
 }
 
-void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* player){
+void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* player, Vector2D globalCoords){
     //SDL_RenderClear(renderer);
+
+    int globalOffputX = globalCoords.x * screenWidth;
+    int globalOffputY = globalCoords.y * screenWidth;
 
     SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, screenWidth, screenHeight);
     if (texture == nullptr)
@@ -103,39 +106,30 @@ void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* playe
         }
 
     }
-    SDL_RenderClear(renderer);
     SDL_Rect AABB = player->getPlayerRect();
     Rendering::offsetX = AABB.x - 5;
     Rendering::offsetY = AABB.y - 1;
-    SDL_Rect dstRect = {(Rendering::screenWidth/2)-Rendering::offsetX, (Rendering::screenWidth/2)-Rendering::offsetY, screenWidth, screenWidth};
+    SDL_Rect dstRect = {((Rendering::screenWidth/2)-Rendering::offsetX) + globalOffputX,( (Rendering::screenWidth/2)-Rendering::offsetY)  +globalOffputY, screenWidth, screenWidth};
 
     SDL_UpdateTexture(texture, NULL, pixels, screenWidth * sizeof(uint32_t));
     SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+    delete[] pixels;
+    SDL_DestroyTexture(texture);
+}
+
+void Rendering::renderPlayer(Player* player){
+    SDL_Rect AABB = player->getPlayerRect();
     player->renderPlayer(renderer, Rendering::screenHeight);
-    // SDL_RenderDrawRect(renderer, &AABB);
     std::stack<SDL_Rect> toRender = player->getStackRender();
     while(!toRender.empty()){
         SDL_Rect cube = toRender.top();
         SDL_RenderDrawRect(renderer, &cube);
         toRender.pop();
     }
+}
 
-    delete[] pixels;
-    SDL_DestroyTexture(texture);
-
-    // SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); 
-    // for (int y = 0; y < screenWidth; y += 8) {
-    //     for (int x = 0; x < screenHeight; x += 8) {
-    //         SDL_Rect rect = {x, y, 8, 1};
-    //         SDL_RenderFillRect(renderer, &rect);
-
-    //         rect = {x, y, 1, 8};
-    //         SDL_RenderFillRect(renderer, &rect); 
-    //     }
-    // }
-
-
-
+void Rendering::showRendering(){
     SDL_RenderPresent(renderer);
+    SDL_RenderClear(renderer);
 }
 

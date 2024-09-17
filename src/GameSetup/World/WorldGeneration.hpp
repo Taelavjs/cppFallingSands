@@ -2,6 +2,9 @@
 #define WORLDGENERATION
 #include "../../Utility/ProceduralTerrainGen.hpp"
 #include "../../Utility/Velocity.hpp"
+#include <iostream>
+#include <iomanip> // Required for std::setprecision
+
 #include <vector>
 #include "../../Elements/BaseElements/Pixel.hpp"
 #include "../../Elements/Napalm.hpp"
@@ -21,6 +24,8 @@ public:
     void generateCorridors(std::vector<float> noise, Vector2D worldQuad, std::vector<std::vector<Pixel *>> &vec);
     std::vector<std::vector<Pixel *>>& getLocalVec();
     Vector2D getGlobalCoordinates(Vector2D position);
+    std::map<Vector2D, std::vector<std::vector<Pixel *>>>& getVecStore();
+
 private:
     std::map<Vector2D, std::vector<std::vector<Pixel *>>> worldVecStore;
     Sand *sand;
