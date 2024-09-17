@@ -16,7 +16,7 @@ std::vector<float> ProceduralTerrainGen::createNoise(int w, int h){
 
 
     // Gather noise data
-    std::vector<float> noiseData(w * h);
+    std::vector<float> noiseData(w * 4 * h);
     int index = 0;
 
     for (int y = 0; y < w; y++)
@@ -47,7 +47,7 @@ std::vector<float> ProceduralTerrainGen::createTerrain(int w, int h){
 
 
     // Gather noise data
-    std::vector<float> noiseData(w * h);
+    std::vector<float> noiseData(w * 4* h);
     int index = 0;
 
     for (int y = 0; y < w; y++)

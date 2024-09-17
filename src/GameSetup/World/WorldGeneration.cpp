@@ -1,7 +1,7 @@
 #include "WorldGeneration.hpp"
 
 WorldGeneration::WorldGeneration(int newWidth)
-:vec(newWidth, std::vector<Pixel *>(newWidth)), width(newWidth)
+:width(newWidth)
 {
     sand = new Sand();
     water = new Water();
@@ -19,23 +19,43 @@ WorldGeneration::~WorldGeneration(){
     delete oil;
     delete smoke;
     delete napalm;
-    for (int i = width - 1; i >= 0; i--)
-    {
-        for (int k = width - 1; k >= 0; k--)
-        {
-            if (vec[i][k] == nullptr)
-                continue;
-            delete vec[i][k];
+    for (const auto& mapEntry : worldVecStore) {
+        const std::vector<std::vector<Pixel *>>& vec2D = mapEntry.second;
+        
+        for (const auto& row : vec2D) {
+            for (Pixel* pixelPtr : row) {
+                if (pixelPtr != nullptr) {
+                    delete pixelPtr;
+                }
+            }
         }
-    }    
+    }
+
+    // Clear the map itself
+    worldVecStore.clear();
 }
 
 void WorldGeneration::generateBlock() {
-    std::vector<float> pixels(width * width);
-    pixels = ProceduralTerrainGen::createNoise(width, width);
-    pixelsToBlocks(pixels);
-    pixels = ProceduralTerrainGen::createTerrain(width, width);
-    generateCorridors(pixels);
+    std::vector<std::vector<Pixel *>> vec1(width, std::vector<Pixel *>(width));
+    std::vector<std::vector<Pixel *>> vec2(width, std::vector<Pixel *>(width));
+    std::vector<std::vector<Pixel *>> vec3(width, std::vector<Pixel *>(width));
+    std::vector<std::vector<Pixel *>> vec4(width, std::vector<Pixel *>(width));
+    worldVecStore[Vector2D(0,0)] = vec1;
+    worldVecStore[Vector2D(0, 1)] = vec2;
+    worldVecStore[Vector2D(1, 0)] = vec3;
+    worldVecStore[Vector2D(1, 1)] = vec4;
+
+    for (auto& mapEntry : worldVecStore) {
+        std::vector<std::vector<Pixel *>>& vec2D = mapEntry.second;
+        std::vector<float> pixels(width * width * 4);
+        pixels = ProceduralTerrainGen::createNoise(width, width);
+        pixelsToBlocks(pixels, mapEntry.first, vec2D);
+        pixels = ProceduralTerrainGen::createTerrain(width, width);
+        std::cout << "Pixels Length : " << pixels.size()/(width * width) << '\n';
+        generateCorridors(pixels, mapEntry.first, vec2D);
+    }
+
+
 }
 
 
@@ -48,13 +68,17 @@ void WorldGeneration::cleanUp(){
     delete napalm;
 }
 
-void WorldGeneration::pixelsToBlocks(std::vector<float> noise)
+void WorldGeneration::pixelsToBlocks(std::vector<float> noise, Vector2D worldQuad, std::vector<std::vector<Pixel *>> &vec)
 {
+    int chunkStartX = worldQuad.x * width;
+    int chunkStartY = worldQuad.y * width;
     for (int row = 0; row < width; ++row)
     {
         for (int col = 0; col < width; ++col)
         {
-            const float pixValue = noise[row * width + col];
+            int globalRow = chunkStartX + row;
+            int globalCol = chunkStartY + col;
+            const float pixValue = noise[globalRow * width + globalCol];
             if (pixValue > -0.2f)
             {
                 vec[row][col] = rock->clone();
@@ -63,14 +87,17 @@ void WorldGeneration::pixelsToBlocks(std::vector<float> noise)
     }
 }
 
-void WorldGeneration::generateCorridors(std::vector<float> noise)
+void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D worldQuad, std::vector<std::vector<Pixel *>> &vec)
 {
+    int chunkStartX = worldQuad.x * width;
+    int chunkStartY = worldQuad.y * width;
     for (int row = 0; row < width; ++row)
     {
         for (int col = 0; col < width; ++col)
         {
-            const float pixValue = noise[row * width + col];
-            if (vec[row][col] != nullptr && vec[row][col]->getIsSolid() && pixValue > 0.6)
+            int globalRow = chunkStartX + row;
+            int globalCol = chunkStartY + col;
+            const float pixValue = noise[globalRow * (width * 2) + globalCol];            if (vec[row][col] != nullptr && vec[row][col]->getIsSolid() && pixValue > 0.6)
             {
                 vec[row][col] = nullptr;
             }
@@ -84,7 +111,7 @@ void WorldGeneration::generateCorridors(std::vector<float> noise)
 }
 
 std::vector<std::vector<Pixel *>>& WorldGeneration::getLocalVec(){
-    return WorldGeneration::vec;
+    return worldVecStore[Vector2D(0, 0)];
 }
 
 Vector2D WorldGeneration::getGlobalCoordinates(Vector2D position){

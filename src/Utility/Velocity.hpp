@@ -11,6 +11,11 @@ struct Vector2D {
     }
     float x{0};
     float y{0};
+
+    bool operator<(const Vector2D& other) const {
+        if (x != other.x) return x < other.x;
+        return y < other.y;
+    }
 };
 
 class Velocity {
