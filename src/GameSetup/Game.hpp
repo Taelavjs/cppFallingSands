@@ -46,7 +46,7 @@ private:
     // int rendererScalex;
     // int rendererScaley;
     bool isRunning;
-
+    WorldGeneration worldGeneration;
     Player* player;
     Uint8* prevKeys = nullptr;
     int numKeys = 0;

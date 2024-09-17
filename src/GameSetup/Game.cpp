@@ -2,7 +2,7 @@
 
 Game::Game(int vecWidthInp, int vecHeightInp)
     : vecWidth(vecWidthInp - 1), vecHeight(vecHeightInp - 1),
-      isRunning(true), vec(vecHeightInp, std::vector<Pixel *>(vecWidthInp))
+      isRunning(true), vec(vecHeightInp, std::vector<Pixel *>(vecWidthInp)), worldGeneration(vecWidthInp)
 {
     sand = new Sand();
     water = new Water();
@@ -10,7 +10,6 @@ Game::Game(int vecWidthInp, int vecHeightInp)
     smoke = new Smoke();
     oil = new Oil();
     napalm = new Napalm();
-
     SDL_GetKeyboardState(&numKeys);
     prevKeys = new Uint8[numKeys];
     SDL_PumpEvents();
@@ -33,13 +32,15 @@ Game::~Game()
     delete sand;
     delete water;
     delete rock;
-    delete player;
+    delete oil;
+    delete smoke;
+    delete napalm;
 }
 
 void Game::init(const std::string *title, int scaleX, int scaleY)
 {
-    WorldGeneration::generateBlock(vecWidth);
-    vec = WorldGeneration::getLocalVec();
+    worldGeneration.generateBlock();
+    vec = worldGeneration.getLocalVec();
     char *playerSpritePath{"Sprites/AnimationSheet_Character.png"};
     int width{32};
     int height{32};
@@ -296,15 +297,11 @@ void Game::update(const int &xScale, const int &yScale)
     ChunkUpdateSkipping(0, 1, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec);
     ChunkUpdateSkipping(0, 0, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec);
 
-    std::tuple coords = player->getCoordinates();
-    std::tuple dimensions = player->getDimensions();
-
-    int playerY = std::get<1>(coords); // swapped since vec x and y are swapped
-    int playerX = std::get<0>(coords);
-    int scaleY = std::get<1>(dimensions);
-    int scaleX = std::get<0>(dimensions);
-    // checkCollision(vec, playerX, playerY, scaleX, scaleY, vecHeight, player);
+    Vector2D coords = player->getCoordinates();
+    Vector2D dimensions = player->getDimensions();
     player->update(vec, Rendering::getRenderer(), vecWidth);
+
+    worldGeneration.getGlobalCoordinates(coords);
 }
 
 void Game::render()

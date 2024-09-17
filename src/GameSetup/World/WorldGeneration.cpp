@@ -1,50 +1,63 @@
 #include "WorldGeneration.hpp"
 
-Sand* WorldGeneration::sand = new Sand();
-Water* WorldGeneration::water = new Water();
-Rock* WorldGeneration::rock = new Rock();
-Smoke* WorldGeneration::smoke = new Smoke();
-Napalm* WorldGeneration::napalm = new Napalm();
-Oil* WorldGeneration::oil = new Oil();
-int WorldGeneration::width{0};
+WorldGeneration::WorldGeneration(int newWidth)
+:vec(newWidth, std::vector<Pixel *>(newWidth)), width(newWidth)
+{
+    sand = new Sand();
+    water = new Water();
+    rock = new Rock();
+    smoke = new Smoke();
+    napalm = new Napalm();
+    oil = new Oil();
 
-std::vector<std::vector<Pixel *>>  WorldGeneration::vec(WorldGeneration::width, 
-                                                        std::vector<Pixel *>(WorldGeneration::width));
+}
 
-void WorldGeneration::generateBlock(int newWidth) {
-    WorldGeneration::width = newWidth;
-    WorldGeneration::vec.resize(newWidth);
-    for (int i = 0; i < newWidth; ++i) {
-        WorldGeneration::vec[i].resize(newWidth);
-    }
-    
-    std::vector<float> pixels(newWidth * newWidth);
-    pixels = ProceduralTerrainGen::createNoise(newWidth, newWidth);
-    WorldGeneration::pixelsToBlocks(pixels);
-    pixels = ProceduralTerrainGen::createTerrain(newWidth, newWidth);
-    WorldGeneration::generateCorridors(pixels);
+WorldGeneration::~WorldGeneration(){
+    delete sand;
+    delete water;
+    delete rock;
+    delete oil;
+    delete smoke;
+    delete napalm;
+    for (int i = width - 1; i >= 0; i--)
+    {
+        for (int k = width - 1; k >= 0; k--)
+        {
+            if (vec[i][k] == nullptr)
+                continue;
+            delete vec[i][k];
+        }
+    }    
+}
+
+void WorldGeneration::generateBlock() {
+    std::vector<float> pixels(width * width);
+    pixels = ProceduralTerrainGen::createNoise(width, width);
+    pixelsToBlocks(pixels);
+    pixels = ProceduralTerrainGen::createTerrain(width, width);
+    generateCorridors(pixels);
 }
 
 
 void WorldGeneration::cleanUp(){
-    delete WorldGeneration::sand;
-    delete WorldGeneration::water;
-    delete WorldGeneration::rock;
-    delete WorldGeneration::oil;
-    delete WorldGeneration::smoke;
-    delete WorldGeneration::napalm;
+    delete sand;
+    delete water;
+    delete rock;
+    delete oil;
+    delete smoke;
+    delete napalm;
 }
 
 void WorldGeneration::pixelsToBlocks(std::vector<float> noise)
 {
-    for (int row = 0; row < WorldGeneration::width; ++row)
+    for (int row = 0; row < width; ++row)
     {
-        for (int col = 0; col < WorldGeneration::width; ++col)
+        for (int col = 0; col < width; ++col)
         {
             const float pixValue = noise[row * width + col];
             if (pixValue > -0.2f)
             {
-                vec[row][col] = WorldGeneration::rock->clone();
+                vec[row][col] = rock->clone();
             }
         }
     }
@@ -52,11 +65,11 @@ void WorldGeneration::pixelsToBlocks(std::vector<float> noise)
 
 void WorldGeneration::generateCorridors(std::vector<float> noise)
 {
-    for (int row = 0; row < WorldGeneration::width; ++row)
+    for (int row = 0; row < width; ++row)
     {
-        for (int col = 0; col < WorldGeneration::width; ++col)
+        for (int col = 0; col < width; ++col)
         {
-            const float pixValue = noise[row * WorldGeneration::width + col];
+            const float pixValue = noise[row * width + col];
             if (vec[row][col] != nullptr && vec[row][col]->getIsSolid() && pixValue > 0.6)
             {
                 vec[row][col] = nullptr;
@@ -72,4 +85,13 @@ void WorldGeneration::generateCorridors(std::vector<float> noise)
 
 std::vector<std::vector<Pixel *>>& WorldGeneration::getLocalVec(){
     return WorldGeneration::vec;
+}
+
+Vector2D WorldGeneration::getGlobalCoordinates(Vector2D position){
+    Vector2D result(0, 0);
+    result.x = std::floor(position.x / width);
+    result.y = std::floor(position.y / width);
+
+    std::cout << "Global Coordinates : " << result.x << " " << result.y << '\n';
+    return result;
 }

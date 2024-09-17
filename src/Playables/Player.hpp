@@ -28,12 +28,12 @@ public:
     void playerReleaseHandler(SDL_Scancode e);
     void renderPlayer(SDL_Renderer* renderer, int screenWidth);
     void update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* renderer, int vecWidth);
-    std::tuple <int, int> getCoordinates(){
-        return std::make_tuple(position.x, position.y);
+    Vector2D getCoordinates(){
+        return position;
     }
 
-    std::tuple <int, int> getDimensions(){
-        return std::make_tuple(playerScale.x, playerScale.y);
+    Vector2D getDimensions(){
+        return playerScale;
     }
 
     void handleCollision(SDL_Rect* colliderRect);
