@@ -91,7 +91,7 @@ void WorldGeneration::pixelsToBlocks(std::vector<float> noise, Vector2D worldQua
             const float pixValue = noise[(globalRow) * (width * 2) + (globalCol)];
             if (pixValue > -0.2f)
             {
-                vec[row][col] = rock->clone();
+                vec[row][col] = water->clone();
                 total += 1;
             } 
         }

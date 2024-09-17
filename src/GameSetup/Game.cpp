@@ -278,7 +278,7 @@ void Game::update(const int &xScale, const int &yScale)
 
     Vector2D coords = player->getCoordinates();
     Vector2D dimensions = player->getDimensions();
-    std::map<Vector2D, std::vector<std::vector<Pixel *>>> temp = worldGeneration.getVecStore();
+    std::map<Vector2D, std::vector<std::vector<Pixel *>>>& temp = worldGeneration.getVecStore();
     for (auto& mapEntry : temp) {
         std::vector<std::vector<Pixel *>>& vec2D = mapEntry.second;
         Vector2D globalCoords = mapEntry.first;
