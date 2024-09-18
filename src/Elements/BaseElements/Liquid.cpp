@@ -43,8 +43,10 @@ void Liquid::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeigh
 
     if(!dropInBounds) {
         Chunk chunk;
-        if(belowChunk.size() == 0){
-
+        if(belowChunk.size() != 0){
+            belowChunk[0][col] = vec[row][col];
+            vec[row][col] = nullptr;
+            return;
         } 
     }
     
