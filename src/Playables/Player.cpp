@@ -73,7 +73,7 @@ void Player::resetPlayerColliders(){
     groundedRect = {(int)playerCenterPosition.x - 1, (int)(playerCenterPosition.y + playerScale.y/2), 5, 5};
 }
 
-void Player::checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &collisions, int vecWidth, std::vector<std::vector<Pixel *>> vec){
+void Player::checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &collisions, int vecWidth, Chunk vec){
     SDL_Rect collisionResult;
     isBlockInPlayer = false;
     collisions.clear();
@@ -91,7 +91,7 @@ void Player::checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &co
     }
 }
 
-void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> vec)
+void Player::collisionHandler(int vecWidth, Chunk vec)
 {
     resetPlayerColliders();
     validPosition = position;
@@ -216,7 +216,7 @@ void Player::collisionHandler(int vecWidth, std::vector<std::vector<Pixel *>> ve
 
 }
 
-void Player::update(std::vector<std::vector<Pixel *>> vec, SDL_Renderer* renderer, int vecWidth)
+void Player::update(Chunk vec, SDL_Renderer* renderer, int vecWidth)
 {
     velocity.velocityTick();
     //Debugging rendering

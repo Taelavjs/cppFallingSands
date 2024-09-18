@@ -5,7 +5,7 @@
 Pixel::Pixel(){}
 Pixel::~Pixel(){}
 
-void Pixel::swapElements(std::vector<std::vector<Pixel*>>& vec,
+void Pixel::swapElements(Chunk& vec,
                                 int x1, int y1,
                                 int x2, int y2)
 {
@@ -55,7 +55,7 @@ bool Pixel::hit() {
     return hp <= 0;
 }
 
-bool Pixel::fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col, int vecHeight, Pixel *elm){
+bool Pixel::fireTick(Chunk &vec, int row, int col, int vecHeight, Pixel *elm){
     if(getOnFire()){
         for(int i = -1; i <= 1; ++i){
             for(int j = -1; j <= 1; ++j ){

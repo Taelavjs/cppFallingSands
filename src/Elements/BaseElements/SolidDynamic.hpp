@@ -14,8 +14,8 @@ protected:
     SolidDynamic();
     virtual ~SolidDynamic();
 protected:
-    virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
-    virtual void xDisperse(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res);
+    virtual void update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight);
+    virtual void xDisperse(Chunk &vec, int row, int col, int xDispersion, int xDirection, int &res);
     bool checkMoveableMat(Pixel *space);
 };
 

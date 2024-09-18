@@ -26,7 +26,7 @@ void Gas::updateYPosition(int &newCol){
     if(yVelocity < (-1 * getTerminalY())) yVelocity = (-1 * getTerminalY());
 }
 
-void Gas::xDisp(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res)
+void Gas::xDisp(Chunk &vec, int row, int col, int xDispersion, int xDirection, int &res)
 {
     // Initialize result with the current position
     res = col;
@@ -49,11 +49,11 @@ void Gas::xDisp(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xD
     }
 }
 // Function to check if a position is valid for gas movement
-bool Gas::isValidPosition(std::vector<std::vector<Pixel *>> &vec, int row, int col)
+bool Gas::isValidPosition(Chunk &vec, int row, int col)
 {
     return (row >= 0 && row < vec.size() && col >= 0 && col < vec[0].size() && isSpaceFree(vec, row, col));
 }
-void Gas::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
+void Gas::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight)
 {
     vec[row][col]->setProcessed(true);
     if(((std::rand() % 2) * 2 - 1 )> 1) return;

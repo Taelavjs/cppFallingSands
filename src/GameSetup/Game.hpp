@@ -33,11 +33,11 @@ public:
     bool getRunning() const { return isRunning; }
     void swapElements(int x, int y, int x2, int y2);
     double randomnumber();
-    void updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std::vector<std::vector<Pixel *>> &vec);
+    void updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, Chunk &vec);
     void chunkUpdates(int chunkStart, int chunkEnd);
     void pixelsToBlocks(std::vector<float> pixels);
-    void ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, std::vector<std::vector<Pixel*>> &vec);
-    void worker(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, std::vector<std::vector<Pixel*>> &vec, int rowChunk, int colChunk);
+    void ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, Chunk &vec);
+    void worker(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, Chunk &vec, int rowChunk, int colChunk);
     void generateCorridors(std::vector<float> pixels);
 
 private:

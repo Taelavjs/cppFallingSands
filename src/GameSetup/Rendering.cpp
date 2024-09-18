@@ -75,7 +75,7 @@ void Rendering::castRays(uint32_t *pixels,SDL_Renderer* renderer, const std::vec
     }
 }
 
-void Rendering::renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* player, Vector2D globalCoords){
+void Rendering::renderGrid(Chunk &vec, Player* player, Vector2D globalCoords){
     //SDL_RenderClear(renderer);
 
     int globalOffputX = globalCoords.x * screenWidth;

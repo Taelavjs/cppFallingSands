@@ -14,7 +14,7 @@ void Flammable::ignite(){
     }
 }
 
-void Flammable::fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col){
+void Flammable::fireTick(Chunk &vec, int row, int col){
     if(getOnFire()){
         for(int i = -1; i <= 1; ++i){
             for(int j = -1; j <= 1; ++j ){

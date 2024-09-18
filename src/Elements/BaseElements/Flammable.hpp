@@ -10,7 +10,7 @@ public:
     ~Flammable();
     void ignite();
     int hit() {hp--; return hp <= 0;}
-    void fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col);
+    void fireTick(Chunk &vec, int row, int col);
     bool getOnFire(){return onFire;};
     void setOnFire(){onFire = true;};
 private:

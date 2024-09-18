@@ -14,21 +14,22 @@
 #include "../../Elements/Smoke.hpp"
 #include "../../Elements/Water.hpp"
 #include <map>
+#include "Chunk.hpp"
 class WorldGeneration {
 public:
     WorldGeneration(int newWidth);
     ~WorldGeneration();
     void cleanUp();
     void generateBlock();
-    void pixelsToBlocks(std::vector<float> noise, Vector2D worldQuad, std::vector<std::vector<Pixel *>> &vec);
-    void generateCorridors(std::vector<float> noise, Vector2D worldQuad, std::vector<std::vector<Pixel *>> &vec);
-    std::vector<std::vector<Pixel *>>& getLocalVec();
+    void pixelsToBlocks(std::vector<float> noise, Vector2D worldQuad, Chunk &chunk);
+    void generateCorridors(std::vector<float> noise, Vector2D worldQuad, Chunk &chunk);
+    Chunk& getLocalVec();
     Vector2D getGlobalCoordinates(Vector2D position);
-    std::map<Vector2D, std::vector<std::vector<Pixel *>>>& getVecStore();
+    std::map<Vector2D, Chunk>& getVecStore();
     Vector2D getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY);
 
 private:
-    std::map<Vector2D, std::vector<std::vector<Pixel *>>> worldVecStore;
+    std::map<Vector2D, Chunk> worldVecStore;
     Sand *sand;
     Water *water;
     Rock *rock;

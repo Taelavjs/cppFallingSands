@@ -7,6 +7,7 @@
 #include <vector>
 #include <SDL2/SDL.h> // Include SDL2 header for SDL_Color
 #include <iostream> // Include SDL2 header for SDL_Color
+#include "../../GameSetup/World/Chunk.hpp"
 
 // Default Base Class Of Every Pixel
 class Pixel {
@@ -71,14 +72,14 @@ public:
     Pixel();
     virtual ~Pixel();
     virtual Pixel *clone() const = 0;
-    virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight) {};
-    void swapElements(std::vector<std::vector<Pixel*>>& vec, int x1, int y1,int x2, int y2);
+    virtual void update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight) {};
+    void swapElements(Chunk& vec, int x1, int y1,int x2, int y2);
 
     // FIRE FUNCTIONALITY
 public:
     virtual void ignite();
     virtual bool hit();
-    virtual bool fireTick(std::vector<std::vector<Pixel *>> &vec, int row, int col, int vecHeight, Pixel *elm);
+    virtual bool fireTick(Chunk &vec, int row, int col, int vecHeight, Pixel *elm);
 };
 
 #endif // PIXEL_HPP

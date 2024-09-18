@@ -74,6 +74,7 @@
         "stack": "cpp",
         "deque": "cpp",
         "__availability": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "iomanip": "cpp"
     },
 }

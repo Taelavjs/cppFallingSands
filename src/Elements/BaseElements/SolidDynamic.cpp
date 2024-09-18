@@ -7,7 +7,7 @@ SolidDynamic::SolidDynamic() {
 }
 SolidDynamic::~SolidDynamic() {}
 
-void SolidDynamic::xDisperse(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res)
+void SolidDynamic::xDisperse(Chunk &vec, int row, int col, int xDispersion, int xDirection, int &res)
 {
     // Initialize result with the current position
     res = col;
@@ -35,7 +35,7 @@ bool SolidDynamic::checkMoveableMat(Pixel *space)
     return (space->getIsLiquid() || space->getIsGas());
 }
 
-void SolidDynamic::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
+void SolidDynamic::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight)
 {
     setProcessed(true);
 

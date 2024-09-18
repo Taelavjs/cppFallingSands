@@ -14,7 +14,7 @@ public:
     void resetVelocity(){
         yVelocity = 0;
     }
-    bool isSpaceFree(std::vector<std::vector<Pixel *>> &vec, int row, int col);
+    bool isSpaceFree(Chunk &vec, int row, int col);
 private:
     int yVelocity{0};
     int xVelocity{0};

@@ -13,7 +13,7 @@ class Player;
 class Rendering {
 public:
 
-    static void renderGrid(std::vector<std::vector<Pixel *>> &vec, Player* player, Vector2D globalCoords);
+    static void renderGrid(Chunk &vec, Player* player, Vector2D globalCoords);
     static void castRay(uint32_t *pixels,SDL_Renderer* renderer, const std::vector<std::vector<Pixel*>>& vec, int screenWidth, int screenHeight, int startX, int startY, int endX, int endY) ;
     static void castRays(uint32_t *pixels,SDL_Renderer* renderer, const std::vector<std::vector<Pixel*>>& vec, int screenWidth, int screenHeight, int row, int col) ;
     static SDL_Renderer* getRenderer(){

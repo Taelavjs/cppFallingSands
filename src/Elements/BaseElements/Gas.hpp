@@ -11,12 +11,12 @@ public:
     Gas();
     virtual ~Gas();
     int getBlocksToFall();
-    void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
+    void update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight);
     bool isGas();
-    void xDisp(std::vector<std::vector<Pixel *>> &vec, int row, int col, int xDispersion, int xDirection, int &res);
+    void xDisp(Chunk &vec, int row, int col, int xDispersion, int xDirection, int &res);
     bool isSolid(){return false;};
-    int calculateNewColumn(const std::vector<std::vector<Pixel*>>& vec, int row, int col, int xDispersion, int xDirection);
-    bool isValidPosition(std::vector<std::vector<Pixel*>>& vec, int row, int col);
+    int calculateNewColumn(const Chunk& vec, int row, int col, int xDispersion, int xDirection);
+    bool isValidPosition(Chunk& vec, int row, int col);
     void updateYPosition(int &newCol);
     bool isMoveable(){return true;};
 private:

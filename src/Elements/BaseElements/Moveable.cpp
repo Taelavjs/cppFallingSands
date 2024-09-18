@@ -26,6 +26,6 @@ double Moveable::randomNumber()
     return dist(rng);
 }
 
-bool Moveable::isSpaceFree(std::vector<std::vector<Pixel *>> &vec, int row, int col){
+bool Moveable::isSpaceFree(Chunk &vec, int row, int col){
     return ( vec[row][col] == nullptr || vec[row][col]->getIsLiquid() || vec[row][col]-> getIsGas());
 };

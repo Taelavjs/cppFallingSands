@@ -12,7 +12,7 @@ int Liquid::getMovingDirection(){
     return x_direction;
 }
 
-void Liquid::moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor)
+void Liquid::moveHorizontally(int &vecWidth, Chunk &vec, int col, int row, int incrementor)
 {
     int newCol = col + incrementor;
     while (newCol >= 0 && newCol < vecWidth && abs(newCol - col) < xMaxDistance  && (vec[row][newCol] == nullptr|| vec[row][newCol] -> getIsLiquid()))
@@ -23,7 +23,7 @@ void Liquid::moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &
     swapElements(vec, row, col, row, newCol);
 }
 
-void Liquid::update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight)
+void Liquid::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight)
 {
     setProcessed(true);
     bool colLeftInBounds = col - 1 >= 0;

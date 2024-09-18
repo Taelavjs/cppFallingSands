@@ -41,7 +41,7 @@ void Game::init(const std::string *title, int scaleX, int scaleY)
     player = new Player(playerSprite);
 }
 
-void SquarePlace(std::vector<std::vector<Pixel *>> &vec, int x, int y, Pixel *elm)
+void SquarePlace(Chunk &vec, int x, int y, Pixel *elm)
 {
     int numToPlace{1};
     for (int j = x - numToPlace; j < x + numToPlace; j++)
@@ -61,7 +61,7 @@ void SquarePlace(std::vector<std::vector<Pixel *>> &vec, int x, int y, Pixel *el
 void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
 {
     const Uint8 *e = SDL_GetKeyboardState(&numKeys);
-    std::vector<std::vector<Pixel *>> vec = worldGeneration.getLocalVec();
+    Chunk localChunk = worldGeneration.getLocalVec();
 
     int x{}, y{};
     if (e)
@@ -73,27 +73,27 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
         }
         else if (e[SDL_SCANCODE_A])
         {
-            SquarePlace(vec, x / xScale, y / yScale, water);
+            SquarePlace(localChunk, x / xScale, y / yScale, water);
         }
         else if (e[SDL_SCANCODE_D])
         {
-            SquarePlace(vec, x / xScale, y / yScale, rock);
+            SquarePlace(localChunk, x / xScale, y / yScale, rock);
         }
         else if (e[SDL_SCANCODE_S])
         {
-            SquarePlace(vec, x / xScale, y / yScale, sand);
+            SquarePlace(localChunk, x / xScale, y / yScale, sand);
         }
         else if (e[SDL_SCANCODE_W])
         {
-            SquarePlace(vec, x / xScale, y / yScale, smoke);
+            SquarePlace(localChunk, x / xScale, y / yScale, smoke);
         }
         else if (e[SDL_SCANCODE_Q])
         {
-            SquarePlace(vec, x / xScale, y / yScale, oil);
+            SquarePlace(localChunk, x / xScale, y / yScale, oil);
         }
         else if (e[SDL_SCANCODE_F])
         {
-            SquarePlace(vec, x / xScale, y / yScale, napalm);
+            SquarePlace(localChunk, x / xScale, y / yScale, napalm);
         }
 
         for(int i = 0; i < numKeys; ++i){
@@ -175,7 +175,7 @@ void Game::chunkUpdates(int chunkStart, int chunkEnd)
     // }
 }
 
-void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std::vector<std::vector<Pixel *>> &vec)
+void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, Chunk &vec)
 {
     if (vec[row][col] == nullptr)
         return;
@@ -192,45 +192,7 @@ void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, std
     vec[row][col]->update(vec, row, col, vecWidth, vecHeight);
 }
 
-void checkCollision(std::vector<std::vector<Pixel *>> &vec, int x, int y, int playerWidth, int playerHeight, int vecWidth, Player *playerObj)
-{
-    // SDL_Rect player = {x+4, y+4, playerWidth -8 , playerHeight - 8}; // leniency
-
-    // for(int i = x - 30; i <= x + 30; ++i) {
-    //     for(int j = y - 30; j <= y + 30; ++j) {
-    //         if (j < 0 || j >= vecWidth || i < 0 || i >= vecWidth) continue;
-
-    //         if (vec[j][i] != nullptr && vec[j][i] -> getIsSolid()) {
-    //             SDL_Rect pxl = {i, j, 1, 1};
-
-    //             if (SDL_HasIntersection(&pxl, &player)) {
-    //                 SDL_Rect tmp = {pxl.x, pxl.y, pxl.w, pxl.h};
-    //                 SDL_Rect tmp2 = {player.x, player.y, player.w, player.h};
-    //                 SDL_Rect result;  // No need for dynamic allocation
-
-    //                 // Calculate the intersection
-    //                 if (SDL_IntersectRect(&tmp, &tmp2, &result)) {
-    //                     playerObj->handleCollision(&result);
-
-    //                 }
-
-    //                     Vector2D coords = playerObj->getCoordinates();
-    //                     Vector2D dimensions = playerObj->getDimensions();
-
-    //                     int playerY = std::get<1>(coords); //swapped since vec x and y are swapped
-    //                     int playerX = std::get<0>(coords);
-    //                     int scaleY = std::get<1>(dimensions);
-    //                     int scaleX = std::get<0>(dimensions);
-
-    //                     player = {coords.x+2, coords.y+2, scaleX -4 , scaleY - 4}; // leniency
-
-    //             }
-    //         }
-    //     }
-    // }
-}
-
-void Game::worker(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, std::vector<std::vector<Pixel *>> &vec, int rowChunk, int colChunk)
+void Game::worker(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, Chunk &vec, int rowChunk, int colChunk)
 {
     // Calculate the boundaries of the current chunk
     int rowStart = rowChunk * chunkSizeY;
@@ -248,7 +210,7 @@ void Game::worker(int startingChunkRow, int startingChunkCol, int numChunksY, in
     }
 }
 
-void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, std::vector<std::vector<Pixel *>> &vec)
+void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, Chunk &vec)
 {
     std::vector<std::thread> threads;
     for (int rowChunk = startingChunkRow; rowChunk < numChunksY; rowChunk += 2)
@@ -273,14 +235,14 @@ void Game::update(const int &xScale, const int &yScale)
     int numChunksX = vecWidth / chunkSizeX;
     int numChunksY = vecHeight / chunkSizeY;
 
-    std::vector<std::vector<Pixel *>> vec = worldGeneration.getLocalVec();
+    Chunk vec = worldGeneration.getLocalVec();
 
 
     Vector2D coords = player->getCoordinates();
     Vector2D dimensions = player->getDimensions();
-    std::map<Vector2D, std::vector<std::vector<Pixel *>>>& temp = worldGeneration.getVecStore();
+    std::map<Vector2D, Chunk>& temp = worldGeneration.getVecStore();
     for (auto& mapEntry : temp) {
-        std::vector<std::vector<Pixel *>>& vec2D = mapEntry.second;
+        Chunk& vec2D = mapEntry.second;
         Vector2D globalCoords = mapEntry.first;
         ChunkUpdateSkipping(1, 1, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec2D);
         ChunkUpdateSkipping(1, 0, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec2D);
@@ -294,9 +256,9 @@ void Game::update(const int &xScale, const int &yScale)
 
 void Game::render()
 {
-    std::map<Vector2D, std::vector<std::vector<Pixel *>>> temp = worldGeneration.getVecStore();
+    std::map<Vector2D, Chunk> temp = worldGeneration.getVecStore();
     for (auto& mapEntry : temp) {
-        std::vector<std::vector<Pixel *>>& vec2D = mapEntry.second;
+        Chunk& vec2D = mapEntry.second;
         Vector2D globalCoords = mapEntry.first;
         Rendering::renderGrid(vec2D, player, globalCoords);
     }

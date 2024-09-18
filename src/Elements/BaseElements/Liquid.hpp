@@ -8,10 +8,10 @@ class Liquid:public Moveable {
 public:
     Liquid();
     ~Liquid();
-    bool swapOnDensity(std::vector<std::vector<Pixel *>> &vec, int x1, int y1, int x2, int y2, int density1, int density2);
+    bool swapOnDensity(Chunk &vec, int x1, int y1, int x2, int y2, int density1, int density2);
     int getDispersionRate(){return 5;};
-    virtual void update(std::vector<std::vector<Pixel *>> &vec, int &row, int &col, int &vecWidth, int &vecHeight);
-    void moveHorizontally(int &vecWidth, std::vector<std::vector<Pixel *>> &vec, int col, int row, int incrementor);
+    virtual void update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight);
+    void moveHorizontally(int &vecWidth, Chunk &vec, int col, int row, int incrementor);
     int getMovingDirection();
 private:
     int maxDispersionRate{9};
