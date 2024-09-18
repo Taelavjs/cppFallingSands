@@ -41,19 +41,19 @@ void Liquid::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeigh
         x_direction = rand() % 2 == 0 ? -1 : 1; // Randomize direction
     }
 
-    if(!dropInBounds) {
+    if(!dropInBounds && belowChunk.size() != 0 && (belowChunk[0][col] == nullptr || (belowChunk[0][col]->getIsLiquid() && vec[row][col]->getDensity() > belowChunk[0][col]->getDensity()))) {
         Chunk chunk;
-        if(belowChunk.size() != 0){
-            belowChunk[0][col] = vec[row][col];
-            vec[row][col] = nullptr;
-            return;
-        } 
+        Pixel* temp = belowChunk[0][col];
+        belowChunk[0][col] = vec[row][col];
+        vec[row][col] = temp;
+        
+        return;
     }
     
     if (dropInBounds && (vec[row + 1][col] == nullptr || (vec[row+1][col]->getIsLiquid() && vec[row][col]->getDensity() > vec[row+1][col]->getDensity())))
     {
 
-        int blocksToFall{0};
+        int blocksToFall{3};
         int fallCounter{1};
 
         updateVelocity(blocksToFall, 1);

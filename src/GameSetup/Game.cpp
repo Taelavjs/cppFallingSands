@@ -40,6 +40,7 @@ void Game::init(const std::string *title, int scaleX, int scaleY)
     Rendering::setValues(vecWidth, vecHeight, title, scaleX, scaleY);
     Sprite *playerSprite = new Sprite(playerSpritePath, width, height, rows, cols);
     player = new Player(playerSprite);
+    
 }
 
 void SquarePlace(Chunk &vec, int x, int y, Pixel *elm)

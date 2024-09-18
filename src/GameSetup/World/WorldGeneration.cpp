@@ -80,12 +80,23 @@ void WorldGeneration::pixelsToBlocks(std::vector<float> noise, Vector2D worldQua
             const float pixValue = noise[(globalRow) * (width * 2) + (globalCol)];
             if (pixValue > -0.2f)
             {
-                vec[row][col] = water->clone();
+                vec[row][col] = rock->clone();
                 total += 1;
             } 
         }
     }
-    std::cout << "total : " << total << '\n';
+}
+
+double getRandomDouble(double min, double max) {
+    // Create a random device and a random number generator
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    
+    // Define the distribution range
+    std::uniform_real_distribution<> dis(min, max);
+    
+    // Generate and return a random number
+    return dis(gen);
 }
 
 void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D worldQuad, Chunk &vec)
@@ -106,6 +117,22 @@ void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D world
             if (row < 30)
             {
                 vec[row][col] = nullptr;
+            }
+        }
+    }
+
+    for (int row = 0; row < width; ++row)
+    {
+        for (int col = 0; col < width; ++col)
+        {
+            if(vec[row][col] != nullptr){
+                continue;
+            }
+            if (getRandomDouble(0, 1) < 0.2)
+            {
+                vec[row][col] = water->clone();
+            } else if(getRandomDouble(0, 1) < 0.2){
+                vec[row][col] = oil->clone();
             }
         }
     }
