@@ -2,7 +2,7 @@
 
 Game::Game(int vecWidthInp, int vecHeightInp)
     : vecWidth(vecWidthInp - 1), vecHeight(vecHeightInp - 1),
-      isRunning(true), worldGeneration(vecWidthInp)
+      isRunning(true), worldGeneration(vecWidthInp), threads()
 {
     sand = new Sand();
     water = new Water();
@@ -13,6 +13,7 @@ Game::Game(int vecWidthInp, int vecHeightInp)
     SDL_GetKeyboardState(&numKeys);
     prevKeys = new Uint8[numKeys];
     SDL_PumpEvents();
+
 }
 
 Game::~Game()
@@ -189,7 +190,20 @@ void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, Chu
             vec[row][col] = smoke->clone();
         };
     }
-    vec[row][col]->update(vec, row, col, vecWidth, vecHeight);
+
+
+    Vector2D globalCoords = vec.getGlobalCoords();
+    
+    // Chunk rightChunk;
+    // Chunk leftChunk;
+    // Chunk topChunk;
+    // Chunk bottomChunk;
+    // rightChunk = worldGeneration.getChunk(Vector2D(globalCoords.x+1, globalCoords.y));
+    // leftChunk = worldGeneration.getChunk(Vector2D(globalCoords.x-1, globalCoords.y));
+    // topChunk = worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y - 1));
+    // bottomChunk = worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y + 1));
+    
+    vec[row][col]->update(vec, row, col, vecWidth, vecHeight, worldGeneration.getChunk(Vector2D(globalCoords.x-1, globalCoords.y)), worldGeneration.getChunk(Vector2D(globalCoords.x+1, globalCoords.y)), worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y + 1)), worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y - 1)));
 }
 
 void Game::worker(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, Chunk &vec, int rowChunk, int colChunk)
@@ -212,19 +226,23 @@ void Game::worker(int startingChunkRow, int startingChunkCol, int numChunksY, in
 
 void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, Chunk &vec)
 {
-    std::vector<std::thread> threads;
+    std::vector<std::future<void>> futures;
+
+    // Enqueue tasks
     for (int rowChunk = startingChunkRow; rowChunk < numChunksY; rowChunk += 2)
     {
         for (int colChunk = startingChunkCol; colChunk < numChunksX; colChunk += 2)
         {
-            threads.emplace_back([this, startingChunkRow, startingChunkCol, numChunksY, numChunksX, chunkSizeY, chunkSizeX, vecHeight, vecWidth, &vec, rowChunk, colChunk]()
-                                 { this->worker(startingChunkRow, startingChunkCol, numChunksY, numChunksX, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec, rowChunk, colChunk); });
+            auto future = threads.enqueue([this, startingChunkRow, startingChunkCol, numChunksY, numChunksX, chunkSizeY, chunkSizeX, vecHeight, vecWidth, &vec, rowChunk, colChunk]()
+            {
+                this->worker(startingChunkRow, startingChunkCol, numChunksY, numChunksX, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec, rowChunk, colChunk);
+            });
+            futures.push_back(std::move(future));  // Move future into vector
         }
     }
-
-    for (auto &t : threads)
+    for (auto& future : futures)
     {
-        t.join();
+        future.get();  // This will wait for each task to complete
     }
 }
 
@@ -240,8 +258,8 @@ void Game::update(const int &xScale, const int &yScale)
 
     Vector2D coords = player->getCoordinates();
     Vector2D dimensions = player->getDimensions();
-    std::map<Vector2D, Chunk>& temp = worldGeneration.getVecStore();
-    for (auto& mapEntry : temp) {
+    std::map<Vector2D, Chunk>& chunks = worldGeneration.getVecStore();
+    for (auto& mapEntry : chunks) {
         Chunk& vec2D = mapEntry.second;
         Vector2D globalCoords = mapEntry.first;
         ChunkUpdateSkipping(1, 1, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec2D);

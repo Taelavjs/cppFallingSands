@@ -23,7 +23,7 @@ void Liquid::moveHorizontally(int &vecWidth, Chunk &vec, int col, int row, int i
     swapElements(vec, row, col, row, newCol);
 }
 
-void Liquid::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight)
+void Liquid::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, Chunk& leftChunk, Chunk& rightChunk, Chunk& belowChunk, Chunk& aboveChunk)
 {
     setProcessed(true);
     bool colLeftInBounds = col - 1 >= 0;
@@ -31,9 +31,21 @@ void Liquid::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeigh
     bool dropInBounds = row + 1 < vecHeight;
     int pRow = row;
     int pCol = col;
+
+    colLeftInBounds = pCol - 1 >= 0;
+    colRightInBounds = pCol + 1 < vecWidth;
+    dropInBounds = pRow + 1 < vecHeight;
+    x_direction = rand() % 2 == 0 ? -1 : 1;
         
     if(x_direction == 0){
         x_direction = rand() % 2 == 0 ? -1 : 1; // Randomize direction
+    }
+
+    if(!dropInBounds) {
+        Chunk chunk;
+        if(belowChunk.size() == 0){
+
+        } 
     }
     
     if (dropInBounds && (vec[row + 1][col] == nullptr || (vec[row+1][col]->getIsLiquid() && vec[row][col]->getDensity() > vec[row+1][col]->getDensity())))
@@ -53,14 +65,7 @@ void Liquid::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeigh
         swapElements(vec, row, col, fallToRow, col);
         pRow = fallToRow;
         pCol = col;
-    }
-
-    colLeftInBounds = pCol - 1 >= 0;
-    colRightInBounds = pCol + 1 < vecWidth;
-    dropInBounds = pRow + 1 < vecHeight;
-    x_direction = rand() % 2 == 0 ? -1 : 1;
-
-    if((colLeftInBounds && (vec[pRow][pCol-1] == nullptr|| vec[pRow][pCol-1]->getIsLiquid())) && (colRightInBounds && (vec[pRow][pCol+1] == nullptr|| vec[pRow][pCol+1]->getIsLiquid()))){
+    } else if((colLeftInBounds && (vec[pRow][pCol-1] == nullptr|| vec[pRow][pCol-1]->getIsLiquid())) && (colRightInBounds && (vec[pRow][pCol+1] == nullptr|| vec[pRow][pCol+1]->getIsLiquid()))){
         moveHorizontally(vecWidth, vec, pCol, pRow, x_direction);
         pCol += x_direction;
 

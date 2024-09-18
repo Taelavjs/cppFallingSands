@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <future>
 #include "../Elements/BaseElements/Pixel.hpp"
 #include "../Elements/Sand.hpp"
 #include "../Elements/Water.hpp"
@@ -18,6 +19,7 @@
 #include "../Playables/Player.hpp"
 #include "../Textures/Sprite.hpp"
 #include "World/WorldGeneration.hpp"
+#include "../Utility/ThreadPool.hpp"
 
 class Game {
 public:
@@ -56,6 +58,7 @@ private:
     Smoke *smoke;
     Oil *oil;
     Napalm *napalm;
+    ThreadPool threads;
 };
 
 #endif // GAME_HPP

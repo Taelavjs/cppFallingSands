@@ -16,6 +16,10 @@ struct Vector2D {
         if (x != other.x) return x < other.x;
         return y < other.y;
     }
+
+    bool operator==(const Vector2D& other) const {
+        return (x == other.x) && (y == other.y);
+    }
 };
 
 class Velocity {

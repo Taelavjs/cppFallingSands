@@ -53,7 +53,7 @@ bool Gas::isValidPosition(Chunk &vec, int row, int col)
 {
     return (row >= 0 && row < vec.size() && col >= 0 && col < vec[0].size() && isSpaceFree(vec, row, col));
 }
-void Gas::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight)
+void Gas::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, Chunk& leftChunk, Chunk& rightChunk, Chunk& belowChunk, Chunk& aboveChunk)
 {
     vec[row][col]->setProcessed(true);
     if(((std::rand() % 2) * 2 - 1 )> 1) return;

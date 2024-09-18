@@ -16,9 +16,12 @@ public:
         return vec[x];
     }
 
-    int size(){
+    int size() {
+        if (vec.empty() || vec[0].empty()) {
+            return 0;
+        }
         return vec[0].size();
-    };
+    }
 
 private:
     std::vector<std::vector<Pixel *>> vec;

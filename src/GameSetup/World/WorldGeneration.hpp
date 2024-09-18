@@ -15,6 +15,14 @@
 #include "../../Elements/Water.hpp"
 #include <map>
 #include "Chunk.hpp"
+
+class Chunk;
+class Napalm;
+class Oil;
+class Smoke;
+class Rock;
+class Water;
+class Sand;
 class WorldGeneration {
 public:
     WorldGeneration(int newWidth);
@@ -27,7 +35,7 @@ public:
     Vector2D getGlobalCoordinates(Vector2D position);
     std::map<Vector2D, Chunk>& getVecStore();
     Vector2D getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY);
-
+    Chunk& getChunk(Vector2D chunkGlobalCoord);
 private:
     std::map<Vector2D, Chunk> worldVecStore;
     Sand *sand;
@@ -37,6 +45,7 @@ private:
     Oil *oil;
     Napalm *napalm;
     int width{0};
+    Chunk emptyChunk;
 };
 
 #endif /* WORLDGENERATION */

@@ -5,13 +5,12 @@
 #include "Moveable.hpp"
 #include <cmath>
 
-
 class Gas : public Moveable {
 public:    
     Gas();
     virtual ~Gas();
     int getBlocksToFall();
-    void update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight);
+    void update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, Chunk& leftChunk, Chunk& rightChunk, Chunk& belowChunk, Chunk& aboveChunk);
     bool isGas();
     void xDisp(Chunk &vec, int row, int col, int xDispersion, int xDirection, int &res);
     bool isSolid(){return false;};

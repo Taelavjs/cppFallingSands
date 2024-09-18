@@ -7,7 +7,7 @@ Chunk::Chunk(Vector2D chunkGlobalCoords, std::vector<std::vector<Pixel *>> chunk
 }
 
 Chunk::Chunk()
-:globalCoords(Vector2D(0,0)), vec()
+:globalCoords(Vector2D(999,999)), vec()
 {
 
 }

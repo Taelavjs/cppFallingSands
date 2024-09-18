@@ -3,6 +3,7 @@
 #include <random>
 #include <vector>
 #include "Pixel.hpp"
+#include "../../GameSetup/World/WorldGeneration.hpp" 
 
 class Flammable {
 public:

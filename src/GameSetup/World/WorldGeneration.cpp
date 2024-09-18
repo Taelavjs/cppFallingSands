@@ -1,7 +1,7 @@
 #include "WorldGeneration.hpp"
 
 WorldGeneration::WorldGeneration(int newWidth)
-:width(newWidth)
+:width(newWidth), emptyChunk()
 {
     sand = new Sand();
     water = new Water();
@@ -9,6 +9,7 @@ WorldGeneration::WorldGeneration(int newWidth)
     smoke = new Smoke();
     napalm = new Napalm();
     oil = new Oil();
+    
 
 }
 
@@ -129,4 +130,11 @@ Vector2D WorldGeneration::getGlobalCoordinates(Vector2D position){
 
 Vector2D WorldGeneration::getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY) {
     return Vector2D(chunkX * width + localX, chunkY * width + localY);
+}
+
+Chunk& WorldGeneration::getChunk(Vector2D chunkGlobalCoord){
+    if(worldVecStore.find(chunkGlobalCoord) != worldVecStore.end()){
+        return worldVecStore[chunkGlobalCoord];;
+    } 
+    return emptyChunk;
 }
