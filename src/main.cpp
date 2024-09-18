@@ -15,8 +15,8 @@ class Pixel;
 class Game;
 constexpr double GLOBAL_CONST_VAR{3.5f};
 
-const uint8_t rendererScalex{4};
-const uint8_t rendererScaley{4};
+const uint8_t rendererScalex{3};
+const uint8_t rendererScaley{3};
 const int vecWidth{48 * 4};
 const int vecHeight{48 * 4};
 const std::string title{"awesomepawsome"};

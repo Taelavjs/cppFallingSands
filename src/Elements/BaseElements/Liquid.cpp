@@ -42,10 +42,37 @@ void Liquid::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeigh
     }
 
     if(!dropInBounds && belowChunk.size() != 0 && (belowChunk[0][col] == nullptr || (belowChunk[0][col]->getIsLiquid() && vec[row][col]->getDensity() > belowChunk[0][col]->getDensity()))) {
-        Chunk chunk;
         Pixel* temp = belowChunk[0][col];
         belowChunk[0][col] = vec[row][col];
         vec[row][col] = temp;
+        
+        return;
+    } else if(!colRightInBounds && rightChunk.size() != 0 && (rightChunk[pRow][0] == nullptr || rightChunk[pRow][0] ->getIsLiquid())){
+        x_direction = 1;
+        pCol += 1;
+        int moveCounter = 1;
+        while(moveCounter < 2 && moveCounter < vecHeight && rightChunk[pRow][moveCounter] == nullptr){
+            moveCounter++;
+        }
+        moveCounter--;
+        Pixel* temp = rightChunk[pRow][moveCounter] ;
+        rightChunk[pRow][moveCounter]  = vec[pRow][col];
+        vec[pRow][col] = temp;
+        
+        return;
+    } else if(!colLeftInBounds && leftChunk.size() != 0 && (leftChunk[pRow][vecWidth-1] == nullptr || leftChunk[pRow][vecWidth-1]->getIsLiquid())){
+        x_direction = -1;
+        pCol -= 1;
+        int moveCounter = vecWidth-2;
+        while(moveCounter > -2 && moveCounter > 0 && leftChunk[pRow][moveCounter] == nullptr){
+            moveCounter--;
+        }
+        moveCounter++;
+
+
+        Pixel* temp = leftChunk[pRow][moveCounter];
+        leftChunk[pRow][moveCounter]  = vec[pRow][col];
+        vec[pRow][col] = temp;
         
         return;
     }
