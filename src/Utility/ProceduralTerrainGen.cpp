@@ -5,6 +5,8 @@ std::vector<float> ProceduralTerrainGen::createNoise(int w, int h){
     FastNoiseLite noise;
     noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
     noise.SetFrequency(0.5f);
+    noise.SetSeed(391203);
+
     noise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Hybrid);
     noise.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
     noise.SetCellularJitter(1.9);
@@ -35,6 +37,8 @@ std::vector<float> ProceduralTerrainGen::createTerrain(int w, int h){
     noise2.SetNoiseType(FastNoiseLite::NoiseType_Value);
     noise2.SetFrequency(0.07);
 
+
+    noise2.SetSeed(31231);
     noise2.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Hybrid);
     noise2.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);
     noise2.SetCellularJitter(1.9);

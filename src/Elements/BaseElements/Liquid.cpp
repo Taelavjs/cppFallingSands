@@ -35,13 +35,12 @@ void Liquid::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeigh
     colLeftInBounds = pCol - 1 >= 0;
     colRightInBounds = pCol + 1 < vecWidth;
     dropInBounds = pRow + 1 < vecHeight;
-    x_direction = rand() % 2 == 0 ? -1 : 1;
         
     if(x_direction == 0){
         x_direction = rand() % 2 == 0 ? -1 : 1; // Randomize direction
     }
 
-    if(!dropInBounds && belowChunk.size() != 0 && (belowChunk[0][col] == nullptr || (belowChunk[0][col]->getIsLiquid() && vec[row][col]->getDensity() > belowChunk[0][col]->getDensity()))) {
+    if(!dropInBounds && belowChunk.size() != 0 && (belowChunk[0][col] == nullptr || (belowChunk[0][col]->getIsLiquid() && getDensity() < belowChunk[0][col]->getDensity()))) {
         Pixel* temp = belowChunk[0][col];
         belowChunk[0][col] = vec[row][col];
         vec[row][col] = temp;
@@ -77,7 +76,7 @@ void Liquid::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeigh
         return;
     }
     
-    if (dropInBounds && (vec[row + 1][col] == nullptr || (vec[row+1][col]->getIsLiquid() && vec[row][col]->getDensity() > vec[row+1][col]->getDensity())))
+    if (dropInBounds && (vec[row + 1][col] == nullptr || (vec[row+1][col]->getIsLiquid() && getDensity() > vec[row+1][col]->getDensity())))
     {
 
         int blocksToFall{3};
@@ -94,19 +93,23 @@ void Liquid::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeigh
         swapElements(vec, row, col, fallToRow, col);
         pRow = fallToRow;
         pCol = col;
-    } else if((colLeftInBounds && (vec[pRow][pCol-1] == nullptr|| vec[pRow][pCol-1]->getIsLiquid())) && (colRightInBounds && (vec[pRow][pCol+1] == nullptr|| vec[pRow][pCol+1]->getIsLiquid()))){
-        moveHorizontally(vecWidth, vec, pCol, pRow, x_direction);
-        pCol += x_direction;
+    } else {
+        bool isLeftValid{(colLeftInBounds && (vec[pRow][pCol-1] == nullptr|| vec[pRow][pCol-1]->getIsLiquid()))};
+        bool isRightValid{(colRightInBounds && (vec[pRow][pCol+1] == nullptr|| vec[pRow][pCol+1]->getIsLiquid()))};
+        if(isLeftValid && isRightValid){
+            moveHorizontally(vecWidth, vec, pCol, pRow, x_direction);
+            pCol += x_direction;
 
-    } else if(colRightInBounds && (vec[pRow][pCol+1] == nullptr || vec[pRow][pCol+1]->getIsLiquid())){
-        moveHorizontally(vecWidth, vec, pCol, pRow, 1);
-        x_direction = 1;
-        pCol += 1;
+        } else if(isRightValid){
+            moveHorizontally(vecWidth, vec, pCol, pRow, 1);
+            x_direction = 1;
+            pCol += 1;
 
-    } else if(colLeftInBounds && (vec[pRow][pCol-1] == nullptr || vec[pRow][pCol-1]->getIsLiquid())){
-        moveHorizontally(vecWidth, vec, pCol, pRow, -1);
-        x_direction = -1;
-        pCol -= 1;
+        } else if(isLeftValid){
+            moveHorizontally(vecWidth, vec, pCol, pRow, -1);
+            x_direction = -1;
+            pCol -= 1;
+        }
     }
 
     if(pRow-1 >= 0 && (vec[pRow - 1][pCol] != nullptr && vec[pRow-1][pCol]->getIsMoveable() && !vec[pRow-1][pCol] -> getIsGas() && (vec[pRow][pCol]->getDensity() > vec[pRow-1][pCol]->getDensity()))){

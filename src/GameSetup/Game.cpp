@@ -254,7 +254,7 @@ void Game::update(const int &xScale, const int &yScale)
     int numChunksX = vecWidth / chunkSizeX;
     int numChunksY = vecHeight / chunkSizeY;
 
-    Chunk vec = worldGeneration.getLocalVec();
+    Chunk& vec = worldGeneration.getChunk(worldGeneration.getGlobalCoordinates(player->getCoordinates()));
 
 
     Vector2D coords = player->getCoordinates();

@@ -73,15 +73,22 @@ void Player::resetPlayerColliders(){
     groundedRect = {(int)playerCenterPosition.x - 1, (int)(playerCenterPosition.y + playerScale.y/2), 5, 5};
 }
 
-void Player::checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &collisions, int vecWidth, Chunk vec){
+void Player::checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &collisions, int vecWidth, Chunk& vec){
     SDL_Rect collisionResult;
+
+    int jOffset = (vec.getGlobalCoords().y * -vecWidth);
+    int iOffset = (vec.getGlobalCoords().x * -vecWidth);
     isBlockInPlayer = false;
+    if(vec.size() == 0) return;
+
     collisions.clear();
     for(int l = 0; l < 8; l++){
-        for(int i = position.x + 3; i < position.x + 3 + playerScale.x - 6; ++i){
-            for(int j = position.y; j < position.y + playerScale.y; ++j){
-                SDL_Rect cube = {i, j, 1, 1};
-                if(!(i > 0 && j > 0 && j < vecWidth && i < vecWidth)) continue;
+        for(int i = position.x + iOffset + 3; i < position.x + iOffset + 3 + playerScale.x - 6; ++i){
+            for(int j = position.y + jOffset; j < position.y + jOffset + playerScale.y; ++j){
+                SDL_Rect cube = {i - iOffset, j - jOffset, 1, 1};
+                if(!(i > 0 && j > 0 && j < vecWidth && i < vecWidth)) {
+                    continue;
+                }
                 if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
                     collisions.push_back(cube);
                     isBlockInPlayer = true;
@@ -91,10 +98,12 @@ void Player::checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &co
     }
 }
 
-void Player::collisionHandler(int vecWidth, Chunk vec)
+void Player::collisionHandler(int vecWidth, Chunk& vec)
 {
     resetPlayerColliders();
     validPosition = position;
+    int jOffset = (vec.getGlobalCoords().y * -vecWidth);
+    int iOffset = (vec.getGlobalCoords().x * -vecWidth);
 
     // flag to check for collisions with environment once
     bool wasGrounded{false};
@@ -108,14 +117,15 @@ void Player::collisionHandler(int vecWidth, Chunk vec)
 
     if(!isBlockInPlayer){
         SDL_Rect col;
-        for(int i = playerCenterPosition.x - 4; i < playerCenterPosition.x + 8; ++i){
+        for(int i = playerCenterPosition.x + iOffset - 4; i < playerCenterPosition.x + iOffset + 8; ++i){
             if(wasGrounded) break;
-            for(int j = playerCenterPosition.y + playerScale.y/2; j < playerCenterPosition.y + 2 + playerScale.y/2; ++j){
+            for(int j = playerCenterPosition.y + jOffset + playerScale.y/2; j < playerCenterPosition.y + jOffset + 2 + playerScale.y/2; ++j){
                 if(wasGrounded) break;
 
                 if(!(i > 0 && j > 0 && j < vecWidth && i < vecWidth)) continue;
-                SDL_Rect cube = {i, j, 1, 1};
+                SDL_Rect cube = {i - iOffset, j - jOffset, 1, 1};
                 stckToRender.push(cube);
+                if(vec.size() == 0) continue;
 
                 if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &groundedRect, &col)){
                     wasGrounded = true;
@@ -216,7 +226,7 @@ void Player::collisionHandler(int vecWidth, Chunk vec)
 
 }
 
-void Player::update(Chunk vec, SDL_Renderer* renderer, int vecWidth)
+void Player::update(Chunk& vec, SDL_Renderer* renderer, int vecWidth)
 {
     velocity.velocityTick();
     //Debugging rendering
