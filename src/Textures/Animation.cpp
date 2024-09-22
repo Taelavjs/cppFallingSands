@@ -35,11 +35,13 @@ void Animation::updateFrame() {
         } else {
             currentFrame++;
         }
-        deltaTime -= frameDuration;
+        deltaTime = 0;
     }
 }
 
 void Animation::resetCounter(){
     currentFrame = 0;
+    prevTime = SDL_GetTicks();
+    deltaTime   = 0;
 }
 

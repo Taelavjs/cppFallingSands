@@ -25,14 +25,11 @@ WorldGeneration::~WorldGeneration(){
 }
 
 void WorldGeneration::generateBlock() {
-    std::vector<std::vector<Pixel *>> vec1(width, std::vector<Pixel *>(width));
-    std::vector<std::vector<Pixel *>> vec2(width, std::vector<Pixel *>(width));
-    std::vector<std::vector<Pixel *>> vec3(width, std::vector<Pixel *>(width));
-    std::vector<std::vector<Pixel *>> vec4(width, std::vector<Pixel *>(width));
-    worldVecStore[Vector2D(0,0)] = Chunk(Vector2D(0, 0), vec1);
-    worldVecStore[Vector2D(0, 1)] = Chunk(Vector2D(0, 1), vec2);
-    worldVecStore[Vector2D(1, 0)] = Chunk(Vector2D(1, 0), vec3);
-    worldVecStore[Vector2D(1, 1)] = Chunk(Vector2D(1, 1), vec4);
+    std::vector<std::vector<Pixel *>> vec(width, std::vector<Pixel *>(width));
+    worldVecStore[Vector2D(0,0)] = Chunk(Vector2D(0, 0), vec);
+    worldVecStore[Vector2D(0, 1)] = Chunk(Vector2D(0, 1), vec);
+    worldVecStore[Vector2D(1, 0)] = Chunk(Vector2D(1, 0), vec);
+    worldVecStore[Vector2D(1, 1)] = Chunk(Vector2D(1, 1), vec);
 
     std::vector<float> noiseMap = ProceduralTerrainGen::createNoise(width, width);
     std::vector<float> terrainMap = ProceduralTerrainGen::createTerrain(width, width);  
