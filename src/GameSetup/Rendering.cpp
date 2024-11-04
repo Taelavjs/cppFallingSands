@@ -89,7 +89,7 @@ void Rendering::renderGrid(Chunk &vec, Player* player, Vector2D globalCoords){
     }
     uint32_t *pixels = new uint32_t[screenWidth * screenHeight];
     uint32_t blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 30, 255);
-
+    int z = 0;
     std::fill(pixels, pixels + (screenWidth * screenHeight), blackColor);
 
     for (int row = 0; row < screenWidth; ++row)
@@ -103,9 +103,11 @@ void Rendering::renderGrid(Chunk &vec, Player* player, Vector2D globalCoords){
             if (vec[row][col] == nullptr)
                 continue;
             vec[row][col]->setProcessed(false);
+            z++;
         }
 
     }
+
     SDL_Rect AABB = player->getPlayerRect();
     Rendering::offsetX = AABB.x - 5;
     Rendering::offsetY = AABB.y - 1;

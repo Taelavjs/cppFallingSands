@@ -25,18 +25,25 @@ void Liquid::moveHorizontally(int &vecWidth, Chunk &vec, int col, int row, int i
 
 void Liquid::update(int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
 {
-    if(row+1 < 384 && worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1)) == nullptr)
+    Pixel* pixBelow = worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1)) ;
+    if(row+1 < 384 && pixBelow == nullptr)
     {
         worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row+1));
-
+        x_direction = 0;
+    } else if(row+1 < 384 && pixBelow != nullptr && pixBelow->getIsLiquid() && pixBelow->getDensity() < getDensity() ){
+        worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row+1));
+        x_direction = 0;
+        
     } else {
         Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
         Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
 
+        
+
         bool isLeftValid = col - 1 >= 0;
         bool isRightValid = col + 1 < 384;
 
-        if(leftPix == nullptr && rightPix == nullptr && isLeftValid && isRightValid){
+        if(isLeftValid && isRightValid && (leftPix == nullptr || leftPix->getIsLiquid() && leftPix->getDensity() < getDensity())  && (rightPix == nullptr || rightPix->getIsLiquid() && rightPix->getDensity() < getDensity())){
             //5050 move left or right
             if (x_direction == 0)
             {
@@ -45,14 +52,15 @@ void Liquid::update(int &row, int &col, int &vecWidth, int &vecHeight, WorldGene
 
             worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + x_direction, row));
 
-        } else if(leftPix == nullptr && isLeftValid){
+        } else if(isLeftValid && (leftPix == nullptr || leftPix->getIsLiquid() && leftPix->getDensity() < getDensity()) ){
             worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col - 1, row));
             x_direction = -1;
-        } else if(rightPix == nullptr && isRightValid){
+        } else if(isRightValid && (rightPix == nullptr || rightPix->getIsLiquid() && rightPix->getDensity() < getDensity())){
             worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + 1, row));
-            x_direction + 1;
+            x_direction = 1;
         }
     }
+
     setProcessed(true);
 
     // bool colLeftInBounds = col - 1 >= 0;

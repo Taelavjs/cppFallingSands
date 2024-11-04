@@ -197,7 +197,6 @@ void Game::updateSequence(int &row, int &col)
         return;
     if (pixel->getProcessed())
         return;
-    pixel->setProcessed(true);
     if (pixel->getIsFlammable())
     {
         // if (worldGeneration.getPixelFromGlobal(Vector2D(col, row))->fireTick(vec, row, col, vecHeight, smoke))
@@ -276,6 +275,7 @@ void Game::update(const int &xScale, const int &yScale)
         ChunkUpdateSkipping(globalCoords, 0, 0);
     }
     player->update(vec, Rendering::getRenderer(), vecWidth);
+    worldGeneration.clearPixelProcessed();
 
 }
 

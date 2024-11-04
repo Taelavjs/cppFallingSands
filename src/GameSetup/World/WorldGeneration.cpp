@@ -192,6 +192,23 @@ Pixel* WorldGeneration::getPixelFromGlobal(Vector2D position){
     return nullptr;
 }
 
+void WorldGeneration::clearPixelProcessed(){
+    for (auto& mapEntry : worldVecStore) {
+        Chunk& vec2D = mapEntry.second;
+        Vector2D globalCoords = mapEntry.first;
+
+        for(int i = 0; i < vec2D.size(); i++){
+            for(int j = 0; j < vec2D[i].size(); j++){
+                Pixel* pix = vec2D[i][j];
+                if(pix != nullptr) {
+                    pix->setProcessed(false);
+                }
+
+            }
+        }
+    }
+}
+
 void WorldGeneration::swapTwoValues(Vector2D pos1, Vector2D pos2){
     Vector2D chunkCoord(0, 0);
     Vector2D localCoord(0, 0);
@@ -221,6 +238,12 @@ void WorldGeneration::swapTwoValues(Vector2D pos1, Vector2D pos2){
     Chunk& ch2 = worldVecStore[chunkCoord2];
    if(ch1.size() == 0 || ch2.size()==0){
         return;
+    }
+    if(ch1[localCoord.y][localCoord.x] != nullptr ) {
+        ch1[localCoord.y][localCoord.x]->setProcessed(true);
+    }
+    if(ch2[localCoord2.y][localCoord2.x] != nullptr ) {
+        ch2[localCoord2.y][localCoord2.x] ->setProcessed(true);
     }
     Pixel* temp = ch1[localCoord.y][localCoord.x];
     ch1[localCoord.y][localCoord.x] = ch2[localCoord2.y][localCoord2.x];

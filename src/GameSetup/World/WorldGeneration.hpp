@@ -31,7 +31,7 @@ public:
     Vector2D getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY);
     Chunk& getChunk(Vector2D chunkGlobalCoord);
     Pixel* getPixelFromGlobal(Vector2D position);
-
+    void clearPixelProcessed();
     void swapTwoValues(Vector2D pos1, Vector2D pos2);
 private:
     std::map<Vector2D, Chunk> worldVecStore;
