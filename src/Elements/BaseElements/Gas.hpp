@@ -10,7 +10,7 @@ public:
     Gas();
     virtual ~Gas();
     int getBlocksToFall();
-    void update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, Chunk& leftChunk, Chunk& rightChunk, Chunk& belowChunk, Chunk& aboveChunk);
+    void update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration);
     bool isGas();
     void xDisp(Chunk &vec, int row, int col, int xDispersion, int xDirection, int &res);
     bool isSolid(){return false;};

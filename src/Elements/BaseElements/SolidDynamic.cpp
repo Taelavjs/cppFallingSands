@@ -35,7 +35,7 @@ bool SolidDynamic::checkMoveableMat(Pixel *space)
     return (space->getIsLiquid() || space->getIsGas());
 }
 
-void SolidDynamic::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, Chunk& leftChunk, Chunk& rightChunk, Chunk& belowChunk, Chunk& aboveChunk)
+void SolidDynamic::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
 {
     setProcessed(true);
 
@@ -55,7 +55,7 @@ void SolidDynamic::update(Chunk &vec, int &row, int &col, int &vecWidth, int &ve
         newRow--; // Step back to the last valid position
         if (newRow != row) // Only swap if new position is different
         {
-            swapElements(vec, row, col, newRow, col);
+            // swapElements(vec, row, col, newRow, col);
         }
     }
     else if (row + 1 < vecHeight && vec[row + 1][col] != nullptr && checkMoveableMat(vec[row + 1][col]))
@@ -71,7 +71,7 @@ void SolidDynamic::update(Chunk &vec, int &row, int &col, int &vecWidth, int &ve
         newRow--; // Step back to the last valid position
         if (newRow != row) // Only swap if new position is different
         {
-            swapElements(vec, row, col, newRow, col);
+            // swapElements(vec, row, col, newRow, col);
         }
     }
     else
@@ -105,7 +105,7 @@ void SolidDynamic::update(Chunk &vec, int &row, int &col, int &vecWidth, int &ve
         // Move sand to the calculated position
         if (res != col)
         {
-            swapElements(vec, row, col, row + 1, res);
+            // swapElements(vec, row, col, row + 1, res);
         }
         resetVelocity();
 

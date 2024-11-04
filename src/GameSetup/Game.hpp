@@ -8,19 +8,21 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <future>
-#include "../Elements/BaseElements/Pixel.hpp"
-#include "../Elements/Sand.hpp"
-#include "../Elements/Water.hpp"
-#include "../Elements/Rock.hpp"
-#include "../Elements/Smoke.hpp"
-#include "../Elements/Oil.hpp"
-#include "../Elements/Napalm.hpp"
-#include "Rendering.hpp"
-#include "../Playables/Player.hpp"
-#include "../Textures/Sprite.hpp"
+
+
+class Pixel;
+class Sand;
+class Water;
+class Rock;
+class Smoke;
+class Oil;
+class Napalm;
+class Rendering;
+class Player;
+class Sprite;
 #include "World/WorldGeneration.hpp"
 #include "../Utility/ThreadPool.hpp"
-
+class Chunk;
 class Game {
 public:
     Game(int vecWidth, int vecHeight);
@@ -49,6 +51,10 @@ private:
     // int rendererScaley;
     bool isRunning;
     WorldGeneration worldGeneration;
+    const int chunkSizeX = 48;
+    const int chunkSizeY = 48;
+    int numChunksX;
+    int numChunksY;
     Player* player;
     Uint8* prevKeys = nullptr;
     int numKeys = 0;

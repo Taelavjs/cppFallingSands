@@ -1,4 +1,15 @@
 #include "Game.hpp"
+#include "../Elements/BaseElements/Pixel.hpp"
+#include "../Elements/Sand.hpp"
+#include "../Elements/Water.hpp"
+#include "../Elements/Rock.hpp"
+#include "../Elements/Smoke.hpp"
+#include "../Elements/Oil.hpp"
+#include "../Elements/Napalm.hpp"
+#include "Rendering.hpp"
+#include "../Playables/Player.hpp"
+#include "../Textures/Sprite.hpp"
+
 
 Game::Game(int vecWidthInp, int vecHeightInp)
     : vecWidth(vecWidthInp - 1), vecHeight(vecHeightInp - 1),
@@ -13,6 +24,8 @@ Game::Game(int vecWidthInp, int vecHeightInp)
     SDL_GetKeyboardState(&numKeys);
     prevKeys = new Uint8[numKeys];
     SDL_PumpEvents();
+    numChunksX = vecWidth / chunkSizeX;
+    numChunksY = vecHeight / chunkSizeY;
 
 }
 
@@ -179,21 +192,20 @@ void Game::chunkUpdates(int chunkStart, int chunkEnd)
 
 void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, Chunk &vec)
 {
-    if (vec[row][col] == nullptr)
+    int globalRow = row;
+    int globalCol = col;
+    if (worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow)) == nullptr)
         return;
-    if (vec[row][col]->getProcessed())
+    if (worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow))->getProcessed())
         return;
-    vec[row][col]->setProcessed(true);
-    if (vec[row][col]->getIsFlammable())
+    worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow))->setProcessed(true);
+    if (worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow))->getIsFlammable())
     {
-        if (vec[row][col]->fireTick(vec, row, col, vecHeight, smoke))
+        if (worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow))->fireTick(vec, row, col, vecHeight, smoke))
         {
-            vec[row][col] = smoke->clone();
+            // worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow)) = smoke->clone();
         };
     }
-
-
-    Vector2D globalCoords = vec.getGlobalCoords();
     
     // Chunk rightChunk;
     // Chunk leftChunk;
@@ -204,7 +216,7 @@ void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, Chu
     // topChunk = worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y - 1));
     // bottomChunk = worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y + 1));
     
-    vec[row][col]->update(vec, row, col, vecWidth, vecHeight, worldGeneration.getChunk(Vector2D(globalCoords.x-1, globalCoords.y)), worldGeneration.getChunk(Vector2D(globalCoords.x+1, globalCoords.y)), worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y + 1)), worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y - 1)));
+    worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow))->update(globalRow, globalCol, vecWidth, vecHeight, worldGeneration);
 }
 
 void Game::worker(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, Chunk &vec, int rowChunk, int colChunk)
@@ -249,15 +261,9 @@ void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int n
 
 void Game::update(const int &xScale, const int &yScale)
 {
-    const int chunkSizeX = 48;
-    const int chunkSizeY = 48;
-    int numChunksX = vecWidth / chunkSizeX;
-    int numChunksY = vecHeight / chunkSizeY;
-
     Chunk& vec = worldGeneration.getChunk(worldGeneration.getGlobalCoordinates(player->getCoordinates()));
-
-
     Vector2D coords = player->getCoordinates();
+
     Vector2D dimensions = player->getDimensions();
     std::map<Vector2D, Chunk>& chunks = worldGeneration.getVecStore();
     for (auto& mapEntry : chunks) {
@@ -270,7 +276,6 @@ void Game::update(const int &xScale, const int &yScale)
     }
     player->update(vec, Rendering::getRenderer(), vecWidth);
 
-    worldGeneration.getGlobalCoordinates(coords);
 }
 
 void Game::render()

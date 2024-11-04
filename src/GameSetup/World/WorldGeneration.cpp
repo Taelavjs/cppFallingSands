@@ -1,4 +1,11 @@
 #include "WorldGeneration.hpp"
+#include "../../Elements/BaseElements/Pixel.hpp"
+#include "../../Elements/Napalm.hpp"
+#include "../../Elements/Oil.hpp"
+#include "../../Elements/Rock.hpp"
+#include "../../Elements/Sand.hpp"
+#include "../../Elements/Smoke.hpp"
+#include "../../Elements/Water.hpp"
 
 WorldGeneration::WorldGeneration(int newWidth)
 :width(newWidth), emptyChunk()
@@ -157,7 +164,65 @@ Vector2D WorldGeneration::getGlobalCoordinates(int chunkX, int chunkY, int local
 
 Chunk& WorldGeneration::getChunk(Vector2D chunkGlobalCoord){
     if(worldVecStore.find(chunkGlobalCoord) != worldVecStore.end()){
-        return worldVecStore[chunkGlobalCoord];;
+        return worldVecStore[chunkGlobalCoord];
     } 
     return emptyChunk;
+}
+
+// Make the class able to give the correct chunk using global coordinates
+// Rather than swapping between global and local, much easier
+
+Pixel* WorldGeneration::getPixelFromGlobal(Vector2D position){
+    width = 192;
+    Vector2D chunkCoord(0, 0);
+    Vector2D localCoord(0, 0);
+    
+    chunkCoord.x = std::floor(position.x / width);
+    chunkCoord.y = std::floor(position.y / width);
+
+    localCoord.x = fmod(position.x, width);
+    if (localCoord.x < 0) localCoord.x += width; // Handle negative coordinates
+
+    localCoord.y = fmod(position.y, width);
+    if (localCoord.y < 0) localCoord.y += width; // Handle negative coordinates
+
+    if(worldVecStore.find(chunkCoord) != worldVecStore.end()){
+        return worldVecStore[chunkCoord][localCoord.y][localCoord.x]; // row x col
+    } 
+    return nullptr;
+}
+
+void WorldGeneration::swapTwoValues(Vector2D pos1, Vector2D pos2){
+    Vector2D chunkCoord(0, 0);
+    Vector2D localCoord(0, 0);
+    
+    chunkCoord.x = std::floor(pos1.x / width);
+    chunkCoord.y = std::floor(pos1.y / width);
+
+    localCoord.x = fmod(pos1.x, width);
+    if (localCoord.x < 0) localCoord.x += width; // Handle negative coordinates
+
+    localCoord.y = fmod(pos1.y, width);
+    if (localCoord.y < 0) localCoord.y += width; // Handle negative coordinates
+
+    Vector2D chunkCoord2(0, 0);
+    Vector2D localCoord2(0, 0);
+    
+    chunkCoord2.x = std::floor(pos2.x / width);
+    chunkCoord2.y = std::floor(pos2.y / width);
+
+    localCoord2.x = fmod(pos2.x, width);
+    if (localCoord2.x < 0) localCoord2.x += width; // Handle negative coordinates
+
+    localCoord2.y = fmod(pos2.y, width);
+    if (localCoord2.y < 0) localCoord2.y += width; // Handle negative coordinates
+
+    Chunk& ch1 = worldVecStore[chunkCoord];
+    Chunk& ch2 = worldVecStore[chunkCoord2];
+   if(ch1.size() == 0 || ch2.size()==0){
+        return;
+    }
+    Pixel* temp = ch1[localCoord.y][localCoord.x];
+    ch1[localCoord.y][localCoord.x] = ch2[localCoord2.y][localCoord2.x];
+    ch2[localCoord2.y][localCoord2.x] = temp;
 }

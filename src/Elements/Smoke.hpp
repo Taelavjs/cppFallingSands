@@ -2,6 +2,8 @@
 #define SMOKE_HPP
 #include "BaseElements/Gas.hpp"
 #include "BaseElements/Pixel.hpp"
+
+class Smoke;
 class Smoke : public Gas {
 public:
     Smoke();

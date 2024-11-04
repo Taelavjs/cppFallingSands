@@ -53,7 +53,7 @@ bool Gas::isValidPosition(Chunk &vec, int row, int col)
 {
     return (row >= 0 && row < vec.size() && col >= 0 && col < vec[0].size() && isSpaceFree(vec, row, col));
 }
-void Gas::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, Chunk& leftChunk, Chunk& rightChunk, Chunk& belowChunk, Chunk& aboveChunk)
+void Gas::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
 {
     vec[row][col]->setProcessed(true);
     if(((std::rand() % 2) * 2 - 1 )> 1) return;
@@ -73,7 +73,7 @@ void Gas::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, 
             newRow--;
         }
         newRow++;
-        swapElements(vec, pRow, pCol, newRow, pCol);
+        // swapElements(vec, pRow, pCol, newRow, pCol);
         pRow = newRow;
     }
 
@@ -87,21 +87,21 @@ void Gas::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, 
             newCol += incr;
         }
         newCol -= incr;
-        swapElements(vec, pRow, pCol, pRow, newCol);
+        // swapElements(vec, pRow, pCol, pRow, newCol);
     } else if (canMoveLeft) {
         int newCol = pCol - 1;
         while (std::abs(pCol - newCol) < xDispersion && newCol >= 0 && isValidPosition(vec, pRow, newCol)) {
             newCol--;
         }
         newCol++;
-        swapElements(vec, pRow, pCol, pRow, newCol);
+        // swapElements(vec, pRow, pCol, pRow, newCol);
     } else if (canMoveRight) {
         int newCol = pCol + 1;
         while (std::abs(pCol - newCol) < xDispersion && newCol < vecWidth && isValidPosition(vec, pRow, newCol)) {
             newCol++;
         }
         newCol--;
-        swapElements(vec, pRow, pCol, pRow, newCol);
+        // swapElements(vec, pRow, pCol, pRow, newCol);
     }
 }
 

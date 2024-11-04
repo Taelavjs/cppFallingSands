@@ -8,8 +8,9 @@
 #include <SDL2/SDL.h> // Include SDL2 header for SDL_Color
 #include <iostream> // Include SDL2 header for SDL_Color
 #include "../../GameSetup/World/Chunk.hpp"
-class WorldGeneration;
+#include "../../GameSetup/World/WorldGeneration.hpp"
 
+class WorldGeneration;
 // Default Base Class Of Every Pixel
 class Pixel {
 
@@ -73,8 +74,8 @@ public:
     Pixel();
     virtual ~Pixel();
     virtual Pixel *clone() const = 0;
-    virtual void update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, Chunk& leftChunk, Chunk& rightChunk, Chunk& belowChunk, Chunk& aboveChunk) {};
-    void swapElements(Chunk& vec, int x1, int y1,int x2, int y2);
+    virtual void update(int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration) {};
+    void swapElements(Pixel* pix1, Pixel* pix2);
 
     // FIRE FUNCTIONALITY
 public:
