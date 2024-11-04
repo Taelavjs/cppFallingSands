@@ -25,14 +25,34 @@ void Liquid::moveHorizontally(int &vecWidth, Chunk &vec, int col, int row, int i
 
 void Liquid::update(int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
 {
-    auto pp = worldGeneration.getPixelFromGlobal(Vector2D(col, row));
-    // Check if there is a space below
     if(row+1 < 384 && worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1)) == nullptr)
     {
         worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row+1));
 
-    } 
-    auto p = worldGeneration.getPixelFromGlobal(Vector2D(col, row));
+    } else {
+        Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
+        Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
+
+        bool isLeftValid = col - 1 >= 0;
+        bool isRightValid = col + 1 < 384;
+
+        if(leftPix == nullptr && rightPix == nullptr && isLeftValid && isRightValid){
+            //5050 move left or right
+            if (x_direction == 0)
+            {
+                x_direction = rand() % 2 == 0 ? -1 : 1; // Randomize direction
+            }
+
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + x_direction, row));
+
+        } else if(leftPix == nullptr && isLeftValid){
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col - 1, row));
+            x_direction = -1;
+        } else if(rightPix == nullptr && isRightValid){
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + 1, row));
+            x_direction + 1;
+        }
+    }
     setProcessed(true);
 
     // bool colLeftInBounds = col - 1 >= 0;

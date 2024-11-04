@@ -216,7 +216,7 @@ void Game::updateSequence(int &row, int &col)
     // bottomChunk = worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y + 1));
     
     pixel->update(row, col, vecWidth, vecHeight, worldGeneration);
-}
+} 
 
 void Game::worker(Vector2D globalChunk, int startingChunkRow, int startingChunkCol)
 {
