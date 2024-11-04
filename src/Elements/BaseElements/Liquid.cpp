@@ -25,43 +25,91 @@ void Liquid::moveHorizontally(int &vecWidth, Chunk &vec, int col, int row, int i
 
 void Liquid::update(int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
 {
-    Pixel* pixBelow = worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1)) ;
-    if(row+1 < 384 && pixBelow == nullptr)
-    {
-        worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row+1));
-        x_direction = 0;
-    } else if(row+1 < 384 && pixBelow != nullptr && pixBelow->getIsLiquid() && pixBelow->getDensity() < getDensity() ){
-        worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row+1));
-        x_direction = 0;
-        
-    } else {
-        Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
-        Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
+    setProcessed(true);
 
-        
+    bool moved = true;
+    int blocksFallen = 0;
+    while (moved && blocksFallen < yVelocity) {
+        moved = false; // Assume no movement; change if a swap is made
 
-        bool isLeftValid = col - 1 >= 0;
-        bool isRightValid = col + 1 < 384;
-
-        if(isLeftValid && isRightValid && (leftPix == nullptr || leftPix->getIsLiquid() && leftPix->getDensity() < getDensity())  && (rightPix == nullptr || rightPix->getIsLiquid() && rightPix->getDensity() < getDensity())){
-            //5050 move left or right
-            if (x_direction == 0)
-            {
-                x_direction = rand() % 2 == 0 ? -1 : 1; // Randomize direction
-            }
-
-            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + x_direction, row));
-
-        } else if(isLeftValid && (leftPix == nullptr || leftPix->getIsLiquid() && leftPix->getDensity() < getDensity()) ){
-            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col - 1, row));
-            x_direction = -1;
-        } else if(isRightValid && (rightPix == nullptr || rightPix->getIsLiquid() && rightPix->getDensity() < getDensity())){
-            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + 1, row));
-            x_direction = 1;
+        Pixel* pixBelow = worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1));
+        if (row + 1 < 384 && pixBelow == nullptr) {
+            // Move down if the space below is empty
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row + 1));
+            row += 1; // Update row after moving
+            x_direction = 0;
+            moved = true; // Indicate a move was made
+            blocksFallen++;
+        } else if (row + 1 < 384 && pixBelow != nullptr && pixBelow->getIsLiquid() && pixBelow->getDensity() < getDensity()) {
+            // Move down if the space below has a less dense liquid
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row + 1));
+            row += 1; // Update row after moving
+            x_direction = 0;
+            moved = true; // Indicate a move was made
+            blocksFallen++;
+        } else {
+            // If no valid move down is possible, break the loop
+            break;
         }
     }
 
-    setProcessed(true);
+    // No lateral movement checks; pixel can only move left or right in a separate update
+    if(blocksFallen > 0) {
+        yVelocity += 2;
+        yVelocity = std::min(yVelocity, 6);
+        return;
+    };
+    yVelocity = 1;
+
+    blocksFallen = 0;
+    moved = true;
+    while (moved && blocksFallen < xVelocity) {
+        moved = false; // Assume no movement; change if a swap is made
+
+        Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
+        Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
+
+        bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->getIsLiquid() && leftPix->getDensity() < getDensity()));
+        bool isRightValid = col + 1 < 384 && ( rightPix == nullptr || (rightPix->getIsLiquid() && rightPix->getDensity() < getDensity()));
+
+        if (isLeftValid && isRightValid) {
+            // Randomly decide to move left or right if both directions are valid
+            x_direction = x_direction == 0 ? (rand() % 2 == 0 ? -1 : 1) : x_direction;
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + x_direction, row));
+            col += x_direction; // Update column after moving
+            moved = true; // Indicate a move was made
+            blocksFallen++;
+        } else if (isLeftValid) {
+            // Move left if only left is valid
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col - 1, row));
+            col -= 1; // Update column after moving
+            x_direction = -1;
+            moved = true; // Indicate a move was made
+            blocksFallen++;
+        } else if (isRightValid) {
+            // Move right if only right is valid
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + 1, row));
+            col += 1; // Update column after moving
+            x_direction = 1;
+            moved = true; // Indicate a move was made
+            blocksFallen++;
+        } else {
+            // No valid horizontal move found, break the loop
+            break;
+        }
+    }
+
+    if(blocksFallen > 0) {
+        xVelocity += 1;
+        xVelocity = std::min(xVelocity, 6);
+        return;
+    };
+
+    xVelocity = 1;
+
+// No vertical movement checks; pixel can only move horizontally during this update cycle
+
+
 
     // bool colLeftInBounds = col - 1 >= 0;
     // bool colRightInBounds = col + 1 < vecWidth;
