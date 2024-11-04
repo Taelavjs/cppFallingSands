@@ -24,8 +24,8 @@ Game::Game(int vecWidthInp, int vecHeightInp)
     SDL_GetKeyboardState(&numKeys);
     prevKeys = new Uint8[numKeys];
     SDL_PumpEvents();
-    numChunksX = vecWidth / chunkSizeX;
-    numChunksY = vecHeight / chunkSizeY;
+    numChunksX = 192 / chunkSizeX;
+    numChunksY = 192 / chunkSizeY;
 
 }
 
@@ -190,21 +190,20 @@ void Game::chunkUpdates(int chunkStart, int chunkEnd)
     // }
 }
 
-void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, Chunk &vec)
+void Game::updateSequence(int &row, int &col)
 {
-    int globalRow = row;
-    int globalCol = col;
-    if (worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow)) == nullptr)
+    Pixel* pixel = worldGeneration.getPixelFromGlobal(Vector2D(col, row));
+    if (pixel == nullptr)
         return;
-    if (worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow))->getProcessed())
+    if (pixel->getProcessed())
         return;
-    worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow))->setProcessed(true);
-    if (worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow))->getIsFlammable())
+    pixel->setProcessed(true);
+    if (pixel->getIsFlammable())
     {
-        if (worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow))->fireTick(vec, row, col, vecHeight, smoke))
-        {
-            // worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow)) = smoke->clone();
-        };
+        // if (worldGeneration.getPixelFromGlobal(Vector2D(col, row))->fireTick(vec, row, col, vecHeight, smoke))
+        // {
+        //     // worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow)) = smoke->clone();
+        // };
     }
     
     // Chunk rightChunk;
@@ -216,28 +215,31 @@ void Game::updateSequence(int &vecWidth, int &vecHeight, int &row, int &col, Chu
     // topChunk = worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y - 1));
     // bottomChunk = worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y + 1));
     
-    worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow))->update(globalRow, globalCol, vecWidth, vecHeight, worldGeneration);
+    pixel->update(row, col, vecWidth, vecHeight, worldGeneration);
 }
 
-void Game::worker(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, Chunk &vec, int rowChunk, int colChunk)
+void Game::worker(Vector2D globalChunk, int startingChunkRow, int startingChunkCol)
 {
     // Calculate the boundaries of the current chunk
-    int rowStart = rowChunk * chunkSizeY;
-    int colStart = colChunk * chunkSizeX;
-    int rowEnd = std::min(rowStart + chunkSizeY, vecHeight);
-    int colEnd = std::min(colStart + chunkSizeX, vecWidth);
 
+
+    int chunkOffsetX = globalChunk.x * 96 * 2;
+    int chunkOffsetY = globalChunk.y * 96 * 2;
+    int rowStart = chunkOffsetX + (startingChunkRow * chunkSizeX);
+    int colStart = chunkOffsetY + (startingChunkCol * chunkSizeY);
+    int rowEnd = std::min(rowStart + chunkSizeY,  192 * 2);
+    int colEnd = std::min(colStart + chunkSizeX, 192 * 2);
     // Update the 8x8 chunk
     for (int row = rowStart; row < rowEnd; ++row)
     {
         for (int col = colStart; col < colEnd; ++col)
         {
-            updateSequence(vecWidth, vecHeight, row, col, vec);
+            updateSequence(row, col);
         }
     }
 }
 
-void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int numChunksY, int numChunksX, int chunkSizeY, int chunkSizeX, int vecHeight, int vecWidth, Chunk &vec)
+void Game::ChunkUpdateSkipping(Vector2D& globalChunk, int startingChunkRow, int startingChunkCol)
 {
     std::vector<std::future<void>> futures;
 
@@ -246,9 +248,9 @@ void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int n
     {
         for (int colChunk = startingChunkCol; colChunk < numChunksX; colChunk += 2)
         {
-            auto future = threads.enqueue([this, startingChunkRow, startingChunkCol, numChunksY, numChunksX, chunkSizeY, chunkSizeX, vecHeight, vecWidth, &vec, rowChunk, colChunk]()
+            auto future = threads.enqueue([this, globalChunk, rowChunk, colChunk]()
             {
-                this->worker(startingChunkRow, startingChunkCol, numChunksY, numChunksX, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec, rowChunk, colChunk);
+                this->worker(globalChunk, rowChunk, colChunk);
             });
             futures.push_back(std::move(future));  // Move future into vector
         }
@@ -262,17 +264,16 @@ void Game::ChunkUpdateSkipping(int startingChunkRow, int startingChunkCol, int n
 void Game::update(const int &xScale, const int &yScale)
 {
     Chunk& vec = worldGeneration.getChunk(worldGeneration.getGlobalCoordinates(player->getCoordinates()));
-    Vector2D coords = player->getCoordinates();
 
     Vector2D dimensions = player->getDimensions();
     std::map<Vector2D, Chunk>& chunks = worldGeneration.getVecStore();
     for (auto& mapEntry : chunks) {
         Chunk& vec2D = mapEntry.second;
         Vector2D globalCoords = mapEntry.first;
-        ChunkUpdateSkipping(1, 1, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec2D);
-        ChunkUpdateSkipping(1, 0, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec2D);
-        ChunkUpdateSkipping(0, 1, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec2D);
-        ChunkUpdateSkipping(0, 0, numChunksX, numChunksY, chunkSizeY, chunkSizeX, vecHeight, vecWidth, vec2D);
+        ChunkUpdateSkipping(globalCoords, 1, 1);
+        ChunkUpdateSkipping(globalCoords, 1, 0);
+        ChunkUpdateSkipping(globalCoords, 0, 1);
+        ChunkUpdateSkipping(globalCoords, 0, 0);
     }
     player->update(vec, Rendering::getRenderer(), vecWidth);
 

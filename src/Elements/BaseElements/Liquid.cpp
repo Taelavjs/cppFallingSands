@@ -25,19 +25,15 @@ void Liquid::moveHorizontally(int &vecWidth, Chunk &vec, int col, int row, int i
 
 void Liquid::update(int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
 {
-    setProcessed(true);
     auto pp = worldGeneration.getPixelFromGlobal(Vector2D(col, row));
     // Check if there is a space below
-
-    if(row == 48){
-
-    }
-    if(row+1 < 96 && worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1)) == nullptr)
+    if(row+1 < 384 && worldGeneration.getPixelFromGlobal(Vector2D(col, row + 1)) == nullptr)
     {
         worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row+1));
 
     } 
     auto p = worldGeneration.getPixelFromGlobal(Vector2D(col, row));
+    setProcessed(true);
 
     // bool colLeftInBounds = col - 1 >= 0;
     // bool colRightInBounds = col + 1 < vecWidth;
