@@ -23,7 +23,7 @@ void Liquid::moveHorizontally(int &vecWidth, Chunk &vec, int col, int row, int i
     // swapElements(vec, row, col, row, newCol);
 }
 
-void Liquid::update(int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
+void Liquid::update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
 {
     setProcessed(true);
 
@@ -68,7 +68,7 @@ void Liquid::update(int &row, int &col, int &vecWidth, int &vecHeight, WorldGene
 
         Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
         Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
-
+        
         bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->getIsLiquid() && leftPix->getDensity() < getDensity()));
         bool isRightValid = col + 1 < 384 && ( rightPix == nullptr || (rightPix->getIsLiquid() && rightPix->getDensity() < getDensity()));
 

@@ -130,13 +130,15 @@ void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D world
         {
             if(vec[row][col] != nullptr){
                 continue;
-            }if(getRandomDouble(0, 1) < 0.3){
-                vec[row][col] = sand->clone();
-            } else if (getRandomDouble(0, 1) < 0.5)
+            }if(getRandomDouble(0, 1) < 0.25){
+                vec[row][col] = napalm->clone();
+            } else if (getRandomDouble(0, 1) < 0.3)
             {
                 vec[row][col] = water->clone();
-            } else if(getRandomDouble(0, 1) < 0.4){
+            } else if(getRandomDouble(0, 1) < 0.3){
                 vec[row][col] = oil->clone();
+            }else if(getRandomDouble(0, 1) < 0.1){
+                vec[row][col] = sand->clone();
             }
         }
     }
@@ -173,7 +175,7 @@ Chunk& WorldGeneration::getChunk(Vector2D chunkGlobalCoord){
 // Make the class able to give the correct chunk using global coordinates
 // Rather than swapping between global and local, much easier
 
-Pixel* WorldGeneration::getPixelFromGlobal(Vector2D position){
+Pixel*& WorldGeneration::getPixelFromGlobal(Vector2D position){
     width = 192;
     Vector2D chunkCoord(0, 0);
     Vector2D localCoord(0, 0);
@@ -190,7 +192,9 @@ Pixel* WorldGeneration::getPixelFromGlobal(Vector2D position){
     if(worldVecStore.find(chunkCoord) != worldVecStore.end()){
         return worldVecStore[chunkCoord][localCoord.y][localCoord.x]; // row x col
     } 
-    return nullptr;
+    static Pixel* nullpixel = nullptr;
+
+    return nullpixel;
 }
 
 void WorldGeneration::clearPixelProcessed(){
@@ -200,7 +204,7 @@ void WorldGeneration::clearPixelProcessed(){
 
         for(int i = 0; i < vec2D.size(); i++){
             for(int j = 0; j < vec2D[i].size(); j++){
-                Pixel* pix = vec2D[i][j];
+                Pixel*& pix = vec2D[i][j];
                 if(pix != nullptr) {
                     pix->setProcessed(false);
                 }
@@ -249,4 +253,11 @@ void WorldGeneration::swapTwoValues(Vector2D pos1, Vector2D pos2){
     Pixel* temp = ch1[localCoord.y][localCoord.x];
     ch1[localCoord.y][localCoord.x] = ch2[localCoord2.y][localCoord2.x];
     ch2[localCoord2.y][localCoord2.x] = temp;
+}
+
+void WorldGeneration::burntSmoke(int &row, int &col){
+    Pixel*& pixelPtr = getPixelFromGlobal(Vector2D(col, row));
+    delete pixelPtr;
+    pixelPtr = smoke->clone();
+    pixelPtr->setProcessed(true);
 }

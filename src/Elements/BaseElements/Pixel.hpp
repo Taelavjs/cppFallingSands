@@ -74,14 +74,13 @@ public:
     Pixel();
     virtual ~Pixel();
     virtual Pixel *clone() const = 0;
-    virtual void update(int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration) {};
+    virtual void update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration) {};
     void swapElements(Pixel* pix1, Pixel* pix2);
 
     // FIRE FUNCTIONALITY
 public:
     virtual void ignite();
     virtual bool hit();
-    virtual bool fireTick(Chunk &vec, int row, int col, int vecHeight, Pixel *elm);
+    virtual bool fireTick(WorldGeneration& worldGeneration, int row, int col );
 };
-
 #endif // PIXEL_HPP

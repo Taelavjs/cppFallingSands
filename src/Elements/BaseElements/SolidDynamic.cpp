@@ -35,7 +35,7 @@ bool SolidDynamic::checkMoveableMat(Pixel *space)
     return (space->getIsLiquid() || space->getIsGas());
 }
 
-void SolidDynamic::update(int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
+void SolidDynamic::update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
 {
     setProcessed(true);
 
@@ -52,7 +52,7 @@ void SolidDynamic::update(int &row, int &col, int &vecWidth, int &vecHeight, Wor
             x_direction = 0;
             moved = true; // Indicate a move was made
             blocksFallen++;
-        } else if (row + 1 < 384 && pixBelow != nullptr && pixBelow->getIsLiquid()) {
+        } else if (row + 1 < 384 && pixBelow != nullptr && !pixBelow->getIsSolid()) {
             // Move down if the space below has a less dense liquid
             worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row + 1));
             row += 1; // Update row after moving
@@ -83,8 +83,8 @@ void SolidDynamic::update(int &row, int &col, int &vecWidth, int &vecHeight, Wor
         Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
         Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
         if(row+1 >= 384) break;
-        bool isLeftValid = col - 1 >= 0 && (leftDownPix == nullptr || (leftDownPix->getIsLiquid())) && (leftPix == nullptr || (leftPix->getIsLiquid()));
-        bool isRightValid = col + 1 < 384 && ( rightDownPix == nullptr || (rightDownPix->getIsLiquid())) && ( rightPix == nullptr || (rightPix->getIsLiquid()));
+        bool isLeftValid = col - 1 >= 0 && (leftDownPix == nullptr || (!leftDownPix->getIsSolid())) && (leftPix == nullptr || (!leftPix->getIsSolid()));
+        bool isRightValid = col + 1 < 384 && ( rightDownPix == nullptr || (!rightDownPix->getIsSolid())) && ( rightPix == nullptr || (!rightPix->getIsSolid()));
 
         if (isLeftValid && isRightValid) {
             // Randomly decide to move left or right if both directions are valid
@@ -120,78 +120,4 @@ void SolidDynamic::update(int &row, int &col, int &vecWidth, int &vecHeight, Wor
     };
 
     xVelocity = 1;
-
-
-
-    // int xDispersion{5}; // Distance to check for dispersion
-    // int res{col};       // Default to current column
-
-    // // Check space below
-    // if (row + 1 < vecHeight && isSpaceFree(vec, row+1, col))
-    // {
-    //     int newRow = row + 1;
-    //     int blocksToFall{};
-    //     updateVelocity(blocksToFall, 1);
-    //     while (newRow < vecHeight && isSpaceFree(vec, newRow, col) && (newRow - row) < blocksToFall)
-    //     {
-    //         newRow++;
-    //     }
-    //     newRow--; // Step back to the last valid position
-    //     if (newRow != row) // Only swap if new position is different
-    //     {
-    //         // swapElements(vec, row, col, newRow, col);
-    //     }
-    // }
-    // else if (row + 1 < vecHeight && vec[row + 1][col] != nullptr && checkMoveableMat(vec[row + 1][col]))
-    // {
-    //     // Space directly below is free
-    //     int newRow = row + 1;
-    //     int blocksToFall{};
-    //     updateVelocity(blocksToFall, -1);
-    //     while (newRow < vecHeight && vec[newRow][col] != nullptr && (isSpaceFree(vec, newRow, col)) && (newRow - row) < blocksToFall)
-    //     {
-    //         newRow++;
-    //     }
-    //     newRow--; // Step back to the last valid position
-    //     if (newRow != row) // Only swap if new position is different
-    //     {
-    //         // swapElements(vec, row, col, newRow, col);
-    //     }
-    // }
-    // else
-    // {
-    //     // Space directly below is not free, check spaces to the sides
-    //     bool canFallLeft = (col - 1 >= 0 && row + 1 < vecHeight && (isSpaceFree(vec, row+1, col-1)));
-    //     bool canFallRight = (col + 1 < vecWidth && row + 1 < vecHeight && (isSpaceFree(vec, row+1, col+1)));
-
-    //     if (canFallLeft && canFallRight)
-    //     {
-    //         // Randomly choose between falling left or right if both are free
-    //         double rngValue = randomNumber();
-    //         if (rngValue > 0.5f)
-    //         {
-    //             xDisperse(vec, row, col, xDispersion, -1, res);
-    //         }
-    //         else
-    //         {
-    //             xDisperse(vec, row, col, xDispersion, 1, res);
-    //         }
-    //     }
-    //     else if (canFallLeft)
-    //     {
-    //         xDisperse(vec, row, col, xDispersion, -1, res);
-    //     }
-    //     else if (canFallRight)
-    //     {
-    //         xDisperse(vec, row, col, xDispersion, 1, res);
-    //     }
-
-    //     // Move sand to the calculated position
-    //     if (res != col)
-    //     {
-    //         // swapElements(vec, row, col, row + 1, res);
-    //     }
-    //     resetVelocity();
-
-    // }
 }

@@ -10,7 +10,7 @@ public:
     Gas();
     virtual ~Gas();
     int getBlocksToFall();
-    void update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration);
+    virtual void update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration);
     bool isGas();
     void xDisp(Chunk &vec, int row, int col, int xDispersion, int xDirection, int &res);
     bool isSolid(){return false;};
@@ -23,5 +23,7 @@ private:
     int yDispersion{7}; // Distance to check for dispersion
     int xDispersion{7}; // Distance to check for dispersion
     int yVelocity{0};
+
+    int x_direction{0};
 };
 #endif /* GAS_HPP */

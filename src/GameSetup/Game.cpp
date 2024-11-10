@@ -199,10 +199,11 @@ void Game::updateSequence(int &row, int &col)
         return;
     if (pixel->getIsFlammable())
     {
-        // if (worldGeneration.getPixelFromGlobal(Vector2D(col, row))->fireTick(vec, row, col, vecHeight, smoke))
-        // {
-        //     // worldGeneration.getPixelFromGlobal(Vector2D(globalCol, globalRow)) = smoke->clone();
-        // };
+        if (worldGeneration.getPixelFromGlobal(Vector2D(col, row))->fireTick(worldGeneration, row, col))
+        {
+            worldGeneration.burntSmoke(row, col);
+            return;
+        };
     }
     
     // Chunk rightChunk;
@@ -213,7 +214,6 @@ void Game::updateSequence(int &row, int &col)
     // leftChunk = worldGeneration.getChunk(Vector2D(globalCoords.x-1, globalCoords.y));
     // topChunk = worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y - 1));
     // bottomChunk = worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y + 1));
-    
     pixel->update(row, col, vecWidth, vecHeight, worldGeneration);
 } 
 

@@ -53,56 +53,79 @@ bool Gas::isValidPosition(Chunk &vec, int row, int col)
 {
     return (row >= 0 && row < vec.size() && col >= 0 && col < vec[0].size() && isSpaceFree(vec, row, col));
 }
-void Gas::update(Chunk &vec, int &row, int &col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
+void Gas::update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
 {
-    vec[row][col]->setProcessed(true);
-    if(((std::rand() % 2) * 2 - 1 )> 1) return;
+    setProcessed(true);
 
-    int pCol = col;
-    int pRow = row;
-    if (randomDir)
-        randomDir = rand() % 2 == 0 ? 1 : -1;
-    if (isValidPosition(vec, pRow - 1, col))
-    {
-        // Air space above gas particle
-        int newRow = pRow - 1;
-        int spaceToRise{};
-        updateYPosition(spaceToRise);
-        while (std::abs(pRow - newRow) < spaceToRise && newRow >= 0 && (isSpaceFree(vec, newRow, pCol) && !(vec[newRow][pCol] != nullptr && vec[newRow][pCol] -> getIsGas())))
-        {
-            newRow--;
+    bool moved = true;
+    int blocksFallen = 0;
+    while (moved && blocksFallen <= yVelocity) {
+        moved = false; 
+
+        Pixel*& pixBelow = worldGeneration.getPixelFromGlobal(Vector2D(col, row - 1));
+        if (row - 1 >= 0 && pixBelow == nullptr) {
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row - 1));
+            row -= 1;
+            x_direction = 0;
+            moved = true; 
+            blocksFallen++;
+        } else if (row - 1 >= 0 && pixBelow != nullptr && (pixBelow->getIsMoveable()) && !pixBelow->getIsGas()) {
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col, row - 1));
+            row -= 1; // Update row after moving
+            x_direction = 0;
+            moved = true; // Indicate a move was made
+            blocksFallen++;
+        } else {
+            // If no valid move down is possible, break the loop
+            break;
         }
-        newRow++;
-        // swapElements(vec, pRow, pCol, newRow, pCol);
-        pRow = newRow;
     }
 
-    bool canMoveLeft = (pCol - 1 >= 0 && (isSpaceFree(vec, pRow, pCol-1)));
-    bool canMoveRight = (pCol + 1 < vecWidth && (isSpaceFree(vec, pRow, pCol + 1)));
+    if(blocksFallen > 0) {
+        yVelocity += 2;
+        yVelocity = std::min(yVelocity, 6);
+        return;
+    };
+    yVelocity = 1;
 
-    if (canMoveLeft && canMoveRight) {
-        int incr = (std::rand() % 2) * 2 - 1;
-        int newCol = pCol + incr;
-        while (std::abs(pCol - newCol) < xDispersion && newCol >= 0 && newCol < vecWidth && isValidPosition(vec, pRow, newCol)) {
-            newCol += incr;
+    blocksFallen = 0;
+    moved = true;
+    while (moved && blocksFallen <= 4) {
+        moved = false; 
+
+        Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
+        Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
+
+        bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->getIsMoveable()) && !leftPix->getIsGas());
+        bool isRightValid = col + 1 < 384 && ( rightPix == nullptr || (rightPix->getIsMoveable()) && !rightPix->getIsGas());
+
+        if (isLeftValid && isRightValid) {
+            x_direction = x_direction == 0 ? (rand() % 2 == 0 ? -1 : 1) : x_direction;
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + x_direction, row));
+            col += x_direction; 
+            moved = true; 
+            blocksFallen++;
+        } else if (isLeftValid) {
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col - 1, row));
+            col -= 1; 
+            x_direction = -1;
+            moved = true; 
+            blocksFallen++;
+        } else if (isRightValid) {
+            worldGeneration.swapTwoValues(Vector2D(col, row), Vector2D(col + 1, row));
+            col += 1; 
+            x_direction = 1;
+            moved = true;
+            blocksFallen++;
+        } else {
+            break;
         }
-        newCol -= incr;
-        // swapElements(vec, pRow, pCol, pRow, newCol);
-    } else if (canMoveLeft) {
-        int newCol = pCol - 1;
-        while (std::abs(pCol - newCol) < xDispersion && newCol >= 0 && isValidPosition(vec, pRow, newCol)) {
-            newCol--;
-        }
-        newCol++;
-        // swapElements(vec, pRow, pCol, pRow, newCol);
-    } else if (canMoveRight) {
-        int newCol = pCol + 1;
-        while (std::abs(pCol - newCol) < xDispersion && newCol < vecWidth && isValidPosition(vec, pRow, newCol)) {
-            newCol++;
-        }
-        newCol--;
-        // swapElements(vec, pRow, pCol, pRow, newCol);
     }
+
+    if(blocksFallen > 0) {
+        return;
+    };
+
 }
 
 int Gas::getBlocksToFall()
