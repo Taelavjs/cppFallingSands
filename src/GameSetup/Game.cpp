@@ -116,78 +116,14 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
                 player->playerInputHandler((SDL_Scancode)i);
             }
         }
-
-        
     }
-
     for(int i = 0; i < numKeys; ++i){
         if(prevKeys[i] == 1 && e[i] == 0){
             player -> playerReleaseHandler((SDL_Scancode)i);
         }
     }
-
-
     memcpy(prevKeys, e, numKeys);
-
     SDL_PumpEvents();
-}
-
-void Game::chunkUpdates(int chunkStart, int chunkEnd)
-{
-
-    // for (int row = chunkStart; row < chunkEnd; ++row)
-    // {
-    //     if (row % 2 == 0)
-    //     {
-    //         // Even rows: left to right
-    //         const int chunkSizeY = 8;
-    //         int numChunks = vecWidth / chunkSizeY;
-    //         int const maxChunks = numChunks;
-
-    //         while (numChunks >= 0)
-    //         {
-    //             for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
-    //             {
-    //                 updateSequence(vecWidth, vecHeight, row, col, vec);
-    //             }
-    //             numChunks--;
-    //         }
-
-    //         numChunks = maxChunks - 1;
-    //         while (numChunks >= 0)
-    //         {
-    //             for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
-    //             {
-    //                 updateSequence(vecWidth, vecHeight, row, col, vec);
-    //             }
-    //             numChunks -= 2;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         // Odd rows: right to left
-    //         const int chunkSizeY = 8;
-    //         int numChunks = vecWidth / chunkSizeY;
-    //         int const maxChunks = numChunks;
-    //         while (numChunks >= 0)
-    //         {
-    //             for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
-    //             {
-    //                 updateSequence(vecWidth, vecHeight, row, col, vec);
-    //             }
-    //             numChunks -= 2;
-    //         }
-    //         numChunks = maxChunks - 1;
-    //         while (numChunks >= 0)
-    //         {
-    //             for (int col = chunkSizeY * numChunks; col < (chunkSizeY * numChunks) + 8; ++col)
-    //             {
-    //                 updateSequence(vecWidth, vecHeight, row, col, vec);
-    //             }
-    //             numChunks -= 2;
-    //         }
-    //     }
-    // }
 }
 
 void Game::updateSequence(int &row, int &col)
@@ -205,15 +141,6 @@ void Game::updateSequence(int &row, int &col)
             return;
         };
     }
-    
-    // Chunk rightChunk;
-    // Chunk leftChunk;
-    // Chunk topChunk;
-    // Chunk bottomChunk;
-    // rightChunk = worldGeneration.getChunk(Vector2D(globalCoords.x+1, globalCoords.y));
-    // leftChunk = worldGeneration.getChunk(Vector2D(globalCoords.x-1, globalCoords.y));
-    // topChunk = worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y - 1));
-    // bottomChunk = worldGeneration.getChunk(Vector2D(globalCoords.x, globalCoords.y + 1));
     pixel->update(row, col, vecWidth, vecHeight, worldGeneration);
 } 
 
@@ -281,7 +208,7 @@ void Game::update(const int &xScale, const int &yScale)
 
 void Game::render()
 {
-    std::map<Vector2D, Chunk> temp = worldGeneration.getVecStore();
+    std::map<Vector2D, Chunk>& temp = worldGeneration.getVecStore();
     for (auto& mapEntry : temp) {
         Chunk& vec2D = mapEntry.second;
         Vector2D globalCoords = mapEntry.first;

@@ -38,7 +38,6 @@ public:
     void swapElements(int x, int y, int x2, int y2);
     double randomnumber();
     void updateSequence(int &row, int &col);
-    void chunkUpdates(int chunkStart, int chunkEnd);
     void pixelsToBlocks(std::vector<float> pixels);
     void ChunkUpdateSkipping(Vector2D& globalChunk, int startingChunkRow, int startingChunkCol);
     void worker(Vector2D globalChunk, int startingChunkRow, int startingChunkCol);

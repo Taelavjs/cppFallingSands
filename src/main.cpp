@@ -46,8 +46,6 @@ struct Timer
 
 int main(int argc, char *argv[])
 {
-    char* charSpritePath{"Sprites/AnimationSheet_Character.png"};
-
     std::vector<float> pixels(vecWidth * vecHeight);
     Game game(vecWidth + 1, vecHeight + 1);
     game.init(&title, rendererScalex, rendererScaley);

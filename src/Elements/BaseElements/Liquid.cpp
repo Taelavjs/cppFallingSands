@@ -16,6 +16,10 @@ void Liquid::update(int row, int col, int &vecWidth, int &vecHeight, WorldGenera
 {
     setProcessed(true);
 
+    if(!getOnFire() && getHp() < maxHp) {
+        setHp(getHp()+1);
+    }
+
     bool moved = true;
     int blocksFallen = 0;
     while (moved && blocksFallen <= yVelocity) {

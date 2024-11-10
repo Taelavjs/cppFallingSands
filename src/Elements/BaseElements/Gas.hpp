@@ -9,13 +9,9 @@ class Gas : public Moveable {
 public:    
     Gas();
     virtual ~Gas();
-    int getBlocksToFall();
     virtual void update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration);
     bool isGas();
-    void xDisp(Chunk &vec, int row, int col, int xDispersion, int xDirection, int &res);
     bool isSolid(){return false;};
-    int calculateNewColumn(const Chunk& vec, int row, int col, int xDispersion, int xDirection);
-    bool isValidPosition(Chunk& vec, int row, int col);
     bool isMoveable(){return true;};
 private:
     int randomDir{0};

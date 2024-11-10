@@ -24,17 +24,14 @@ Sprite::Sprite(char* srcPath, int& width, int& height, int& rows, int& cols)
 
     surface = IMG_Load(srcPath);
     texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_SetRenderTarget(renderer, nullptr);
     
     for (int y = 0; y < rows; ++y) {
         for (int x = 0; x < cols; ++x) {
 
             SDL_Rect srcRect = {x * width, y * height, width, height}; 
             rectSheet[y][x] = srcRect;
-            SDL_RenderCopy(renderer, texture, &rectSheet[y][x], nullptr);
         }
     }
-    showSpriteSheet(rows, cols);
 }
 
 void Sprite::showSpriteSheet(int &rows, int &cols){

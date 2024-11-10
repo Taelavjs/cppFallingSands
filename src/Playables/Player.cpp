@@ -200,22 +200,6 @@ void Player::collisionHandler(int vecWidth, Chunk& vec)
         }
 
         resetPlayerColliders();
-
-
-        // if(dispX > dispY){
-        //     position.x += dispX;
-        //     position.y += dispY * 0.5;
-
-        //     resetPlayerColliders();
-        //     checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
-        // } else {
-        //     position.y += dispY;
-        //     position.x += dispX * 0.5;
-        //     resetPlayerColliders();
-        //     checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
-        // }
-
-        // tries++;
     }
 
     if(tries >= 10){
@@ -247,8 +231,6 @@ void Player::renderPlayer(SDL_Renderer* renderer, int screenWidth){
     }
     SDL_Texture* texture = playerSprite -> getTexture();
     SDL_Rect* rect = animations[stateManager.getCurrentState()].play();
-    // SDL_Rect* textureRect = playerSprite->runCycle();
-
 
     SDL_Rect* dst = new SDL_Rect{0 + screenWidth/2, 0 + screenWidth/2, (int)playerScale.x, (int)playerScale.y};
     SDL_RendererFlip flip;

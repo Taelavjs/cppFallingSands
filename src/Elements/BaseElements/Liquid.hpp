@@ -17,6 +17,7 @@ private:
     int xVelocity{1};
     int x_direction{0};
     int density{5};
+    int maxHp{5};
 };
 
 

@@ -22,6 +22,8 @@ void Rendering::setValues(int vecWidth, int vecHeight, const std::string* title,
 
     Rendering::window = SDL_CreateWindow(Rendering::title->c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Rendering::screenWidth * Rendering::rendererScalex, Rendering::screenHeight * Rendering::rendererScaley, SDL_WINDOW_SHOWN);
     Rendering::renderer = SDL_CreateRenderer(Rendering::window, -1, 0);
+    SDL_SetRenderTarget(renderer, nullptr);
+
     SDL_RenderSetScale(Rendering::renderer, Rendering::rendererScalex, Rendering::rendererScaley);
     SDL_SetRenderDrawColor(Rendering::renderer, 255, 255, 255, 255);
     SDL_RenderDrawPoint(Rendering::renderer, 5, 5);

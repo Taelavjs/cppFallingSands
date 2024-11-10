@@ -19,33 +19,6 @@ bool Gas::isGas()
     return true;
 };
 
-void Gas::xDisp(Chunk &vec, int row, int col, int xDispersion, int xDirection, int &res)
-{
-    // Initialize result with the current position
-    res = col;
-
-    for (int i = 1; i <= xDispersion; i++)
-    {
-        int newCol = col + (xDirection * i);
-        if (newCol < 0 || newCol >= vec[0].size())
-        {
-            break; // Out of bounds
-        }
-        if (isSpaceFree(vec, row-1, newCol))
-        {
-            res = newCol; // Update result to the new free position
-        }
-        else
-        {
-            break; // Stop if we hit a non-empty space
-        }
-    }
-}
-// Function to check if a position is valid for gas movement
-bool Gas::isValidPosition(Chunk &vec, int row, int col)
-{
-    return (row >= 0 && row < vec.size() && col >= 0 && col < vec[0].size() && isSpaceFree(vec, row, col));
-}
 void Gas::update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
 {
     setProcessed(true);
@@ -83,7 +56,7 @@ void Gas::update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneratio
 
     blocksFallen = 0;
     moved = true;
-    while (moved && blocksFallen <= 3) {
+    while (moved && blocksFallen <= 4) {
         moved = false; 
 
         Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
@@ -119,9 +92,4 @@ void Gas::update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneratio
         return;
     };
 
-}
-
-int Gas::getBlocksToFall()
-{
-    return -1;
 }
