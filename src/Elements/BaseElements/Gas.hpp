@@ -16,12 +16,9 @@ public:
     bool isSolid(){return false;};
     int calculateNewColumn(const Chunk& vec, int row, int col, int xDispersion, int xDirection);
     bool isValidPosition(Chunk& vec, int row, int col);
-    void updateYPosition(int &newCol);
     bool isMoveable(){return true;};
 private:
     int randomDir{0};
-    int yDispersion{7}; // Distance to check for dispersion
-    int xDispersion{7}; // Distance to check for dispersion
     int yVelocity{0};
 
     int x_direction{0};

@@ -4,7 +4,6 @@
 
 Gas::Gas()
 {
-    // Constructor implementation
     setMass(300);
     setIsMoveable(true);
     setIsGas(true);
@@ -12,19 +11,13 @@ Gas::Gas()
 
 Gas::~Gas()
 {
-    // Destructor implementation
+
 }
 
 bool Gas::isGas()
 {
     return true;
 };
-
-void Gas::updateYPosition(int &newCol){
-    newCol -= (int)1.0f/getMass() + yVelocity;
-    yVelocity -= (int)1.0f;
-    if(yVelocity < (-1 * getTerminalY())) yVelocity = (-1 * getTerminalY());
-}
 
 void Gas::xDisp(Chunk &vec, int row, int col, int xDispersion, int xDirection, int &res)
 {
@@ -83,21 +76,21 @@ void Gas::update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneratio
 
     if(blocksFallen > 0) {
         yVelocity += 2;
-        yVelocity = std::min(yVelocity, 6);
+        yVelocity = std::min(yVelocity, 4);
         return;
     };
     yVelocity = 1;
 
     blocksFallen = 0;
     moved = true;
-    while (moved && blocksFallen <= 4) {
+    while (moved && blocksFallen <= 3) {
         moved = false; 
 
         Pixel* leftPix = worldGeneration.getPixelFromGlobal(Vector2D(col - 1, row));
         Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
 
-        bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->getIsMoveable()) && !leftPix->getIsGas());
-        bool isRightValid = col + 1 < 384 && ( rightPix == nullptr || (rightPix->getIsMoveable()) && !rightPix->getIsGas());
+        bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->getIsMoveable() && !leftPix->getIsGas() && !leftPix->getIsSolid()));
+        bool isRightValid = col + 1 < 384 && ( rightPix == nullptr || (rightPix->getIsMoveable() && !rightPix->getIsGas() && !rightPix -> getIsSolid()));
 
         if (isLeftValid && isRightValid) {
             x_direction = x_direction == 0 ? (rand() % 2 == 0 ? -1 : 1) : x_direction;

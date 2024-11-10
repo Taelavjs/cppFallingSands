@@ -130,14 +130,16 @@ void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D world
         {
             if(vec[row][col] != nullptr){
                 continue;
-            }if(getRandomDouble(0, 1) < 0.25){
+            }
+            double rng = getRandomDouble(0, 1);
+            if(rng < 0.2){
                 vec[row][col] = napalm->clone();
-            } else if (getRandomDouble(0, 1) < 0.3)
+            } else if (rng < 0.4)
             {
                 vec[row][col] = water->clone();
-            } else if(getRandomDouble(0, 1) < 0.3){
+            } else if(rng < 0.6){
                 vec[row][col] = oil->clone();
-            }else if(getRandomDouble(0, 1) < 0.1){
+            }else if(rng < 0.8){
                 vec[row][col] = sand->clone();
             }
         }

@@ -1,6 +1,5 @@
 #ifndef Oil_HPP
 #define Oil_HPP
-#include "BaseElements/Flammable.hpp"
 #include "BaseElements/Liquid.hpp"
 
 class Oil : public Liquid {

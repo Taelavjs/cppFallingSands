@@ -12,17 +12,6 @@ int Liquid::getMovingDirection(){
     return x_direction;
 }
 
-void Liquid::moveHorizontally(int &vecWidth, Chunk &vec, int col, int row, int incrementor)
-{
-    // int newCol = col + incrementor;
-    // while (newCol >= 0 && newCol < vecWidth && abs(newCol - col) < xMaxDistance  && (vec[row][newCol] == nullptr|| vec[row][newCol] -> getIsLiquid()))
-    // {
-    //     newCol += incrementor;
-    // }
-    // newCol -= incrementor; // Step back to the last valid position
-    // swapElements(vec, row, col, row, newCol);
-}
-
 void Liquid::update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
 {
     setProcessed(true);
@@ -56,7 +45,7 @@ void Liquid::update(int row, int col, int &vecWidth, int &vecHeight, WorldGenera
     // No lateral movement checks; pixel can only move left or right in a separate update
     if(blocksFallen > 0) {
         yVelocity += 2;
-        yVelocity = std::min(yVelocity, 6);
+        yVelocity = std::min(yVelocity, 4);
         return;
     };
     yVelocity = 1;
@@ -101,7 +90,7 @@ void Liquid::update(int row, int col, int &vecWidth, int &vecHeight, WorldGenera
 
     if(blocksFallen > 0) {
         xVelocity += 1;
-        xVelocity = std::min(xVelocity, 6);
+        xVelocity = std::min(xVelocity, 4);
         return;
     };
 
