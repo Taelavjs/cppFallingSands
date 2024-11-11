@@ -19,7 +19,7 @@ bool Gas::isGas()
     return true;
 };
 
-void Gas::update(int row, int col, const int vecWidth, const int vecHeight, WorldGeneration &worldGeneration)
+void Gas::update(int row, int col, const int &vecWidth, const int &vecHeight, WorldGeneration &worldGeneration)
 {
     setProcessed(true);
 
@@ -63,7 +63,7 @@ void Gas::update(int row, int col, const int vecWidth, const int vecHeight, Worl
         Pixel* rightPix = worldGeneration.getPixelFromGlobal(Vector2D(col + 1, row));
 
         bool isLeftValid = col - 1 >= 0 && (leftPix == nullptr || (leftPix->getIsMoveable() && !leftPix->getIsGas() && !leftPix->getIsSolid()));
-        bool isRightValid = col + 1 < 384 && ( rightPix == nullptr || (rightPix->getIsMoveable() && !rightPix->getIsGas() && !rightPix -> getIsSolid()));
+        bool isRightValid = col + 1 < vecHeight * 2 && ( rightPix == nullptr || (rightPix->getIsMoveable() && !rightPix->getIsGas() && !rightPix -> getIsSolid()));
 
         if (isLeftValid && isRightValid) {
             x_direction = x_direction == 0 ? (rand() % 2 == 0 ? -1 : 1) : x_direction;

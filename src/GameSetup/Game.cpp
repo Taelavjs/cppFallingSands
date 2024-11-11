@@ -149,12 +149,12 @@ void Game::worker(Vector2D globalChunk, int startingChunkRow, int startingChunkC
     // Calculate the boundaries of the current chunk
 
 
-    int chunkOffsetX = globalChunk.x * 96 * 2;
-    int chunkOffsetY = globalChunk.y * 96 * 2;
+    int chunkOffsetX = globalChunk.x * GlobalVariables::screenSize;
+    int chunkOffsetY = globalChunk.y * GlobalVariables::screenSize;
     int rowStart = chunkOffsetX + (startingChunkRow * chunkSizeX);
     int colStart = chunkOffsetY + (startingChunkCol * chunkSizeY);
-    int rowEnd = std::min(rowStart + chunkSizeY,  192 * 2);
-    int colEnd = std::min(colStart + chunkSizeX, 192 * 2);
+    int rowEnd = std::min(rowStart + chunkSizeY,  GlobalVariables::screenSize * 2); 
+    int colEnd = std::min(colStart + chunkSizeX, GlobalVariables::screenSize * 2);
     // Update the 8x8 chunk
     for (int row = rowStart; row < rowEnd; ++row)
     {
@@ -193,6 +193,11 @@ void Game::update()
 
     Vector2D dimensions = player->getDimensions();
     std::map<Vector2D, Chunk>& chunks = worldGeneration.getVecStore();
+    // Runs over each chunk, specifying what sub chunk the X and Y update sequence should start at
+    // It allows for no two chunks directly next to each other to be updating at the same time, allowing for multicore processing
+    // Without dirty reads/rights
+
+    // Current issues with fire ticks and check for getIsFlammable - Unsure why
     for (auto& mapEntry : chunks) {
         Chunk& vec2D = mapEntry.second;
         Vector2D globalCoords = mapEntry.first;

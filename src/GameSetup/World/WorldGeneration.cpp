@@ -176,7 +176,7 @@ Chunk& WorldGeneration::getChunk(Vector2D chunkGlobalCoord){
 // Rather than swapping between global and local, much easier
 
 Pixel*& WorldGeneration::getPixelFromGlobal(Vector2D position){
-    // GlobalVariables::screenSize = 192;
+    // GlobalVariables::screenSize = GlobalVariables::screeenSize;
     Vector2D chunkCoord(0, 0);
     Vector2D localCoord(0, 0);
     
@@ -255,7 +255,7 @@ void WorldGeneration::swapTwoValues(Vector2D pos1, Vector2D pos2){
     ch2[localCoord2.y][localCoord2.x] = temp;
 }
 
-void WorldGeneration::burntSmoke(int &row, int &col){
+void WorldGeneration::burntSmoke(const int row, const int col){
     Pixel*& pixelPtr = getPixelFromGlobal(Vector2D(col, row));
     delete pixelPtr;
     pixelPtr = smoke->clone();

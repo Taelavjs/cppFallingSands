@@ -74,7 +74,7 @@ public:
     Pixel();
     virtual ~Pixel();
     virtual Pixel *clone() const = 0;
-    virtual void update(int row, int col, const int vecWidth, const int vecHeight, WorldGeneration &worldGeneration) {};
+    virtual void update(int row, int col, const int &vecWidth, const int &vecHeight, WorldGeneration &worldGeneration) {};
     void swapElements(Pixel* pix1, Pixel* pix2);
 
     // FIRE FUNCTIONALITY

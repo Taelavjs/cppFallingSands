@@ -33,7 +33,7 @@ public:
     Pixel*& getPixelFromGlobal(Vector2D position);
     void clearPixelProcessed();
     void swapTwoValues(Vector2D pos1, Vector2D pos2);
-    void burntSmoke(int &row, int &col);
+    void burntSmoke(const int row, const int col);
 private:
     std::map<Vector2D, Chunk> worldVecStore;
     Sand *sand;
