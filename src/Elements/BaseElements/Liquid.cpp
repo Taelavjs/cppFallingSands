@@ -12,7 +12,7 @@ int Liquid::getMovingDirection(){
     return x_direction;
 }
 
-void Liquid::update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
+void Liquid::update(int row, int col, const int vecWidth, const int vecHeight, WorldGeneration &worldGeneration)
 {
     setProcessed(true);
 

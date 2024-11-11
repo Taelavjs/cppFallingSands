@@ -10,16 +10,17 @@
 #include <stack>
 #include "../Utility/Velocity.hpp"
 class Player;
+class GlobalVariables;
 class Rendering {
 public:
 
     static void renderGrid(Chunk &vec, Player* player, Vector2D globalCoords);
-    static void castRay(uint32_t *pixels,SDL_Renderer* renderer, const std::vector<std::vector<Pixel*>>& vec, int screenWidth, int screenHeight, int startX, int startY, int endX, int endY) ;
-    static void castRays(uint32_t *pixels,SDL_Renderer* renderer, const std::vector<std::vector<Pixel*>>& vec, int screenWidth, int screenHeight, int row, int col) ;
+    static void castRay(uint32_t *pixels,SDL_Renderer* renderer, const std::vector<std::vector<Pixel*>>& vec, int startX, int startY, int endX, int endY) ;
+    static void castRays(uint32_t *pixels,SDL_Renderer* renderer, const std::vector<std::vector<Pixel*>>& vec, int row, int col) ;
     static SDL_Renderer* getRenderer(){
         return renderer;
     };
-    static void setValues(int vecWidth, int vecHeight, const std::string* title, int scaleX, int scaleY);
+    static void setValues();
     static void renderPlayer(Player* player);
     static void showRendering();
 
@@ -29,11 +30,6 @@ private:
     ~Rendering();
     static SDL_Window* window;
     static SDL_Renderer* renderer;
-    static int rendererScalex;
-    static int rendererScaley;
-    static int screenHeight;
-    static int screenWidth;
-    static const std::string* title;
     static int offsetX;
     static int offsetY;
 };

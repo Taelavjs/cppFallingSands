@@ -9,11 +9,10 @@
 #include "Rendering.hpp"
 #include "../Playables/Player.hpp"
 #include "../Textures/Sprite.hpp"
+#include "../Utility/GlobalVariables.hpp"
 
-
-Game::Game(int vecWidthInp, int vecHeightInp)
-    : vecWidth(vecWidthInp - 1), vecHeight(vecHeightInp - 1),
-      isRunning(true), worldGeneration(vecWidthInp), threads()
+Game::Game()
+    : isRunning(true), worldGeneration(), threads()
 {
     sand = new Sand();
     water = new Water();
@@ -24,8 +23,8 @@ Game::Game(int vecWidthInp, int vecHeightInp)
     SDL_GetKeyboardState(&numKeys);
     prevKeys = new Uint8[numKeys];
     SDL_PumpEvents();
-    numChunksX = 192 / chunkSizeX;
-    numChunksY = 192 / chunkSizeY;
+    numChunksX = GlobalVariables::screenSize / chunkSizeX;
+    numChunksY = GlobalVariables::screenSize / chunkSizeY;
 
 }
 
@@ -42,15 +41,16 @@ Game::~Game()
     delete napalm;
 }
 
-void Game::init(const std::string *title, int scaleX, int scaleY)
+void Game::init()
 {
     worldGeneration.generateBlock();
     char *playerSpritePath{"Sprites/AnimationSheet_Character.png"};
+
+    Rendering::setValues();
     int width{32};
     int height{32};
     int rows{9};
     int cols{8};
-    Rendering::setValues(vecWidth, vecHeight, title, scaleX, scaleY);
     Sprite *playerSprite = new Sprite(playerSpritePath, width, height, rows, cols);
     player = new Player(playerSprite);
     
@@ -73,7 +73,7 @@ void SquarePlace(Chunk &vec, int x, int y, Pixel *elm)
     }
 }
 
-void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
+void Game::handleEvents()
 {
     const Uint8 *e = SDL_GetKeyboardState(&numKeys);
     Chunk localChunk = worldGeneration.getLocalVec();
@@ -88,27 +88,27 @@ void Game::handleEvents(const uint8_t &xScale, const uint8_t &yScale)
         }
         else if (e[SDL_SCANCODE_A])
         {
-            SquarePlace(localChunk, x / xScale, y / yScale, water);
+            SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, water);
         }
         else if (e[SDL_SCANCODE_D])
         {
-            SquarePlace(localChunk, x / xScale, y / yScale, rock);
+            SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, rock);
         }
         else if (e[SDL_SCANCODE_S])
         {
-            SquarePlace(localChunk, x / xScale, y / yScale, sand);
+            SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, sand);
         }
         else if (e[SDL_SCANCODE_W])
         {
-            SquarePlace(localChunk, x / xScale, y / yScale, smoke);
+            SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, smoke);
         }
         else if (e[SDL_SCANCODE_Q])
         {
-            SquarePlace(localChunk, x / xScale, y / yScale, oil);
+            SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, oil);
         }
         else if (e[SDL_SCANCODE_F])
         {
-            SquarePlace(localChunk, x / xScale, y / yScale, napalm);
+            SquarePlace(localChunk, x / GlobalVariables::rendererScale, y / GlobalVariables::rendererScale, napalm);
         }
 
         for(int i = 0; i < numKeys; ++i){
@@ -141,7 +141,7 @@ void Game::updateSequence(int &row, int &col)
             return;
         };
     }
-    pixel->update(row, col, vecWidth, vecHeight, worldGeneration);
+    pixel->update(row, col, GlobalVariables::screenSize, GlobalVariables::screenSize, worldGeneration);
 } 
 
 void Game::worker(Vector2D globalChunk, int startingChunkRow, int startingChunkCol)
@@ -187,7 +187,7 @@ void Game::ChunkUpdateSkipping(Vector2D& globalChunk, int startingChunkRow, int 
     }
 }
 
-void Game::update(const int &xScale, const int &yScale)
+void Game::update()
 {
     Chunk& vec = worldGeneration.getChunk(worldGeneration.getGlobalCoordinates(player->getCoordinates()));
 
@@ -201,7 +201,7 @@ void Game::update(const int &xScale, const int &yScale)
         ChunkUpdateSkipping(globalCoords, 0, 1);
         ChunkUpdateSkipping(globalCoords, 0, 0);
     }
-    player->update(vec, Rendering::getRenderer(), vecWidth);
+    player->update(vec, Rendering::getRenderer(), GlobalVariables::screenSize);
     worldGeneration.clearPixelProcessed();
 
 }

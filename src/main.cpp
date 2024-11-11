@@ -8,18 +8,12 @@
 #include "./GameSetup/Game.hpp"
 #include "./Elements/BaseElements/Pixel.hpp"
 #include "Textures/Sprite.hpp"
-#include "utility/ProceduralTerrainGen.hpp"
+#include "./utility/ProceduralTerrainGen.hpp"
+#include "./utility/GlobalVariables.hpp"
 
 class Sprite;
 class Pixel;
 class Game;
-constexpr double GLOBAL_CONST_VAR{3.5f};
-
-const uint8_t rendererScalex{3};
-const uint8_t rendererScaley{3};
-const int vecWidth{48 * 4};
-const int vecHeight{48 * 4};
-const std::string title{"awesomepawsome"};
 
 const int blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 0, 255);
 const int whiteColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 255, 255, 255, 255);
@@ -46,9 +40,10 @@ struct Timer
 
 int main(int argc, char *argv[])
 {
-    std::vector<float> pixels(vecWidth * vecHeight);
-    Game game(vecWidth + 1, vecHeight + 1);
-    game.init(&title, rendererScalex, rendererScaley);
+    std::vector<float> pixels(GlobalVariables::screenSize * GlobalVariables::screenSize);
+    Game game;
+
+    game.init();
 
     const int fps = 60;
     const float timeBetweenFrames = 1.0f / fps;
@@ -62,22 +57,14 @@ int main(int argc, char *argv[])
         accumulated_seconds += system_timer.elapsed_seconds;
         if (std::isgreater(accumulated_seconds, timeBetweenFrames)){
             accumulated_seconds = -timeBetweenFrames;
-
             i++;
             // Events
-            game.handleEvents(rendererScalex, rendererScaley);
+            game.handleEvents();
             // frame runing
-            game.update(rendererScalex, rendererScaley);
+            game.update();
             // Render
             game.render();
         }
-        // frameStart = SDL_GetTicks();
-
-        // frameTime = SDL_GetTicks() - frameStart;
-        // if (frameTime < timeBetweenFrames)
-        // {
-        //     SDL_Delay(timeBetweenFrames - frameTime);
-        // }
     }
 
 

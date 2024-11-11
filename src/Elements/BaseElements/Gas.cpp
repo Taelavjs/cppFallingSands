@@ -19,7 +19,7 @@ bool Gas::isGas()
     return true;
 };
 
-void Gas::update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
+void Gas::update(int row, int col, const int vecWidth, const int vecHeight, WorldGeneration &worldGeneration)
 {
     setProcessed(true);
 

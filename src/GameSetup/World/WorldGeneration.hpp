@@ -19,7 +19,7 @@ class Pixel;
 class Chunk;
 class WorldGeneration {
 public:
-    WorldGeneration(int newWidth);
+    WorldGeneration();
     ~WorldGeneration();
     void cleanUp();
     void generateBlock();

@@ -9,7 +9,7 @@ class Gas : public Moveable {
 public:    
     Gas();
     virtual ~Gas();
-    virtual void update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration);
+    virtual void update(int row, int col, const int vecWidth, const int vecHeight, WorldGeneration &worldGeneration);
     bool isGas();
     bool isSolid(){return false;};
     bool isMoveable(){return true;};

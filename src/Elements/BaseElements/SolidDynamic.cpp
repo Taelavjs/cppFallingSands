@@ -35,7 +35,7 @@ bool SolidDynamic::checkMoveableMat(Pixel *space)
     return (space->getIsLiquid() || space->getIsGas());
 }
 
-void SolidDynamic::update(int row, int col, int &vecWidth, int &vecHeight, WorldGeneration &worldGeneration)
+void SolidDynamic::update(int row, int col, const int vecWidth, const int vecHeight, WorldGeneration &worldGeneration)
 {
     setProcessed(true);
 

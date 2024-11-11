@@ -25,12 +25,12 @@ class Sprite;
 class Chunk;
 class Game {
 public:
-    Game(int vecWidth, int vecHeight);
+    Game();
     ~Game();
 
-    void init(const std::string* title, int scaleX, int scaleY);
-    void handleEvents(const uint8_t &xScale, const uint8_t &yScale);
-    void update( const int& xScale, const int& yScale);
+    void init();
+    void handleEvents();
+    void update();
     void render();
     void clean();
     void setRunning(bool running) { isRunning = running; }
@@ -44,8 +44,6 @@ public:
     void generateCorridors(std::vector<float> pixels);
 
 private:
-    int vecWidth;
-    int vecHeight;
     // int rendererScalex;
     // int rendererScaley;
     bool isRunning;
