@@ -88,6 +88,8 @@ void Rendering::renderGrid(Chunk &vec, Player* player, Vector2D globalCoords){
     {
         for (int col = 0; col < GlobalVariables::screenSize; ++col)
         {
+            if(std::abs(row + globalOffputY - player->getCoordinates().y) > 100) continue;
+            if(std::abs(col + globalOffputX - player->getCoordinates().x) > 100) continue;
             uint32_t color = (vec[row][col] != nullptr) ? vec[row][col] -> getColour() : pixels[row * GlobalVariables::screenSize + col];
 
             pixels[row * GlobalVariables::screenSize + col] = color;

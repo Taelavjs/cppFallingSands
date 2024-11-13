@@ -244,12 +244,12 @@ void WorldGeneration::swapTwoValues(Vector2D pos1, Vector2D pos2){
    if(ch1.size() == 0 || ch2.size()==0){
         return;
     }
-    if(ch1[localCoord.y][localCoord.x] != nullptr ) {
+{    if(ch1[localCoord.y][localCoord.x] != nullptr ) {
         ch1[localCoord.y][localCoord.x]->setProcessed(true);
     }
     if(ch2[localCoord2.y][localCoord2.x] != nullptr ) {
         ch2[localCoord2.y][localCoord2.x] ->setProcessed(true);
-    }
+    }}
     Pixel* temp = ch1[localCoord.y][localCoord.x];
     ch1[localCoord.y][localCoord.x] = ch2[localCoord2.y][localCoord2.x];
     ch2[localCoord2.y][localCoord2.x] = temp;

@@ -144,7 +144,7 @@ void Game::updateSequence(int &row, int &col)
     pixel->update(row, col, GlobalVariables::screenSize, GlobalVariables::screenSize, worldGeneration);
 } 
 
-void Game::worker(Vector2D globalChunk, int startingChunkRow, int startingChunkCol)
+void Game::worker(Vector2D globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D &playerCoords)
 {
     // Calculate the boundaries of the current chunk
 
@@ -155,37 +155,44 @@ void Game::worker(Vector2D globalChunk, int startingChunkRow, int startingChunkC
     int colStart = chunkOffsetY + (startingChunkCol * chunkSizeY);
     int rowEnd = std::min(rowStart + chunkSizeY,  GlobalVariables::screenSize * 2); 
     int colEnd = std::min(colStart + chunkSizeX, GlobalVariables::screenSize * 2);
+    if(std::abs(colEnd - playerCoords.x) > 150 || std::abs(rowEnd - playerCoords.y) > 150) return;
+    if(std::abs(colStart - playerCoords.x) > 150 || std::abs(rowStart - playerCoords.y) > 150) return;
+
     // Update the 8x8 chunk
     for (int row = rowStart; row < rowEnd; ++row)
     {
         for (int col = colStart; col < colEnd; ++col)
         {
+            if(std::abs(col - playerCoords.x) > 150 || std::abs(row - playerCoords.y) > 150) continue;
             updateSequence(row, col);
         }
     }
 }
-
-void Game::ChunkUpdateSkipping(Vector2D& globalChunk, int startingChunkRow, int startingChunkCol)
+void Game::ChunkUpdateSkipping(Vector2D& globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D &playerCoords)
 {
     std::vector<std::future<void>> futures;
 
-    // Enqueue tasks
+    int batchSize = std::max(1, numChunksY / 2); 
     for (int rowChunk = startingChunkRow; rowChunk < numChunksY; rowChunk += 2)
     {
         for (int colChunk = startingChunkCol; colChunk < numChunksX; colChunk += 2)
         {
-            auto future = threads.enqueue([this, globalChunk, rowChunk, colChunk]()
+            futures.push_back(threads.enqueue([this, globalChunk, rowChunk, colChunk, playerCoords]()
             {
-                this->worker(globalChunk, rowChunk, colChunk);
-            });
-            futures.push_back(std::move(future));  // Move future into vector
+                this->worker(globalChunk, rowChunk, colChunk, playerCoords);
+            }));
+            
+            if (futures.size() >= batchSize) {
+                for (auto& future : futures) future.get();
+                futures.clear();
+            }
         }
     }
-    for (auto& future : futures)
-    {
-        future.get();  // This will wait for each task to complete
-    }
+
+    // Wait for remaining tasks to finish
+    for (auto& future : futures) future.get();
 }
+
 
 void Game::update()
 {
@@ -198,13 +205,15 @@ void Game::update()
     // Without dirty reads/rights
 
     // Current issues with fire ticks and check for getIsFlammable - Unsure why
+    const Vector2D playerCoords = player->getCoordinates();
+    
     for (auto& mapEntry : chunks) {
         Chunk& vec2D = mapEntry.second;
         Vector2D globalCoords = mapEntry.first;
-        ChunkUpdateSkipping(globalCoords, 1, 1);
-        ChunkUpdateSkipping(globalCoords, 1, 0);
-        ChunkUpdateSkipping(globalCoords, 0, 1);
-        ChunkUpdateSkipping(globalCoords, 0, 0);
+        ChunkUpdateSkipping(globalCoords, 1, 1, playerCoords);
+        ChunkUpdateSkipping(globalCoords, 1, 0, playerCoords);
+        ChunkUpdateSkipping(globalCoords, 0, 1, playerCoords);
+        ChunkUpdateSkipping(globalCoords, 0, 0, playerCoords);
     }
     player->update(Rendering::getRenderer(), worldGeneration);
     worldGeneration.clearPixelProcessed();
