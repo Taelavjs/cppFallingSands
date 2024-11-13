@@ -27,7 +27,7 @@ public:
     void playerInputHandler(SDL_Scancode e);
     void playerReleaseHandler(SDL_Scancode e);
     void renderPlayer(SDL_Renderer* renderer, int screenWidth);
-    void update(Chunk& vec, SDL_Renderer* renderer, int vecWidth);
+    void update(SDL_Renderer* renderer, WorldGeneration& worldGeneration);
     Vector2D getCoordinates(){
         return position;
     }
@@ -40,11 +40,11 @@ public:
     SDL_Rect getPlayerRect(){return playerAABB;}
     std::stack<SDL_Rect> getStackRender(){return stckToRender;};
     void playerForcesInputs();
-    void collisionHandler(int vecWidth, Chunk& vec);
+    void collisionHandler(WorldGeneration& worldGeneration);
     bool isFlipTexture();
     Velocity velocity;
     void resetPlayerColliders();
-    void checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &collisions, int vecWidth, Chunk& vec);
+    void checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &collisions, WorldGeneration& worldGeneration);
 
 private:
     SDL_Rect playerAABB;

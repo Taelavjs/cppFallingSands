@@ -206,7 +206,7 @@ void Game::update()
         ChunkUpdateSkipping(globalCoords, 0, 1);
         ChunkUpdateSkipping(globalCoords, 0, 0);
     }
-    player->update(vec, Rendering::getRenderer(), GlobalVariables::screenSize);
+    player->update(Rendering::getRenderer(), worldGeneration);
     worldGeneration.clearPixelProcessed();
 
 }

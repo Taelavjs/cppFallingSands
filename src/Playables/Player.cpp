@@ -1,5 +1,5 @@
 #include "Player.hpp"
-
+#include "../Utility/GlobalVariables.hpp"
 Player::Player(Sprite* sprite):playerSprite(sprite), velocity(), stateManager(), position(0 ,0), validPosition(0,0),playerScale(16 , 16), playerCenterPosition(0 ,0)
 {
     SDL_Texture* texture = playerSprite -> getTexture();
@@ -67,29 +67,30 @@ void Player::resetPlayerColliders(){
     // Player Collider
     playerCenterPosition.x = position.x + (playerScale.x/2) - 1;
     playerCenterPosition.y = position.y + (playerScale.y/2);
-    playerAABB = {(int)position.x + 5, (int)position.y, (int)playerScale.x - 10, (int)playerScale.y}; // leniency
+    playerAABB = {(int)position.x + 6, (int)position.y, (int)playerScale.x - 12, (int)playerScale.y}; // leniency
 
     // check for isGrounded
     groundedRect = {(int)playerCenterPosition.x - 1, (int)(playerCenterPosition.y + playerScale.y/2), 5, 5};
 }
 
-void Player::checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &collisions, int vecWidth, Chunk& vec){
+void Player::checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &collisions, WorldGeneration& worldGeneration){
     SDL_Rect collisionResult;
 
-    int jOffset = (vec.getGlobalCoords().y * -vecWidth);
-    int iOffset = (vec.getGlobalCoords().x * -vecWidth);
+    // int jOffset = (vec.getGlobalCoords().y * -vecWidth);
+    // int iOffset = (vec.getGlobalCoords().x * -vecWidth);
     isBlockInPlayer = false;
-    if(vec.size() == 0) return;
 
     collisions.clear();
     for(int l = 0; l < 8; l++){
-        for(int i = position.x + iOffset + 3; i < position.x + iOffset + 3 + playerScale.x - 6; ++i){
-            for(int j = position.y + jOffset; j < position.y + jOffset + playerScale.y; ++j){
-                SDL_Rect cube = {i - iOffset, j - jOffset, 1, 1};
-                if(!(i > 0 && j > 0 && j < vecWidth && i < vecWidth)) {
+        for(int i = position.x + 3; i < position.x - 3 + playerScale.x ; ++i){
+            for(int j = position.y ; j < position.y + playerScale.y; ++j){
+                SDL_Rect cube = {i, j, 1, 1};
+                if(!(i >= 0 && j >= 0 && j < (GlobalVariables::screenSize * 2) - 1 && i < (GlobalVariables::screenSize * 2) - 1)) {
                     continue;
                 }
-                if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
+
+                Pixel* blockToCheck = worldGeneration.getPixelFromGlobal(Vector2D(i, j));
+                if(blockToCheck != nullptr && blockToCheck->getIsSolid() && SDL_IntersectRect(&cube, &playerAABB, &collisionResult)){
                     collisions.push_back(cube);
                     isBlockInPlayer = true;
                 }
@@ -98,18 +99,18 @@ void Player::checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &co
     }
 }
 
-void Player::collisionHandler(int vecWidth, Chunk& vec)
+void Player::collisionHandler(WorldGeneration& worldGeneration)
 {
     resetPlayerColliders();
     validPosition = position;
-    int jOffset = (vec.getGlobalCoords().y * -vecWidth);
-    int iOffset = (vec.getGlobalCoords().x * -vecWidth);
+    // int jOffset = (vec.getGlobalCoords().y * -(GlobalVariables::screenSize * 2));
+    // int iOffset = (vec.getGlobalCoords().x * -(GlobalVariables::screenSize * 2));
 
     // flag to check for collisions with environment once
     bool wasGrounded{false};
     bool isBlockInPlayer{false};
     std::vector<SDL_Rect> collisions;
-    checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+    checkAreaCollision(isBlockInPlayer, collisions, worldGeneration);
 
     
     // Calculate average displacement from players center
@@ -117,17 +118,17 @@ void Player::collisionHandler(int vecWidth, Chunk& vec)
 
     if(!isBlockInPlayer){
         SDL_Rect col;
-        for(int i = playerCenterPosition.x + iOffset - 4; i < playerCenterPosition.x + iOffset + 8; ++i){
+        for(int i = playerCenterPosition.x - 4; i < playerCenterPosition.x + 8; ++i){
             if(wasGrounded) break;
-            for(int j = playerCenterPosition.y + jOffset + playerScale.y/2; j < playerCenterPosition.y + jOffset + 2 + playerScale.y/2; ++j){
+            for(int j = playerCenterPosition.y + playerScale.y/2; j < playerCenterPosition.y + 2 + playerScale.y/2; ++j){
                 if(wasGrounded) break;
 
-                if(!(i > 0 && j > 0 && j < vecWidth && i < vecWidth)) continue;
-                SDL_Rect cube = {i - iOffset, j - jOffset, 1, 1};
+                if(!(i > 0 && j > 0 && j < (GlobalVariables::screenSize * 2) -1  && i < (GlobalVariables::screenSize * 2) - 1)) continue;
+                SDL_Rect cube = {i, j, 1, 1};
                 stckToRender.push(cube);
-                if(vec.size() == 0) continue;
+                Pixel* blockToCheck = worldGeneration.getPixelFromGlobal(Vector2D(i, j));
 
-                if(vec[j][i] != nullptr && vec[j][i]->getIsSolid() && SDL_IntersectRect(&cube, &groundedRect, &col)){
+                if(blockToCheck != nullptr && blockToCheck->getIsSolid() && SDL_IntersectRect(&cube, &groundedRect, &col)){
                     wasGrounded = true;
                     break;
                 }
@@ -143,16 +144,15 @@ void Player::collisionHandler(int vecWidth, Chunk& vec)
         float xBlocksMove{playerVelocity.x};
         position.y += yBlocksMove;
         resetPlayerColliders();
-        checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        checkAreaCollision(isBlockInPlayer, collisions, worldGeneration);
         if(isBlockInPlayer){
             position.y = validPosition.y;
             velocity.setVelocity(velocity.getVelocity().x, 0);
         }
 
-        resetPlayerColliders();
         position.x += xBlocksMove;
         resetPlayerColliders();
-        checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        checkAreaCollision(isBlockInPlayer, collisions, worldGeneration);
         if(isBlockInPlayer){
             position.x = validPosition.x;
             velocity.setVelocity(0, velocity.getVelocity().y);
@@ -181,11 +181,11 @@ void Player::collisionHandler(int vecWidth, Chunk& vec)
         position.x += velocity.getVelocity().x;
         resetPlayerColliders();
 
-        checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        checkAreaCollision(isBlockInPlayer, collisions, worldGeneration);
         if(!isBlockInPlayer) return;
         
         resetPlayerColliders();
-        checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        checkAreaCollision(isBlockInPlayer, collisions, worldGeneration);
         if(isBlockInPlayer){
             position.y = validPosition.y;
             velocity.setVelocity(velocity.getVelocity().x, 0);
@@ -193,7 +193,7 @@ void Player::collisionHandler(int vecWidth, Chunk& vec)
 
         resetPlayerColliders();
         resetPlayerColliders();
-        checkAreaCollision(isBlockInPlayer, collisions, vecWidth, vec);
+        checkAreaCollision(isBlockInPlayer, collisions, worldGeneration);
         if(isBlockInPlayer){
             position.x = validPosition.x;
             velocity.setVelocity(0, velocity.getVelocity().y);
@@ -210,7 +210,7 @@ void Player::collisionHandler(int vecWidth, Chunk& vec)
 
 }
 
-void Player::update(Chunk& vec, SDL_Renderer* renderer, int vecWidth)
+void Player::update(SDL_Renderer* renderer, WorldGeneration& worldGeneration)
 {
     velocity.velocityTick();
     //Debugging rendering
@@ -218,7 +218,7 @@ void Player::update(Chunk& vec, SDL_Renderer* renderer, int vecWidth)
         stckToRender.pop();
     }
     playerForcesInputs();
-    collisionHandler(vecWidth, vec);
+    collisionHandler(worldGeneration);
                 
     resetPlayerColliders();
     stateManager.updatePlayerState(velocity.getVelocity(), isGrounded);
