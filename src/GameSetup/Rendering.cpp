@@ -10,7 +10,7 @@ void Rendering::setValues(){
     SDL_Init(SDL_INIT_VIDEO);
     std::cout << "Everything SDL Initialized Correctly" << '\n';
 
-    Rendering::window = SDL_CreateWindow(GlobalVariables::title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, GlobalVariables::screenSize * GlobalVariables::rendererScale, GlobalVariables::screenSize * GlobalVariables::rendererScale, SDL_WINDOW_SHOWN);
+    Rendering::window = SDL_CreateWindow(GlobalVariables::title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800 , 800, SDL_WINDOW_SHOWN);
     Rendering::renderer = SDL_CreateRenderer(Rendering::window, -1, 0);
     SDL_SetRenderTarget(renderer, nullptr);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);

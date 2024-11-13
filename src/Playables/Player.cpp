@@ -48,18 +48,19 @@ void Player::playerInputHandler(SDL_Scancode e){
 
 void Player::playerForcesInputs(){
     if(dLeft){
-        velocity.addForce(3, 180);
+        velocity.addForce(80, 180);
     }
     if(dRight){
-        velocity.addForce(3, 0);
+        velocity.addForce(80, 0);
     }
-    if(dUp){
+    if(dUp && lastTimeJumpedAccumulated >= jumpDelay ){
         playerStates currentState = stateManager.getCurrentState();
-        if(currentState == playerStates::Idle || currentState == playerStates::Running){
-            velocity.addForce(3, 90);
+        if((currentState == playerStates::Idle || currentState == playerStates::Running)){
+            velocity.addForce(160, 90);
+            lastTimeJumpedAccumulated = 0;
         }
-    }
-
+    } 
+    lastTimeJumpedAccumulated += GlobalVariables::getDeltaTime();
 
 }
 

@@ -61,6 +61,9 @@ private:
     bool isGrounded{false};
     PlayerStateManager stateManager;
     playerStates prev;
+
+    float jumpDelay{0.5f};
+    float lastTimeJumpedAccumulated{0.0f};
 };
 
 #endif /* PLAYER_HPP */

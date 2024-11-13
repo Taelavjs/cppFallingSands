@@ -51,8 +51,8 @@ private:
     const float gravity{1.1f};
     const float mass{1};
 
-    const float maxYVelocity{4.5f};
-    const float maxXVelocity{4.5f};
+    const float maxYVelocity{8.5f};
+    const float maxXVelocity{6.5f};
 
     bool isGrounded{false};
 

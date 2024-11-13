@@ -9,6 +9,19 @@ public:
     const static inline int screenSize{48 * 8};
     const static inline int rendererScale{3};
     const static inline std::string title{"awsomepawsome"};
+
+    static inline float getDeltaTime(){
+        return deltaTime;
+    }
+
+    static inline void setDeltaTime(float time){
+        deltaTime = time;
+    }
+
+
+private:
+    static inline float deltaTime{0};
+    
 };
 
 #endif /* */

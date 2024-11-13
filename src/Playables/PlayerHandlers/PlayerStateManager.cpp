@@ -43,9 +43,10 @@ void PlayerStateManager::idleStateChangeConditions(Vector2D velocity, bool isGro
     {
         if(velocity.y < 0) currentState = playerStates::Falling;
         if(velocity.y > 0) currentState = playerStates::Jumping;
-    } else if(std::abs(velocity.x) > 0 && isGrounded) // Has to be grounded 
+    } else if((std::abs(velocity.x) > 0 || std::abs(velocity.x) < 0) && isGrounded) // Has to be grounded 
     {
         if(velocity.x < 0) currentState = playerStates::Running;
+        if(velocity.x > 0) currentState = playerStates::Running;
     }
 }
 
