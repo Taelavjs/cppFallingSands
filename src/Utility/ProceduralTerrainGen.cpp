@@ -1,11 +1,16 @@
 #include "ProceduralTerrainGen.hpp"
-
+#include <random>
 
 std::vector<float> ProceduralTerrainGen::createNoise(int w, int h){
     FastNoiseLite noise;
     noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
     noise.SetFrequency(0.3f);
-    noise.SetSeed(391203);
+    std::random_device rd;     // Only used once to initialise (seed) engine
+    std::mt19937 rng(rd());    // Random-number engine used (Mersenne-Twister in this case)
+    std::uniform_int_distribution<int> uni(0,99999); // Guaranteed unbiased
+
+    auto random_integer = uni(rng);
+    noise.SetSeed(random_integer);
 
     noise.SetCellularDistanceFunction(FastNoiseLite::CellularDistanceFunction_Hybrid);
     noise.SetCellularReturnType(FastNoiseLite::CellularReturnType_CellValue);

@@ -30,14 +30,15 @@ WorldGeneration::~WorldGeneration(){
 }
 
 void WorldGeneration::generateBlock() {
-    std::vector<std::vector<Pixel *>> vec(GlobalVariables::screenSize, std::vector<Pixel *>(GlobalVariables::screenSize));
+    std::vector<std::vector<Pixel *>> vec(GlobalVariables::chunkSize, std::vector<Pixel *>(GlobalVariables::chunkSize));
     worldVecStore[Vector2D(0,0)] = Chunk(Vector2D(0, 0), vec);
     worldVecStore[Vector2D(0, 1)] = Chunk(Vector2D(0, 1), vec);
     worldVecStore[Vector2D(1, 0)] = Chunk(Vector2D(1, 0), vec);
     worldVecStore[Vector2D(1, 1)] = Chunk(Vector2D(1, 1), vec);
-
-    std::vector<float> noiseMap = ProceduralTerrainGen::createNoise(GlobalVariables::screenSize, GlobalVariables::screenSize);
-    std::vector<float> terrainMap = ProceduralTerrainGen::createTerrain(GlobalVariables::screenSize, GlobalVariables::screenSize);  
+    
+    
+    std::vector<float> noiseMap = ProceduralTerrainGen::createNoise(GlobalVariables::chunkSize, GlobalVariables::chunkSize);
+    std::vector<float> terrainMap = ProceduralTerrainGen::createTerrain(GlobalVariables::chunkSize, GlobalVariables::chunkSize);  
 
     for (auto& mapEntry : worldVecStore) {
         Chunk& chunk = mapEntry.second;
@@ -67,18 +68,18 @@ void printVector(const std::vector<float>& vec) {
 
 void WorldGeneration::pixelsToBlocks(std::vector<float> noise, Vector2D worldQuad, Chunk &vec)
 {
-    int chunkStartX = worldQuad.x * GlobalVariables::screenSize;
-    int chunkStartY = worldQuad.y * GlobalVariables::screenSize;
+    int chunkStartX = worldQuad.x * GlobalVariables::chunkSize;
+    int chunkStartY = worldQuad.y * GlobalVariables::chunkSize;
     std::cout << worldQuad.x << worldQuad.y << '\n';
     int total = 0;
     std::setprecision(2);
-    for (int row = 0; row < GlobalVariables::screenSize; ++row)
+    for (int row = 0; row < GlobalVariables::chunkSize; ++row)
     {
-        for (int col = 0; col < GlobalVariables::screenSize; ++col)
+        for (int col = 0; col < GlobalVariables::chunkSize; ++col)
         {
             int globalRow = chunkStartY + row;
             int globalCol = chunkStartX + col;
-            const float pixValue = noise[(globalRow) * (GlobalVariables::screenSize * 2) + (globalCol)];
+            const float pixValue = noise[(globalRow) * (GlobalVariables::chunkSize * 2) + (globalCol)];
             if (pixValue > -0.2f)
             {
                 vec[row][col] = rock->clone();
@@ -102,15 +103,15 @@ double getRandomDouble(double min, double max) {
 
 void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D worldQuad, Chunk &vec)
 {
-    int chunkStartX = worldQuad.x * GlobalVariables::screenSize;
-    int chunkStartY = worldQuad.y * GlobalVariables::screenSize;
-    for (int row = 0; row < GlobalVariables::screenSize; ++row)
+    int chunkStartX = worldQuad.x * GlobalVariables::chunkSize;
+    int chunkStartY = worldQuad.y * GlobalVariables::chunkSize;
+    for (int row = 0; row < GlobalVariables::chunkSize; ++row)
     {
-        for (int col = 0; col < GlobalVariables::screenSize; ++col)
+        for (int col = 0; col < GlobalVariables::chunkSize; ++col)
         {
             int globalRow = chunkStartY + row;
             int globalCol = chunkStartX + col;
-            const float pixValue = noise[(globalRow) * (GlobalVariables::screenSize*2) + (globalCol)];            
+            const float pixValue = noise[(globalRow) * (GlobalVariables::chunkSize*2) + (globalCol)];            
             if (vec[row][col] != nullptr && vec[row][col]->getIsSolid() && pixValue > 0.6)
             {
                 vec[row][col] = nullptr;
@@ -122,9 +123,9 @@ void WorldGeneration::generateCorridors(std::vector<float> noise, Vector2D world
         }
     }
 
-    for (int row = 0; row < GlobalVariables::screenSize; ++row)
+    for (int row = 0; row < GlobalVariables::chunkSize; ++row)
     {
-        for (int col = 0; col < GlobalVariables::screenSize; ++col)
+        for (int col = 0; col < GlobalVariables::chunkSize; ++col)
         {
             if(vec[row][col] != nullptr){
                 continue;
@@ -154,15 +155,15 @@ std::map<Vector2D, Chunk>& WorldGeneration::getVecStore(){
 
 Vector2D WorldGeneration::getGlobalCoordinates(Vector2D position){
     Vector2D result(0, 0);
-    result.x = std::floor(position.x / GlobalVariables::screenSize);
-    result.y = std::floor(position.y / GlobalVariables::screenSize);
+    result.x = std::floor(position.x / GlobalVariables::chunkSize);
+    result.y = std::floor(position.y / GlobalVariables::chunkSize);
 
     std::cout << "Global Coordinates : " << result.x << " " << result.y << '\n';
     return result;
 }
 
 Vector2D WorldGeneration::getGlobalCoordinates(int chunkX, int chunkY, int localX, int localY, int chunkSizeX, int chunkSizeY) {
-    return Vector2D(chunkX * GlobalVariables::screenSize + localX, chunkY * GlobalVariables::screenSize + localY);
+    return Vector2D(chunkX * GlobalVariables::chunkSize + localX, chunkY * GlobalVariables::chunkSize + localY);
 }
 
 Chunk& WorldGeneration::getChunk(Vector2D chunkGlobalCoord){
@@ -176,18 +177,18 @@ Chunk& WorldGeneration::getChunk(Vector2D chunkGlobalCoord){
 // Rather than swapping between global and local, much easier
 
 Pixel*& WorldGeneration::getPixelFromGlobal(Vector2D position){
-    // GlobalVariables::screenSize = GlobalVariables::screeenSize;
+    // GlobalVariables::chunkSize = GlobalVariables::screeenSize;
     Vector2D chunkCoord(0, 0);
     Vector2D localCoord(0, 0);
     
-    chunkCoord.x = std::floor(position.x / GlobalVariables::screenSize);
-    chunkCoord.y = std::floor(position.y / GlobalVariables::screenSize);
+    chunkCoord.x = std::floor(position.x / GlobalVariables::chunkSize);
+    chunkCoord.y = std::floor(position.y / GlobalVariables::chunkSize);
 
-    localCoord.x = fmod(position.x, GlobalVariables::screenSize);
-    if (localCoord.x < 0) localCoord.x += GlobalVariables::screenSize; // Handle negative coordinates
+    localCoord.x = fmod(position.x, GlobalVariables::chunkSize);
+    if (localCoord.x < 0) localCoord.x += GlobalVariables::chunkSize; // Handle negative coordinates
 
-    localCoord.y = fmod(position.y, GlobalVariables::screenSize);
-    if (localCoord.y < 0) localCoord.y += GlobalVariables::screenSize; // Handle negative coordinates
+    localCoord.y = fmod(position.y, GlobalVariables::chunkSize);
+    if (localCoord.y < 0) localCoord.y += GlobalVariables::chunkSize; // Handle negative coordinates
 
     if(worldVecStore.find(chunkCoord) != worldVecStore.end()){
         return worldVecStore[chunkCoord][localCoord.y][localCoord.x]; // row x col
@@ -218,26 +219,26 @@ void WorldGeneration::swapTwoValues(Vector2D pos1, Vector2D pos2){
     Vector2D chunkCoord(0, 0);
     Vector2D localCoord(0, 0);
     
-    chunkCoord.x = std::floor(pos1.x / GlobalVariables::screenSize);
-    chunkCoord.y = std::floor(pos1.y / GlobalVariables::screenSize);
+    chunkCoord.x = std::floor(pos1.x / GlobalVariables::chunkSize);
+    chunkCoord.y = std::floor(pos1.y / GlobalVariables::chunkSize);
 
-    localCoord.x = fmod(pos1.x, GlobalVariables::screenSize);
-    if (localCoord.x < 0) localCoord.x += GlobalVariables::screenSize; // Handle negative coordinates
+    localCoord.x = fmod(pos1.x, GlobalVariables::chunkSize);
+    if (localCoord.x < 0) localCoord.x += GlobalVariables::chunkSize; // Handle negative coordinates
 
-    localCoord.y = fmod(pos1.y, GlobalVariables::screenSize);
-    if (localCoord.y < 0) localCoord.y += GlobalVariables::screenSize; // Handle negative coordinates
+    localCoord.y = fmod(pos1.y, GlobalVariables::chunkSize);
+    if (localCoord.y < 0) localCoord.y += GlobalVariables::chunkSize; // Handle negative coordinates
 
     Vector2D chunkCoord2(0, 0);
     Vector2D localCoord2(0, 0);
     
-    chunkCoord2.x = std::floor(pos2.x / GlobalVariables::screenSize);
-    chunkCoord2.y = std::floor(pos2.y / GlobalVariables::screenSize);
+    chunkCoord2.x = std::floor(pos2.x / GlobalVariables::chunkSize);
+    chunkCoord2.y = std::floor(pos2.y / GlobalVariables::chunkSize);
 
-    localCoord2.x = fmod(pos2.x, GlobalVariables::screenSize);
-    if (localCoord2.x < 0) localCoord2.x += GlobalVariables::screenSize; // Handle negative coordinates
+    localCoord2.x = fmod(pos2.x, GlobalVariables::chunkSize);
+    if (localCoord2.x < 0) localCoord2.x += GlobalVariables::chunkSize; // Handle negative coordinates
 
-    localCoord2.y = fmod(pos2.y, GlobalVariables::screenSize);
-    if (localCoord2.y < 0) localCoord2.y += GlobalVariables::screenSize; // Handle negative coordinates
+    localCoord2.y = fmod(pos2.y, GlobalVariables::chunkSize);
+    if (localCoord2.y < 0) localCoord2.y += GlobalVariables::chunkSize; // Handle negative coordinates
 
     Chunk& ch1 = worldVecStore[chunkCoord];
     Chunk& ch2 = worldVecStore[chunkCoord2];

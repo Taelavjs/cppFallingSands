@@ -40,7 +40,7 @@ struct Timer
 
 int main(int argc, char *argv[])
 {
-    std::vector<float> pixels(GlobalVariables::screenSize * GlobalVariables::screenSize);
+    std::vector<float> pixels(GlobalVariables::chunkSize * GlobalVariables::chunkSize);
     Game game;
 
     game.init();

@@ -47,7 +47,7 @@ bool Pixel::fireTick(WorldGeneration& worldGeneration, int row, int col){
                 if(i == -1 && (j == 1 || j == -1)) continue;
 
                 // Boundary Checks
-                if(row+i > (GlobalVariables::screenSize * 2) - 1 || row+i < 0 || col+j > (GlobalVariables::screenSize * 2) - 1|| col+j < 0) continue;
+                if(row+i > (GlobalVariables::chunkSize * 2) - 1 || row+i < 0 || col+j > (GlobalVariables::chunkSize * 2) - 1|| col+j < 0) continue;
 
                 // Grab necessary pixel from world space
                 Pixel *ptrToNeighbor = worldGeneration.getPixelFromGlobal(Vector2D(col + i, row + j));

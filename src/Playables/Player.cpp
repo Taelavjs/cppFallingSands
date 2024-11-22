@@ -86,7 +86,7 @@ void Player::checkAreaCollision(bool &isBlockInPlayer, std::vector<SDL_Rect> &co
         for(int i = position.x + 3; i < position.x - 3 + playerScale.x ; ++i){
             for(int j = position.y ; j < position.y + playerScale.y; ++j){
                 SDL_Rect cube = {i, j, 1, 1};
-                if(!(i >= 0 && j >= 0 && j < (GlobalVariables::screenSize * 2) - 1 && i < (GlobalVariables::screenSize * 2) - 1)) {
+                if(!(i >= 0 && j >= 0 && j < (GlobalVariables::chunkSize * 2) - 1 && i < (GlobalVariables::chunkSize * 2) - 1)) {
                     continue;
                 }
 
@@ -104,8 +104,8 @@ void Player::collisionHandler(WorldGeneration& worldGeneration)
 {
     resetPlayerColliders();
     validPosition = position;
-    // int jOffset = (vec.getGlobalCoords().y * -(GlobalVariables::screenSize * 2));
-    // int iOffset = (vec.getGlobalCoords().x * -(GlobalVariables::screenSize * 2));
+    // int jOffset = (vec.getGlobalCoords().y * -(GlobalVariables::chunkSize * 2));
+    // int iOffset = (vec.getGlobalCoords().x * -(GlobalVariables::chunkSize * 2));
 
     // flag to check for collisions with environment once
     bool wasGrounded{false};
@@ -124,7 +124,7 @@ void Player::collisionHandler(WorldGeneration& worldGeneration)
             for(int j = playerCenterPosition.y + playerScale.y/2; j < playerCenterPosition.y + 2 + playerScale.y/2; ++j){
                 if(wasGrounded) break;
 
-                if(!(i > 0 && j > 0 && j < (GlobalVariables::screenSize * 2) -1  && i < (GlobalVariables::screenSize * 2) - 1)) continue;
+                if(!(i > 0 && j > 0 && j < (GlobalVariables::chunkSize * 2) -1  && i < (GlobalVariables::chunkSize * 2) - 1)) continue;
                 SDL_Rect cube = {i, j, 1, 1};
                 stckToRender.push(cube);
                 Pixel* blockToCheck = worldGeneration.getPixelFromGlobal(Vector2D(i, j));

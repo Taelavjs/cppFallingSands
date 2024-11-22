@@ -39,10 +39,10 @@ void Rendering::castRay(uint32_t *pixels, SDL_Renderer* renderer, const std::vec
     int limit{3};
     while (true) {
 
-        if (startX >= 0 && startX < GlobalVariables::screenSize && startY >= 0 && startY < GlobalVariables::screenSize) {
+        if (startX >= 0 && startX < GlobalVariables::chunkSize && startY >= 0 && startY < GlobalVariables::chunkSize) {
             if ((vec[startX][startY] == nullptr || vec[startX][startY] -> getIsMoveable())&& limit > 0) {
                 limit--;
-                pixels[startX * GlobalVariables::screenSize + startY] = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 182, 130, 124, 90);
+                pixels[startX * GlobalVariables::chunkSize + startY] = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 182, 130, 124, 90);
             } else if(vec[startX][startY] != nullptr || limit <= 0) {
                 count++;
                 if (count==2) break;
@@ -61,38 +61,36 @@ void Rendering::castRays(uint32_t *pixels,SDL_Renderer* renderer, const std::vec
     int rays = 360; // Number of rays to cast
     for (int i = 0; i < rays; ++i) {
         float angle = i * (2 * M_PI / rays);
-        int endX = row + GlobalVariables::screenSize * cos(angle);
-        int endY = col + GlobalVariables::screenSize * sin(angle);
+        int endX = row + GlobalVariables::chunkSize * cos(angle);
+        int endY = col + GlobalVariables::chunkSize * sin(angle);
         castRay(pixels, renderer, vec, row, col, endX, endY);
     }
 }
 
 void Rendering::renderGrid(Chunk &vec, Player* player, Vector2D globalCoords){
-    //SDL_RenderClear(renderer);
+    int globalOffputX = globalCoords.x * GlobalVariables::chunkSize;
+    int globalOffputY = globalCoords.y * GlobalVariables::chunkSize;
 
-    int globalOffputX = globalCoords.x * GlobalVariables::screenSize;
-    int globalOffputY = globalCoords.y * GlobalVariables::screenSize;
-
-    SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, GlobalVariables::screenSize, GlobalVariables::screenSize);
+    SDL_Texture *texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, GlobalVariables::chunkSize, GlobalVariables::chunkSize);
     if (texture == nullptr)
     {
         std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
         return;
     }
-    uint32_t *pixels = new uint32_t[GlobalVariables::screenSize * GlobalVariables::screenSize];
+    uint32_t *pixels = new uint32_t[GlobalVariables::chunkSize * GlobalVariables::chunkSize];
     uint32_t blackColor = SDL_MapRGBA(SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32), 0, 0, 30, 255);
     int z = 0;
-    std::fill(pixels, pixels + (GlobalVariables::screenSize * GlobalVariables::screenSize), blackColor);
+    std::fill(pixels, pixels + (GlobalVariables::chunkSize * GlobalVariables::chunkSize), blackColor);
 
-    for (int row = 0; row < GlobalVariables::screenSize; ++row)
+    for (int row = 0; row < GlobalVariables::chunkSize; ++row)
     {
-        for (int col = 0; col < GlobalVariables::screenSize; ++col)
+        for (int col = 0; col < GlobalVariables::chunkSize; ++col)
         {
             if(std::abs(row + globalOffputY - player->getCoordinates().y) > 100) continue;
             if(std::abs(col + globalOffputX - player->getCoordinates().x) > 100) continue;
-            uint32_t color = (vec[row][col] != nullptr) ? vec[row][col] -> getColour() : pixels[row * GlobalVariables::screenSize + col];
+            uint32_t color = (vec[row][col] != nullptr) ? vec[row][col] -> getColour() : pixels[row * GlobalVariables::chunkSize + col];
 
-            pixels[row * GlobalVariables::screenSize + col] = color;
+            pixels[row * GlobalVariables::chunkSize + col] = color;
 
             if (vec[row][col] == nullptr)
                 continue;
@@ -105,9 +103,9 @@ void Rendering::renderGrid(Chunk &vec, Player* player, Vector2D globalCoords){
     SDL_Rect AABB = player->getPlayerRect();
     Rendering::offsetX = AABB.x - 5;
     Rendering::offsetY = AABB.y - 1;
-    SDL_Rect dstRect = {((GlobalVariables::screenSize/2)-Rendering::offsetX) + globalOffputX,( (GlobalVariables::screenSize/2)-Rendering::offsetY)  +globalOffputY, GlobalVariables::screenSize, GlobalVariables::screenSize};
+    SDL_Rect dstRect = {((GlobalVariables::chunkSize/2)-Rendering::offsetX) + globalOffputX,( (GlobalVariables::chunkSize/2)-Rendering::offsetY)  +globalOffputY, GlobalVariables::chunkSize, GlobalVariables::chunkSize};
 
-    SDL_UpdateTexture(texture, NULL, pixels, GlobalVariables::screenSize * sizeof(uint32_t));
+    SDL_UpdateTexture(texture, NULL, pixels, GlobalVariables::chunkSize * sizeof(uint32_t));
     SDL_RenderCopy(renderer, texture, NULL, &dstRect);
     delete[] pixels;
     SDL_DestroyTexture(texture);
@@ -115,7 +113,7 @@ void Rendering::renderGrid(Chunk &vec, Player* player, Vector2D globalCoords){
 
 void Rendering::renderPlayer(Player* player){
     SDL_Rect AABB = player->getPlayerRect();
-    player->renderPlayer(renderer, GlobalVariables::screenSize);
+    player->renderPlayer(renderer, GlobalVariables::chunkSize);
     std::stack<SDL_Rect> toRender = player->getStackRender();
     while(!toRender.empty()){
         SDL_Rect cube = toRender.top();

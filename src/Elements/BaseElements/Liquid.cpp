@@ -49,7 +49,7 @@ void Liquid::update(int row, int col, const int &vecWidth, const int &vecHeight,
     // No lateral movement checks; pixel can only move left or right in a separate update
     if(blocksFallen > 0) {
         yVelocity += 2;
-        yVelocity = std::min(yVelocity, 4);
+        yVelocity = std::min(yVelocity, 3);
         return;
     };
     yVelocity = 1;
@@ -94,7 +94,7 @@ void Liquid::update(int row, int col, const int &vecWidth, const int &vecHeight,
 
     if(blocksFallen > 0) {
         xVelocity += 1;
-        xVelocity = std::min(xVelocity, 4);
+        xVelocity = std::min(xVelocity, 3);
         return;
     };
 

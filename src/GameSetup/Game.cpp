@@ -23,8 +23,8 @@ Game::Game()
     SDL_GetKeyboardState(&numKeys);
     prevKeys = new Uint8[numKeys];
     SDL_PumpEvents();
-    numChunksX = GlobalVariables::screenSize / chunkSizeX;
-    numChunksY = GlobalVariables::screenSize / chunkSizeY;
+    numChunksX = GlobalVariables::chunkSize / chunkSizeX;
+    numChunksY = GlobalVariables::chunkSize / chunkSizeY;
 
 }
 
@@ -141,7 +141,7 @@ void Game::updateSequence(int &row, int &col)
             return;
         };
     }
-    pixel->update(row, col, GlobalVariables::screenSize, GlobalVariables::screenSize, worldGeneration);
+    pixel->update(row, col, GlobalVariables::chunkSize, GlobalVariables::chunkSize, worldGeneration);
 } 
 
 void Game::worker(Vector2D globalChunk, int startingChunkRow, int startingChunkCol, const Vector2D &playerCoords)
@@ -149,12 +149,12 @@ void Game::worker(Vector2D globalChunk, int startingChunkRow, int startingChunkC
     // Calculate the boundaries of the current chunk
 
 
-    int chunkOffsetX = globalChunk.x * GlobalVariables::screenSize;
-    int chunkOffsetY = globalChunk.y * GlobalVariables::screenSize;
+    int chunkOffsetX = globalChunk.x * GlobalVariables::chunkSize;
+    int chunkOffsetY = globalChunk.y * GlobalVariables::chunkSize;
     int rowStart = chunkOffsetX + (startingChunkRow * chunkSizeX);
     int colStart = chunkOffsetY + (startingChunkCol * chunkSizeY);
-    int rowEnd = std::min(rowStart + chunkSizeY,  GlobalVariables::screenSize * 2); 
-    int colEnd = std::min(colStart + chunkSizeX, GlobalVariables::screenSize * 2);
+    int rowEnd = std::min(rowStart + chunkSizeY,  GlobalVariables::chunkSize * 2); 
+    int colEnd = std::min(colStart + chunkSizeX, GlobalVariables::chunkSize * 2);
     if(std::abs(colEnd - playerCoords.x) > 150 || std::abs(rowEnd - playerCoords.y) > 150) return;
     if(std::abs(colStart - playerCoords.x) > 150 || std::abs(rowStart - playerCoords.y) > 150) return;
 
